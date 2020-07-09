@@ -4,6 +4,7 @@ import apiClient from '../config/axios';
 export const AuthContext = createContext({
     authenticated: false,
     authenticating: false,
+    userData: {},
     register: () => {},
     logIn: () => {},
     logOut: () => {},
@@ -16,20 +17,26 @@ export class AuthProvider extends React.Component {
 
     };
 
-    logIn = (data) => {
-        console.log('authenticated');
-        console.log(data);
-        this.setState({authenticated: true});
-        apiClient.default.withCredentials = true;
-        apiClient.get('http://localhost:8000/api/user', {withCredentials: true}).then(res => {
-            console.log(res);
-        }).then(() => {
-            apiClient.get('http://localhost:8000/api/test').then((res) => {
-                apiClient.get('http://localhost:8000/api/test').then(res => {
-                    
-                })
+    logIn = async (data) => {
+        // console.log('authenticated');
+        // console.log(data);
+        // this.setState({authenticated: true});
+        let user = await apiClient.get('user');
+        if(user.status === 200){
+            this.setState({userData: Object.assign({}, user.data)}, () => {
+                this.setState({authenticated: true});
             })
-        });
+        };
+        
+        // apiClient.get('http://localhost:8000/api/user').then(res => {
+        //     console.log(res);
+        // }).then(() => {
+        //     apiClient.get('http://localhost:8000/api/test').then((res) => {
+        //         apiClient.get('http://localhost:8000/api/test').then(res => {
+                    
+        //         })
+        //     })
+        // });
     };
 
     logOut = () => {
@@ -37,22 +44,29 @@ export class AuthProvider extends React.Component {
     };
 
     validateOnLoad = async () => {
-        apiClient.default.withCredentials = true;
+        // apiClient.default.withCredentials = true;
         // let sanctumCookie = await apiClient.get('http://localhost:8000/sanctum/csrf-cookie');
         // if(sanctumCookie.status === 204){
-            let user = await apiClient.get('http://localhost:8000/api/test');
+            let user = await apiClient.get('user/checkToken');
+            if(user.status === 200){
+                this.setState({userData: Object.assign({}, user.data)}, () => {
+                    this.setState({authenticated: true});
+                })
+                
+            }
             console.log(user);
         // }
 
     }
 
     componentDidMount() {
-        // this.validateOnLoad();
+        this.validateOnLoad();
     }
 
     state = {
         authenticated: false,
         authenticating: false,
+        userData: {},
         logIn: this.logIn,
         logOut: this.logOut,
         register: this.register,

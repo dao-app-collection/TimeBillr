@@ -9,16 +9,18 @@ application.use('/api/user', UserRouter);
 application.use('/api/teams', TeamsRouter);
 
 
-application.get('/verification', (req, res) => {
+application.get('/verification*', (req, res) => {
     res.sendFile(__dirname + '/views/verification.html');
 });
 
-application.get('/', (req, res) => {
+application.get('/landing', (req, res) => {
     res.sendFile(__dirname + '/views/landing.html');
 });
 
-application.get('/*', (req, res) => {
+application.get('/app*', (req, res) => {
     res.sendFile(__dirname + '/frontend/build/index.html');
 });
+
+
 
 application.listen(8080);

@@ -13,3 +13,8 @@ export const AuthFormContainer = styled.div`
     padding: 8px;
 
 `
+
+export const CenteredContainer = styled.div`
+    margin: 24px auto;
+    
+`

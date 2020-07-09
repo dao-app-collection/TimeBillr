@@ -6,6 +6,24 @@
     <title>TimeBillr - Verify Email</title>
 </head>
 <body>
+    <h1>Verification</h1>
+    <button class="verification-button">
+        Verify Email
+    </button>
+    <script>
+        let submit = document.querySelector('.verification-button');
+        console.log(submit);
+        submit.addEventListener('click', () => {
+            fetch('/api/user/emailVerification',{
+                method: 'POST',
+                'content-type': 'application/json',
+                body:{
+                    
+                }
+            })
+        })
+
+    </script>
     
 </body>
 </html>

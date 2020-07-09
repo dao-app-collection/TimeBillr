@@ -1,14 +1,32 @@
-const {User, sequelize} = require('../../database/models/index');
+const {User, EmailVerification, sequelize} = require('../../database/models/index');
+const mailer = require('../../mailer/config');
+const mailOptions = require('../../mailer/mailOptions');
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const e = require('express');
 
 const saltRounds = (process.env.SALTROUNDS || 10);
 const secret = (process.env.SECRET || 'TimeBillr');
 
 const UserController = {
-    all(req,res){
-        console.log('haha');
+    async all(req,res){
+        if(req.userId){
+            let user = await User.findOne(
+                {where: 
+                    {id: req.userId},
+                    attributes: {
+                        exclude: [
+                            'password',
+                            'emailVerified'
+                        ]
+                    }
+                }
+                );
+            res.status(200).json(user);
+        } else {
+            res.status(400).send({error: 'User Not Found'});
+        }
     },
     async register(req, res){
         console.log('hit the register route');
@@ -26,19 +44,29 @@ const UserController = {
                     email: email,
                     password: hash,
                 })
+                const verificationEmail = await EmailVerification.create({
+                    UserId: newUser.dataValues.id,
+                })
+                mailer.sendMail(mailOptions.createVerificationEmailOptions(email, verificationEmail.dataValues.id), (err, info) => {
+                    if(err){
+                        console.log(err);
+                    } else {
+                        console.log('Mail Sent: ', info.response);
+                    }
+                })
                 return newUser;
             })
             
         } catch(error){
             console.log(error);
-            res.status(500).send(error);
+            res.status(400).send({error: 'An account is already linked to that email address.'});
         }
         // create a jwt from the users email, as email is unique.
         const payload = {email};
         const token = jwt.sign(payload, secret, {
             expiresIn: '24h'
         });
-        res.status(200).cookie('jwt', token).send();
+        res.status(200).cookie('jwt', token).send({success: 'Account registered, please check your email and follow the link to verify your address.'});
     },
     async logIn(req, res){
        const {email, password} = req.body;
@@ -46,22 +74,29 @@ const UserController = {
        try{
            let user = await User.findOne({where: {email: email}});
            if(!user){
-               res.status(400).json({error: 'User does not exist, please sign up'});
+               res.status(401).send({error: 'User does not exist, please sign up'});
            }else{
+               console.log(user.dataValues);
+               if(user.dataValues.emailVerified === false){
+                //    res.status(401).send({error: 'Please Verify your email to sign in'}).send();
+                res.status(400).send({error: 'You need to verify your email to sign in'})
+               } else {
+                    bcrypt.compare(password, user.dataValues.password, (err, result) => {
+                        if(!result){
+                            res.status(401).send({error: 'Invalid Password'})
+                        } else {
+
+                            const payload = {email};
+
+                            const token = jwt.sign(payload, secret, {
+                             expiresIn: '24h'
+                         });
+                            res.status(200).cookie('jwt', token).send();
+                        }
+                    })
+               }
                
-               bcrypt.compare(password, user.dataValues.password, (err, result) => {
-                   if(!result){
-                       res.status(401).json({error: 'Invalid Password'})
-                   } else {
-                       
-                       const payload = {email};
-                       
-                       const token = jwt.sign(payload, secret, {
-                        expiresIn: '24h'
-                    });
-                       res.status(200).cookie('jwt', token).send();
-                   }
-               })
+               
            }
        } catch(error){
            console.log(error);
@@ -69,6 +104,45 @@ const UserController = {
     },
     logOut(req, res){
         console.log('haha');
+    },
+
+    async checkToken(req, res){
+        if(req.userId){
+            let user = await User.findOne(
+                {where: 
+                    {id: req.userId},
+                    attributes: {
+                        exclude: [
+                            'password',
+                            'emailVerified'
+                        ]
+                    }
+                }
+                );
+            res.status(200).json(user);
+        } else {
+            res.status(400).send({error: 'User Not Found'});
+        }
+    },
+
+    async verifyEmail(req, res){
+        const {id, email} = req.body;
+        try {
+            const result = await sequelize.transaction(async t => {
+                let user = await User.findOne({where: {email: email}});
+                let emailVerification = await EmailVerification.findOne({where: {id: id}});
+                if(emailVerification.dataValues.UserId === user.dataValues.id){
+                    user.emailVerified = true;
+                } else {
+                    res.status(401).json({error: 'Email does not match verification Id'});
+                }
+                user.save();
+                return user;
+            })
+            res.status(200).send();
+        } catch (error) {
+            console.log(error);
+        }
     }
 };
 

@@ -16,13 +16,19 @@ const Skeleton = () => {
                     <Layout style={{height: '100vh'}}>
 
                             <Switch>
+                                <Route path='/app/membership/request/:id'>
+                                    <div>This is the membership request form</div>
+                                </Route>
+                                <Route path={'/app/login'}>
+                                    <Redirect to={'/app'} />
+                                </Route>
                                 <Route path={"/app/:organization_id"}>
                                     <AppRouter />
                                 </Route>
                                 <Route path={"/app"}>
                                    <OrganizationSelectOrCreate />
                                 </Route>
-                                <Route path={"/"}>
+                                <Route path={"/*"}>
                                     <Redirect to={"/app"} />
                                 </Route>
                             </Switch>

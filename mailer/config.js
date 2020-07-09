@@ -1,6 +1,6 @@
 let nodemailer = require('nodemailer');
 
-let transporter = nodemailer.createTransport({
+module.exports = nodemailer.createTransport({
     host: 'smtp-mail.outlook.com',
     secureConnection: false,
     port: 587,
@@ -13,18 +13,12 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-let mailOptions = {
-    from: '"TimeBillr" <clintongillespie@outlook.com>',
-    to: 'clintongillespie@outlook.com',
-    subject: 'hello',
-    text: 'Hello World',
-    html: '<h1> Hello world! </h1>'
-}
 
-transporter.sendMail(mailOptions, (err, info) => {
-    if(err){
-        console.log(err);
-    } else {
-        console.log('Message sent: ', info.response);
-    }
-})
+// transporter.sendMail(mailOptions, (err, info) => {
+//     if(err){
+//         console.log(err);
+//     } else {
+//         console.log('Message sent: ', info.response);
+//     }
+// });
+

@@ -15,8 +15,8 @@ const ApplicationHeader = () => {
     }
     return (
 
-        <Layout.Header >
-            <Menu onClick={handleNavigationClick} selectedKeys={[activeLink]} mode={'horizontal'}>
+        <Layout.Header style={{backgroundColor: '#1890ff'}}>
+            <Menu onClick={handleNavigationClick} selectedKeys={[activeLink]} mode={'horizontal'} style={{width: '100%'}}>
                 <Menu.Item key="home" icon={<HomeOutlined />}>
 
                 </Menu.Item>
@@ -26,8 +26,8 @@ const ApplicationHeader = () => {
                 <Menu.Item key="projects">
                     Projects
                 </Menu.Item>
-                <Menu.Item key="organization">
-                    Organization
+                <Menu.Item key="team">
+                    Team
                 </Menu.Item>
                 <Menu.Item key="reports">
                     Reports

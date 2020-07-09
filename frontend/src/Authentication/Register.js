@@ -4,42 +4,49 @@ import {
     Form,
     Input,
     Button, Space,
+    Alert
 
 } from 'antd';
 
-
-import {AuthFormContainer, FullPageContainer} from "../styled-components/styled";
-
 function Register(props){
     const [form] = Form.useForm();
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
 
-    const onFinish = values => {
+    const onFinish = async values => {
         console.log('Received values of form:', values);
         // apiClient.defaults.withCredentials = true;
-        apiClient.post('user/register', {
-            email: values.email,
-            password: values.password,
-            name: values.name,
-        }).then(res => {
-            console.log(res);
-        })
-        // apiClient.get('http://localhost:8000/sanctum/csrf-cookie').then(res => {
-        //     if(res.status === 204){
-        //         apiClient.post('http://localhost:8000/api/register',{
-        //             email: values.email,
-        //             password: values.password,
-        //             name: values.name,
-        //         }).then(res => {
-        //             console.log(res);
-        //         })
-        //     }
-        //     console.log(res);
-        // })
+        try {
+            let response = await apiClient.post('user/register', {
+                email: values.email,
+                password: values.password,
+                name: values.name,
+            })
+                console.log(response);
+                setSuccess(true);
+                setSuccessMessage(response.data.success);
+                setTimeout(() => {
+                    setSuccess(false);
+                    setSuccessMessage(null);
+                }, 10000)
+    
+            
+        } catch (error) {
+            setError(true);
+            setErrorMessage(error.response.data.error);
+            setTimeout(() => {
+                setError(false);
+                setErrorMessage(null);
+            }, 10000)
+        }
+       
+        
     }
     return(
-        <FullPageContainer>
-            <AuthFormContainer>
-
+        
+            <>
                 <Form
                     form={form}
                     name={"register"}
@@ -112,10 +119,12 @@ function Register(props){
                             </Button>
                         </Space>
                     </Form.Item>
-                    Already registered? <a href="/login">Log in!</a>
+                    Already registered? <a href="/app/login">Log in!</a>
                 </Form>
-            </AuthFormContainer>
-        </FullPageContainer>
+                {success ? <Alert message={successMessage} type='success'/>:null}
+                {error ? <Alert message={errorMessage} type='error'/> : null}
+            </>
+           
     );
 }
 // const Register = () => {
