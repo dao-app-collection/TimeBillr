@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   TeamMembership.init({
-    role: DataTypes.STRING
+    permissions: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'TeamMembership',

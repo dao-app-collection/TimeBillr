@@ -3,15 +3,16 @@ const router = express.Router();
 
 const TeamsController = require('./Teams.controller');
 
-const authorization = require('../Middleware/authorization');
+const permissions = require('../Middleware/permissions');
+const organization = require('../Middleware/organization');
 
 router.get('/findAll', authorization, TeamsController.findAll);
 
 router.post('/create', authorization, TeamsController.create);
 
-router.post('/members/add', authorization, TeamsController.addMember );
+router.post('/members/add', authorization, permissions.getPermissionLevel, TeamsController.addMember );
 
-router.delete('/members/remove', authorization, TeamsController.removeMember);
+router.delete('/members/remove', authorization, permissions.getPermissionLevel, TeamsController.removeMember);
 
 router.post('/members/requests/accept', authorization, TeamsController.acceptRequest);
 

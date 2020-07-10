@@ -10,23 +10,24 @@ const AppRouter = () => {
             <ApplicationHeader/>
             <Layout.Content style={{backgroundColor: 'white'}}>
             <Switch>
-                <Route path='/app/{organization_id}'>
-
-                </Route>
-                <Route path="/app/:organizationID/time">
+                
+                <Route path="/app/:teamId/time">
                     <div>Time</div>
                 </Route>
-                <Route path="/app/:organizationID/projects">
+                <Route path="/app/:teamId/projects">
                     <div>Projects</div>
                 </Route>
-                <Route path='/app/:organizationID/team'>
+                <Route path='/app/:teamId/team'>
                     <TeamRouter />
                 </Route>
-                <Route path="/app/:organizationID/reports">
+                <Route path="/app/:teamId/reports">
                     <div>reports</div>
                 </Route>
-                <Route path="/app/:organizationID/invoices">
+                <Route path="/app/:teamId/invoices">
                     <div>invoices</div>
+                </Route>
+                <Route path='/app/:teamId'>
+
                 </Route>
             </Switch>
             </Layout.Content>

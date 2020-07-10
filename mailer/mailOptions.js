@@ -17,7 +17,7 @@ const createVerificationEmailOptions = (email, link) => {
     }
 };
 
-createTeamInviteEmailOptions = (email, teamName, inviteId) => {
+const createTeamInviteEmailOptions = (email, teamName, inviteId) => {
     return {
         from: '"TimeBillr" <clintongillespie@outlook.com>',
         to: `${email}`,
@@ -27,4 +27,4 @@ createTeamInviteEmailOptions = (email, teamName, inviteId) => {
     }
 }
 
-module.exports = {createVerificationEmailOptions};
+module.exports = {createVerificationEmailOptions, createTeamInviteEmailOptions};

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Form, Input, Divider, Radio, Button } from 'antd';
 import {CenteredContainer} from '../../styled-components/styled';
 import {Typography} from 'antd';
+import apiClient from '../../config/axios';
 
 const formLayout = {
     labelCol: {span: 4},
@@ -14,11 +15,16 @@ const buttonLayout = {
 }
 
 const AddMember = () => {
-    const organizationId = useParams().organizationId;
+    const teamId = useParams().teamId;
     const [form] = Form.useForm();
 
     const onFinish = (values) => {
         console.log(values);
+        apiClient.post('teams/members/add',{
+            teamId: teamId,
+            email: values.email,
+            permissions: values.permissions,
+        })
     }
     return (
         <CenteredContainer style={{width: '800px'}}>            

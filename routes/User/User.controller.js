@@ -62,11 +62,11 @@ const UserController = {
             res.status(400).send({error: 'An account is already linked to that email address.'});
         }
         // create a jwt from the users email, as email is unique.
-        const payload = {email};
-        const token = jwt.sign(payload, secret, {
-            expiresIn: '24h'
-        });
-        res.status(200).cookie('jwt', token).send({success: 'Account registered, please check your email and follow the link to verify your address.'});
+        // const payload = {email};
+        // const token = jwt.sign(payload, secret, {
+        //     expiresIn: '24h'
+        // });
+        res.status(200).send({success: 'Account registered, please check your email and follow the link to verify your address.'});
     },
     async logIn(req, res){
        const {email, password} = req.body;
@@ -114,12 +114,18 @@ const UserController = {
                     attributes: {
                         exclude: [
                             'password',
-                            'emailVerified'
+                            
                         ]
                     }
                 }
                 );
-            res.status(200).json(user);
+                console.log(user.dataValues);
+                if(user.dataValues.emailVerified === false){
+                    res.status(400).send({error: 'Need to verify email'})
+                } else {
+                    res.status(200).json(user);
+                }
+            
         } else {
             res.status(400).send({error: 'User Not Found'});
         }

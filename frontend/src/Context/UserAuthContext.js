@@ -3,7 +3,7 @@ import apiClient from '../config/axios';
 
 export const AuthContext = createContext({
     authenticated: false,
-    authenticating: false,
+    authenticating: true,
     userData: {},
     register: () => {},
     logIn: () => {},
@@ -46,15 +46,25 @@ export class AuthProvider extends React.Component {
     validateOnLoad = async () => {
         // apiClient.default.withCredentials = true;
         // let sanctumCookie = await apiClient.get('http://localhost:8000/sanctum/csrf-cookie');
-        // if(sanctumCookie.status === 204){
+
+        try {
+            this.setState({authenticating: true});
             let user = await apiClient.get('user/checkToken');
             if(user.status === 200){
                 this.setState({userData: Object.assign({}, user.data)}, () => {
                     this.setState({authenticated: true});
+                    this.setState({authenticating: false});
                 })
                 
-            }
-            console.log(user);
+            } else {
+                this.setState({authenticating: false});
+            } 
+        } catch (error) {
+            this.setState({authenticating: false});
+        }
+        // if(sanctumCookie.status === 204){
+            
+            // console.log(user);
         // }
 
     }
@@ -65,7 +75,7 @@ export class AuthProvider extends React.Component {
 
     state = {
         authenticated: false,
-        authenticating: false,
+        authenticating: true,
         userData: {},
         logIn: this.logIn,
         logOut: this.logOut,
