@@ -1,5 +1,8 @@
 'use strict';
 
+// const dotenv = require('dotenv');
+// const env = dotenv.config({path: '../.env'}).NODE_ENV;
+console.log('something');
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');

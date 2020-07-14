@@ -5,30 +5,38 @@ const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const e = require('express');
+const {ErrorHandler} = require('../Middleware/ErrorHandler');
+
 
 const saltRounds = (process.env.SALTROUNDS || 10);
 const secret = (process.env.SECRET || 'TimeBillr');
 
 const UserController = {
-    async all(req,res){
-        if(req.userId){
-            let user = await User.findOne(
-                {where: 
-                    {id: req.userId},
-                    attributes: {
-                        exclude: [
-                            'password',
-                            'emailVerified'
-                        ]
+    async all(req,res, next){
+        try {
+            if(req.userId){
+                let user = await User.findOne(
+                    {where: 
+                        {id: req.userId},
+                        attributes: {
+                            exclude: [
+                                'password',
+                                'emailVerified'
+                            ]
+                        }
                     }
-                }
-                );
-            res.status(200).json(user);
-        } else {
-            res.status(400).send({error: 'User Not Found'});
+                    );
+                res.status(200).json(user);
+            } else {
+                throw new ErrorHandler(400, 'User not Found');
+                res.status(400).send({error: 'User Not Found'});
+            }
+        } catch (error) {
+            next(error);
         }
+        
     },
-    async register(req, res){
+    async register(req, res, next){
         console.log('hit the register route');
         console.log(User);
         console.log(req.body);
@@ -58,8 +66,9 @@ const UserController = {
             })
             
         } catch(error){
+            next(new ErrorHandler(400, 'An account is already linked to that email address'));
             console.log(error);
-            res.status(400).send({error: 'An account is already linked to that email address.'});
+            // res.status(400).send({error: 'An account is already linked to that email address.'});
         }
         // create a jwt from the users email, as email is unique.
         // const payload = {email};
@@ -68,21 +77,24 @@ const UserController = {
         // });
         res.status(200).send({success: 'Account registered, please check your email and follow the link to verify your address.'});
     },
-    async logIn(req, res){
+    async logIn(req, res, next){
        const {email, password} = req.body;
 
        try{
            let user = await User.findOne({where: {email: email}});
            if(!user){
+               throw new ErrorHandler(401, 'User does not exist, please sign up');
                res.status(401).send({error: 'User does not exist, please sign up'});
            }else{
                console.log(user.dataValues);
                if(user.dataValues.emailVerified === false){
                 //    res.status(401).send({error: 'Please Verify your email to sign in'}).send();
+                throw new ErrorHandler(400, 'You need to verify your email to sign in');
                 res.status(400).send({error: 'You need to verify your email to sign in'})
                } else {
                     bcrypt.compare(password, user.dataValues.password, (err, result) => {
                         if(!result){
+                            throw new ErrorHandler(400, 'Invalid Password')
                             res.status(401).send({error: 'Invalid Password'})
                         } else {
 
@@ -99,14 +111,15 @@ const UserController = {
                
            }
        } catch(error){
+           next(error);
            console.log(error);
        }
     },
-    logOut(req, res){
+    logOut(req, res, next){
         console.log('haha');
     },
 
-    async checkToken(req, res){
+    async checkToken(req, res, next){
         if(req.userId){
             let user = await User.findOne(
                 {where: 
@@ -121,17 +134,19 @@ const UserController = {
                 );
                 console.log(user.dataValues);
                 if(user.dataValues.emailVerified === false){
-                    res.status(400).send({error: 'Need to verify email'})
+                    next(new ErrorHandler(400, 'Need to verify email'));
+                    // res.status(400).send({error: 'Need to verify email'})
                 } else {
                     res.status(200).json(user);
                 }
             
         } else {
+            next(new ErrorHandler(400, 'User not Found'))
             res.status(400).send({error: 'User Not Found'});
         }
     },
 
-    async verifyEmail(req, res){
+    async verifyEmail(req, res, next){
         const {id, email} = req.body;
         try {
             const result = await sequelize.transaction(async t => {
@@ -140,6 +155,7 @@ const UserController = {
                 if(emailVerification.dataValues.UserId === user.dataValues.id){
                     user.emailVerified = true;
                 } else {
+                    throw new ErrorHandler(401, 'Email does not match verification Id');
                     res.status(401).json({error: 'Email does not match verification Id'});
                 }
                 user.save();
@@ -147,6 +163,7 @@ const UserController = {
             })
             res.status(200).send();
         } catch (error) {
+            next(error);
             console.log(error);
         }
     }

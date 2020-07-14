@@ -21,12 +21,13 @@ export class OrganizationProvider extends React.Component {
         this.setState({organization: Object.assign({}, organization[0])});
     }
     updateOrganizations = () =>{
-        apiClient.get('teams/findAll')
+        return apiClient.get('teams/findAll')
             .then(res => {
+                console.log(res);
                 this.setState({organizations: [...res.data]});
 
             });
-        return Promise.resolve();
+        
 
 
     }

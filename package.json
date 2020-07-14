@@ -4,7 +4,15 @@
   "description": "A Time Billing system for teams/organizations",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --testTimeout=10000",
+    "pretest": "sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/frontend/*"
+    ]
   },
   "keywords": [
     "Time",
@@ -30,5 +38,10 @@
     "nodemailer": "^6.4.10",
     "sequelize": "^6.3.0",
     "sequelize-cli": "^6.2.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.2",
+    "jest": "^26.1.0",
+    "supertest": "^4.0.2"
   }
 }

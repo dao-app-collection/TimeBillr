@@ -7,6 +7,7 @@ import {
     Alert
 
 } from 'antd';
+import { useAlert } from 'react-alert';
 
 function Register(props){
     const [form] = Form.useForm();
@@ -14,6 +15,7 @@ function Register(props){
     const [successMessage, setSuccessMessage] = useState(null);
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+    const alert = useAlert();
 
     const onFinish = async values => {
         console.log('Received values of form:', values);
@@ -26,20 +28,26 @@ function Register(props){
             })
                 console.log(response);
                 setSuccess(true);
-                setSuccessMessage(response.data.success);
-                setTimeout(() => {
-                    setSuccess(false);
-                    setSuccessMessage(null);
-                }, 10000)
+                alert.show(response.data.success, {
+                    type: 'success'
+                })
+                // setSuccessMessage(response.data.success);
+                // setTimeout(() => {
+                //     setSuccess(false);
+                //     setSuccessMessage(null);
+                // }, 10000)
     
             
         } catch (error) {
-            setError(true);
-            setErrorMessage(error.response.data.error);
-            setTimeout(() => {
-                setError(false);
-                setErrorMessage(null);
-            }, 10000)
+            alert.show(error.response.data.error, {
+                type: 'error'
+            })
+            // setError(true);
+            // setErrorMessage(error.response.data.error);
+            // setTimeout(() => {
+            //     setError(false);
+            //     setErrorMessage(null);
+            // }, 10000)
         }
        
         

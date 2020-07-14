@@ -10,6 +10,8 @@ router.post('/login', UserController.logIn);
 
 router.post('/register', UserController.register);
 
+router.post('/logout', authorization, UserController.logOut);
+
 router.get('/checkToken', authorization, UserController.checkToken);
 
 router.post('/emailVerification', UserController.verifyEmail);

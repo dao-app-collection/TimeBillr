@@ -7,6 +7,7 @@ import {BankOutlined} from '@ant-design/icons';
 import {Form, Input} from "antd";
 import apiClient from '../config/axios';
 import {OrganizationContext} from "../Context/OrganizationContext";
+import { useAlert } from 'react-alert';
 
 const OrganizationCreate = () => {
     const context = useContext(OrganizationContext);
@@ -15,7 +16,7 @@ const OrganizationCreate = () => {
     const [sending, setSending] = useState(false);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-
+    const alert = useAlert();
     const toggleModal = () => {
         setShowModal(!showModal);
     }
@@ -27,6 +28,9 @@ const OrganizationCreate = () => {
             name: name,
             description: description,
         }).then(res => {
+            alert.show('Team created', {
+                type: 'success'
+            })
             console.log(res);
             setSending(false);
             context.updateOrganizations().then(emptyPromise => {

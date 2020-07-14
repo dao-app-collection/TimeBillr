@@ -2,6 +2,9 @@ const db = require('../../database/models/index');
 const mailer = require('../../mailer/config');
 const mailOptions = require('../../mailer/mailOptions');
 
+const {ErrorHandler} = require('../Middleware/ErrorHandler');
+const { sequelize } = require('../../database/models/index');
+
 module.exports = {
     // returns all organizations that one user is a member of
     async findAll (req, res){
@@ -83,18 +86,79 @@ module.exports = {
     // Removes a member of the organization
     // each role can only delete a member roles below them
     // Associated records remain
-    async removeMember(req,res){
+    async removeMember(req,res, next){
 
+    },
+    // Sends information on a memmbership request,
+    // This route is hit when a membership email request is sent, 
+    // When the inivitation accept/deny page is loaded,
+    // A request will be sent here to retrieve the information on the membership request
+    async getRequest(req, res, next){
+        
+        try {
+            const membershipRequest = await db.TeamMembershipRequest.findOne({where: {id: req.params.id}});
+            if(!membershipRequest){
+                throw new ErrorHandler(400, 'Membership Request doesnt exist');
+            }
+            console.log(membershipRequest);
+            const team = await db.Team.findOne({where: {id: membershipRequest.dataValues.TeamId}});
+            console.log(team)
+            const data = {
+                email: membershipRequest.dataValues.email,
+                teamName: team.dataValues.name,
+                description: team.dataValues.description
+            }
+            res.status(200).json(data);
+        } catch (error) {
+            console.log(error);
+            next(error);
+        }
     },
     // When a user accepts a request to join a team,
     // this route is pinged, a new membership is created from the membership request
-    async acceptRequest(req,res){
+    async acceptRequest(req,res, next){
+        try {
+            const result = db.sequelize.transaction(async t => {
+                const membershipRequest = await db.TeamMembershipRequest.findOne({where: {id: req.params.id}});
+                if(!membershipRequest){
+                    throw new ErrorHandler(400, 'Could not find membership request, may have already been accepted/denyed')
+                }
+                const newMembership = await db.TeamMembership
+                .create(
+                    {
+                        permissions: membershipRequest.dataValues.permissions, 
+                        TeamId: membershipRequest.dataValues.TeamId,
+                        UserId: req.userId,
+                    
+                    });
+                if(!newMembership){
+                    throw new ErrorHandler(400, 'Could not create a new membership')
+                }
+                await membershipRequest.destroy();
+
+                return newMembership;
+            });
+            res.status(200).send();
+        } catch (error) {
+            next(error);
+        }
 
     },
     // When a user denys a request to join a team,
     // this route is pinged, the membership request is deleted.
-    async denyRequest(req,res){
-
+    async denyRequest(req,res, next){
+        try {
+            const result = db.sequelize.transaction(async t => {
+                const membershipRequest = await db.TeamMembershipRequest.findOne({where: {id: req.params.id}});
+                if(!membershipRequest){
+                    throw new ErrorHandler(400, 'Could not find membership request, may have already been accepted/denyed');
+                }
+                return await membershipRequest.destroy();
+            })
+            res.status(200);
+        } catch (error) {
+            next(error);
+        }
     }
 };
 
