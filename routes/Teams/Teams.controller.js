@@ -32,6 +32,25 @@ module.exports = {
             console.log(error);
         }
     },
+    async getAllTeamData (req, res, next){
+        try {
+            let team = await db.Team.findOne({where: {
+                id: req.params.id
+            },
+            include: [{
+                model: db.TeamMembership
+            },{
+                model: db.TeamMembershipRequest
+            }]
+        })
+            if(!team){
+                throw new ErrorHandler(400, 'Team not found')
+            }
+            res.status(200).json(team);
+        } catch (error) {
+            next(error)
+        }
+    },
     // creates a new organization, with the creator as a Member with permissions Owner
     async create(req, res){
         const {name, description} = req.body;

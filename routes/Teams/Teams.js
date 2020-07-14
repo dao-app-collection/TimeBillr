@@ -9,6 +9,8 @@ const permissions = require('../Middleware/permissions');
 
 router.get('/findAll', authorization, TeamsController.findAll);
 
+router.get('/data/:id', authorization, TeamsController.getAllTeamData);
+
 router.post('/create', authorization, TeamsController.create);
 
 router.get('/invitation/:id', authorization, TeamsController.getRequest);
