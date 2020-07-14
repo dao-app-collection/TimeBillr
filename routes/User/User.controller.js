@@ -55,8 +55,10 @@ const UserController = {
                 const verificationEmail = await EmailVerification.create({
                     UserId: newUser.dataValues.id,
                 })
-                mailer.sendMail(mailOptions.createVerificationEmailOptions(email, verificationEmail.dataValues.id), (err, info) => {
+                mailer.sendMail(await mailOptions.createVerificationEmailOptions(email, verificationEmail.dataValues.id), (err, info) => {
                     if(err){
+                        console.log(error);
+                        throw new ErrorHandler(400, 'Invalid email address');
                         console.log(err);
                     } else {
                         console.log('Mail Sent: ', info.response);
@@ -117,6 +119,8 @@ const UserController = {
     },
     logOut(req, res, next){
         console.log('haha');
+        res.clearCookie('jwt');
+        res.status(200).send('Logged out')
     },
 
     async checkToken(req, res, next){

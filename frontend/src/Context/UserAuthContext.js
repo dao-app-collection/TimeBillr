@@ -40,7 +40,7 @@ export class AuthProvider extends React.Component {
     };
 
     logOut = () => {
-
+        this.setState({authenticating: false, authenticated: false});
     };
 
     validateOnLoad = async () => {

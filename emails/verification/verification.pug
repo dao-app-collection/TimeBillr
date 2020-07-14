@@ -1,0 +1,8 @@
+head
+    link(rel="stylesheet", href="/css/verification.css", data-inline)
+
+body
+    p hey #{email}
+    p Welcome to TimeBillr
+    p
+        a(href=`${process.env.HOSTNAME}/app/verification/${link}`) Verify your email

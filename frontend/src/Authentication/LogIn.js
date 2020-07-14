@@ -4,13 +4,15 @@ import {AuthFormContainer, FullPageContainer} from "../styled-components/styled"
 import {Button, Form, Input, Space, Alert} from "antd";
 import {AuthContext} from "../Context/UserAuthContext";
 import { useHistory } from 'react-router-dom';
+import { useAlert } from 'react-alert';
 
 const LogIn = (props) => {
     const history = useHistory();
     const [form] = Form.useForm();
     const authContext = useContext(AuthContext);
-    const [error, setError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
+    // const [error, setError] = useState(false);
+    // const [errorMessage, setErrorMessage] = useState(null);
+    const alert = useAlert();
 
     const onFinish = async (values) => {
         try {
@@ -25,10 +27,13 @@ const LogIn = (props) => {
                 history.push('/app');
             }
         } catch (error) {
-            setError(true);
-            setErrorMessage(error.response.data.error);
-            console.log(error);
-            console.log(error.response.data);
+            alert.show('Error: Incorrect Username or Password', {
+                type: 'error'
+            })
+            // setError(true);
+            // setErrorMessage(error.response.data.error);
+            // console.log(error);
+            // console.log(error.response.data);
         }
         
         //  else {
@@ -87,7 +92,7 @@ const LogIn = (props) => {
                 </Form.Item>
                 Or <a href="/app/register">Register</a>
             </Form>
-            {error ? <Alert message={errorMessage} type='error'/> : null}
+            {/* {error ? <Alert message={errorMessage} type='error'/> : null} */}
         </>
         
     )
