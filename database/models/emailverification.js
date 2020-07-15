@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class EmailVerification extends Model {
     /**
@@ -13,12 +11,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.UserId = this.belongsTo(models.User);
     }
-  };
-  EmailVerification.init({
-    email: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'EmailVerification',
-  });
+  }
+  EmailVerification.init(
+    {
+      email: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "EmailVerification",
+    }
+  );
   return EmailVerification;
 };

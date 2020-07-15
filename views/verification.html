@@ -1,29 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TimeBillr - Verify Email</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Verification</h1>
     <button class="verification-button">
-        Verify Email
+      Verify Email
     </button>
     <script>
-        let submit = document.querySelector('.verification-button');
-        console.log(submit);
-        submit.addEventListener('click', () => {
-            fetch('/api/user/emailVerification',{
-                method: 'POST',
-                'content-type': 'application/json',
-                body:{
-                    
-                }
-            })
-        })
-
+      let submit = document.querySelector(".verification-button");
+      console.log(submit);
+      submit.addEventListener("click", () => {
+        fetch("/api/user/emailVerification", {
+          method: "POST",
+          "content-type": "application/json",
+          body: {},
+        });
+      });
     </script>
-    
-</body>
+  </body>
 </html>

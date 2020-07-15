@@ -1,18 +1,18 @@
-const Email = require('email-templates');
-const nodemailer = require('nodemailer');
-const path = require('path');
+const Email = require("email-templates");
+const nodemailer = require("nodemailer");
+const path = require("path");
 
 const transport = nodemailer.createTransport({
-    host: 'smtp-mail.outlook.com',
-    secureConnection: false,
-    port: 587,
-    tls: {
-        ciphers: 'SSLv3'
-    },
-    auth: {
-        user: 'clintongillespie@outlook.com',
-        pass: 'clintoncunt2'
-    }
+  host: "smtp-mail.outlook.com",
+  secureConnection: false,
+  port: 587,
+  tls: {
+    ciphers: "SSLv3",
+  },
+  auth: {
+    user: "clintongillespie@outlook.com",
+    pass: "clintoncunt2",
+  },
 });
 
 // const verificationEmail = (email, link) => {
@@ -37,21 +37,21 @@ const transport = nodemailer.createTransport({
 // };
 
 const verificationEmailRender = (emailAddress, link) => {
-    console.log(emailAddress);
-    const email = new Email({
-        juice: true,
-        juiceResources: {
-            preserveImportant: true,
-            webResources: {
-                relativeTo: path.resolve('emails')
-            }
-        }
-    });
+  console.log(emailAddress);
+  const email = new Email({
+    juice: true,
+    juiceResources: {
+      preserveImportant: true,
+      webResources: {
+        relativeTo: path.resolve("emails"),
+      },
+    },
+  });
 
-    return email.render('verification/verification', {
-        email: emailAddress,
-        link: link,
-    });
-}
+  return email.render("verification/verification", {
+    email: emailAddress,
+    link: link,
+  });
+};
 
-module.exports = { verificationEmailRender};
+module.exports = { verificationEmailRender };

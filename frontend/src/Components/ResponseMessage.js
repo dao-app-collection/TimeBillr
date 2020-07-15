@@ -1,9 +1,7 @@
-import React from 'react';
+import React from "react";
 
-const ResponseMessage = ({message, status, }) => {
-    return (
-        <div></div>
-    );
+const ResponseMessage = ({ message, status }) => {
+  return <div></div>;
 };
 
 export default ResponseMessage;

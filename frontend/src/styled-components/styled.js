@@ -1,20 +1,18 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const FullPageContainer = styled.div`
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const AuthFormContainer = styled.div`
-    max-width: 600px;
-    padding: 8px;
-
-`
+  max-width: 600px;
+  padding: 8px;
+`;
 
 export const CenteredContainer = styled.div`
-    margin: 24px auto;
-    
-`
+  margin: 24px auto;
+`;

@@ -1,1 +1,1 @@
-console.log('connected js file');
+console.log("connected js file");
