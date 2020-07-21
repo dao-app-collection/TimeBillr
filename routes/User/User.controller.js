@@ -37,18 +37,22 @@ const UserController = {
     console.log("hit the register route");
     console.log(User);
     console.log(req.body);
-    const { name, password, email } = req.body;
-    console.log(`Name: ${name}, Password: ${password}, Email: ${email}`);
-    // User.create({})
+    const { firstName, lastName, password, email } = req.body;
+   
+    
     try {
       let hash = await bcrypt.hash(password, saltRounds);
       console.log(hash);
       const result = await sequelize.transaction(async (t) => {
         const newUser = await User.create({
-          name: name,
+          firstName: firstName,
+          lastName: lastName,
           email: email,
           password: hash,
         });
+        if(!newUser){
+          throw new ErrorHandler(400, 'Error: A User already exists for this Email. Please Log In, or register under a different email.');
+        }
         const verificationEmail = await EmailVerification.create({
           UserId: newUser.dataValues.id,
         });
@@ -70,6 +74,8 @@ const UserController = {
         return newUser;
       });
     } catch (error) {
+      console.log('--------------------------- Hit error handling block -----------------------');
+      console.log(error);
       next(
         new ErrorHandler(
           400,
