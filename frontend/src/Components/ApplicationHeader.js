@@ -13,6 +13,8 @@ const ApplicationHeader = () => {
   const authContext = useContext(AuthContext);
   const alert = useAlert();
 
+  console.log(orgContext)
+
   const handleNavigationClick = (e) => {
     setActiveLink(e.key);
     console.log(e.key);

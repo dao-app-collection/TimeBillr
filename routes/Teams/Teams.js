@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const TeamsController = require("./Teams.controller");
+const TeamRolesController = require('./TeamRoles.controller');
 
 const authorization = require("../Middleware/authorization");
 const permissions = require("../Middleware/permissions");
@@ -31,5 +32,9 @@ router.delete(
   permissions.getPermissionLevel,
   TeamsController.removeMember
 );
+
+// Roles routes
+
+router.post('/roles/create', authorization, permissions.checkOwnerOrManager, TeamRolesController.create);
 
 module.exports = router;

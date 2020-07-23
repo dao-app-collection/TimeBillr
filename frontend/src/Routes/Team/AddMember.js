@@ -1,9 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Form, Input, Divider, Radio, Button } from "antd";
+import { Form, Input, Divider, Radio, Button, Select } from "antd";
 import { CenteredContainer } from "../../styled-components/styled";
 import { Typography } from "antd";
 import apiClient from "../../config/axios";
+
+const {Option} = Select;
 
 const formLayout = {
   labelCol: { span: 4 },
@@ -24,9 +26,10 @@ const AddMember = () => {
   const onFinish = (values) => {
     console.log(values);
     apiClient.post("teams/members/add", {
-      teamId: teamId,
+      TeamId: teamId,
       email: values.email,
       permissions: values.permissions,
+      employmentType: values.employmentType,
     });
   };
   return (
@@ -63,15 +66,14 @@ const AddMember = () => {
           ]}
         >
           <Radio.Group>
-            <Radio value="member">
-              Member: Basic permissions, can only submit work.
+            <Radio value="employee">
+              Member: Basic permissions, can only view rosters and change availability.
             </Radio>
             <Radio value="manager">
-              Manager: Can add projects, manage projects, remove members.
+              Manager: Can create rosters, change shifts, add new shifts etc.
             </Radio>
             <Radio value="owner">
-              Owner: Can add projects, manage projects, remove members and
-              managers.
+              Owner: Full permissions.
             </Radio>
           </Radio.Group>
         </Form.Item>
@@ -80,6 +82,20 @@ const AddMember = () => {
           <Button type="primary" htmlType="submit">
             Add Member
           </Button>
+        </Form.Item>
+        <Form.Item 
+          name='employmentType'
+          label='Employment Type'
+          extra="On what basis is this employee paid?"
+          rules={[
+            {required: true,}
+          ]}
+        >
+          <Select defaultValue='full-time'>
+            <Option value='full-time'>Full Time</Option>
+            <Option value='part-time'>Part Time</Option>
+            <Option value='casual'>Casual</Option>
+          </Select>
         </Form.Item>
       </Form>
     </CenteredContainer>

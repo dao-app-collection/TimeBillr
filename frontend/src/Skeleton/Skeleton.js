@@ -15,7 +15,7 @@ const Skeleton = () => {
     <OrganizationProvider>
       <OrganizationConsumer>
         {(value) => (
-          <Layout style={{ height: "100vh" }}>
+          <Layout style={{ height: "auto", minHeight: '100vh' }}>
             <Switch>
               <Route path="/app/invitation/:id">
                 <Invitation />
@@ -35,7 +35,7 @@ const Skeleton = () => {
               </Route>
             </Switch>
 
-            <Layout.Footer style={{ textAlign: "center" }}>
+            <Layout.Footer style={{ textAlign: "center", position: 'sticky', bottom: '0' }}>
               TimeBiller &copy;2020 Clinnygee
             </Layout.Footer>
           </Layout>

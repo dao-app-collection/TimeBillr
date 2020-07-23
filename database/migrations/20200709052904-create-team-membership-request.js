@@ -16,6 +16,10 @@ module.exports = {
           key: "id",
         },
       },
+      employmentType: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       email: {
         type: Sequelize.STRING,
       },

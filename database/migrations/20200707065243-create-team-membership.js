@@ -20,6 +20,11 @@ module.exports = {
           key: "id",
         },
       },
+      employmentType: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        
+      },
       TeamId: {
         type: Sequelize.INTEGER,
         allowNull: false,

@@ -11,8 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.hasMany(models.TeamMembership);
       this.hasMany(models.TeamMembershipRequest);
-      this.hasMany(models.Client);
-      this.hasMany(models.Project);
+      
+      this.hasOne(models.TeamSettings);
+      this.hasMany(models.TeamRoles);
     }
   }
   Team.init(

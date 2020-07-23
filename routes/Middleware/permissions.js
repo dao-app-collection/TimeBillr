@@ -3,10 +3,10 @@ const { User, TeamMembership } = require("../../database/models/index");
 module.exports = {
   getPermissionLevel: async (req, res, next) => {
     console.log(req.body);
-    console.log(req.body.teamId);
+    console.log(req.body.TeamId);
     console.log(req.userId);
     const teamMembership = await TeamMembership.findOne({
-      where: { UserId: req.userId, TeamId: req.body.teamId },
+      where: { UserId: req.userId, TeamId: req.body.TeamId },
     });
     if (!teamMembership) {
       res.status(400).send({ error: "You are not a member of this Team" });
@@ -19,7 +19,7 @@ module.exports = {
 
   checkManager: async (req, res, next) => {
     const teamMembership = await TeamMembership.findOne({
-      where: { UserId: req.userId, TeamId: req.body.teamId },
+      where: { UserId: req.userId, TeamId: req.body.TeamId },
     });
     if (!teamMembership) {
       res.status(400).send({ error: "You are not a member of this Team" });
@@ -36,7 +36,7 @@ module.exports = {
 
   checkOwner: async (req, res, next) => {
     const teamMembership = await TeamMembership.findOne({
-      where: { UserId: req.userId, TeamId: req.body.teamId },
+      where: { UserId: req.userId, TeamId: req.body.TeamId },
     });
     if (!teamMembership) {
       res.status(400).send({ error: "You are not a member of this Team" });
@@ -48,4 +48,21 @@ module.exports = {
             .send({ error: "You need to be an owner to perform this action" });
     }
   },
+
+  checkOwnerOrManager: async (req, res, next) => {
+    console.log(req.userId);
+    console.log(req.body.TeamId);
+    const teamMembership = await TeamMembership.findOne({
+      where: { UserId: req.userId, TeamId: req.body.TeamId },
+    });
+    if (!teamMembership) {
+      res.status(400).send({ error: "You are not a member of this Team" });
+    } else {
+      teamMembership.dataValues.permissions === "owner" || teamMembership.dataValues.permissions === 'manager'
+        ? (req.permissions = teamMembership.dataValues.permissions && next())
+        : res
+            .status(400)
+            .send({ error: "You need to be an owner OR manager to perform this action" });
+    }
+  }
 };

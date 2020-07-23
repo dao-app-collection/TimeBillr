@@ -1,10 +1,29 @@
-import React from "react";
-import { Switch, Route } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { Switch, Route, useParams, useHistory } from "react-router-dom";
 import ApplicationHeader from "../Components/ApplicationHeader";
+import {OrganizationContext} from '../Context/OrganizationContext';
 import TeamRouter from "./Team/TeamRouter";
 import { Layout } from "antd";
 
 const AppRouter = () => {
+
+  const teamId = useParams().organization_id;
+  const history = useHistory();
+  const orgContext = useContext(OrganizationContext);
+
+  useEffect(()=> {
+    console.log(teamId);
+    if(teamId === 'undefined'){
+      history.push('/app');
+    }
+  }, [teamId, history]);
+
+  useEffect(() => {
+    console.log(teamId);
+    if(Object.keys(orgContext.organization).length === 0){
+      orgContext.getAllOrganizationData(teamId);
+    }
+  }, [ teamId]);
   return (
     <>
       <ApplicationHeader />

@@ -49,6 +49,12 @@ module.exports = {
           {
             model: db.TeamMembershipRequest,
           },
+          {
+            model: db.TeamRoles,
+          }, 
+          {
+            model: db.TeamSettings,
+          }
         ],
       });
       if (!team) {
@@ -76,6 +82,7 @@ module.exports = {
           permissions: "owner",
           TeamId: newTeam.dataValues.id,
           UserId: req.userId,
+          employmentType: 'full-time'
         });
         console.log(newMembership);
         return newTeam;
@@ -92,7 +99,7 @@ module.exports = {
   // A manager can create a member or a manager
   // An email is sent with the request to join the team
   async addMember(req, res) {
-    if (req.permissions !== "member") {
+    if (req.permissions !== "employee") {
       try {
         const result = await db.sequelize.transaction(async (t) => {
           let team = await db.Team.findOne({ where: { id: req.body.teamId } });
@@ -100,6 +107,7 @@ module.exports = {
             email: req.body.email,
             permissions: req.body.permissions,
             TeamId: req.body.teamId,
+            employmentType: req.body.employmentType,
           });
           mailer.sendMail(
             mailOptions.createTeamInviteEmailOptions(
@@ -183,6 +191,7 @@ module.exports = {
           permissions: membershipRequest.dataValues.permissions,
           TeamId: membershipRequest.dataValues.TeamId,
           UserId: req.userId,
+          employmentType: membershipRequest.dataValues.employmentType,
         });
         if (!newMembership) {
           throw new ErrorHandler(400, "Could not create a new membership");
