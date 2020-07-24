@@ -37,4 +37,6 @@ router.delete(
 
 router.post('/roles/create', authorization, permissions.checkOwnerOrManager, TeamRolesController.create);
 
+router.post('/roles/addUser', authorization, permissions.checkOwnerOrManager, TeamRolesController.addUser);
+
 module.exports = router;

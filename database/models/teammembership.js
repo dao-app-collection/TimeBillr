@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.TeamId = this.belongsTo(models.Team);
       this.UserId = this.belongsTo(models.User);
+      this.hasMany(models.EmployeeRole)
     }
   }
   TeamMembership.init(

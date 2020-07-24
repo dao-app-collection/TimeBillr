@@ -23,6 +23,8 @@ const AddMember = () => {
   const teamId = useParams().teamId;
   const [form] = Form.useForm();
 
+  console.log(teamId);
+
   const onFinish = (values) => {
     console.log(values);
     apiClient.post("teams/members/add", {
@@ -40,6 +42,7 @@ const AddMember = () => {
       </h4>
       <Divider />
       <Form
+      form={form}
         {...formLayout}
         name="AddMember"
         initialValues={{ remember: true }}

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import TeamHome from "./TeamHome";
 import AddMember from "./AddMember";
 import Roles from "./Roles";
@@ -12,8 +12,11 @@ const TeamRouter = () => {
     <>
     <TeamHome />
     <Switch>
-      <Route exact path="/app/:teamId/team">
-        
+      <Route exact path='/app/:teamId/team'>
+        <Redirect to='/app/:teamId/team/view' />
+      </Route>
+      <Route exact path="/app/:teamId/team/view">
+        <p>the view component</p>
       </Route>
       <Route path="/app/:teamId/team/addMember">
         <AddMember />

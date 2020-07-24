@@ -55,14 +55,20 @@ module.exports = {
     const teamMembership = await TeamMembership.findOne({
       where: { UserId: req.userId, TeamId: req.body.TeamId },
     });
+    console.log(teamMembership);
     if (!teamMembership) {
       res.status(400).send({ error: "You are not a member of this Team" });
     } else {
-      teamMembership.dataValues.permissions === "owner" || teamMembership.dataValues.permissions === 'manager'
-        ? (req.permissions = teamMembership.dataValues.permissions && next())
-        : res
+      if(teamMembership.dataValues.permissions === "owner" || teamMembership.dataValues.permissions === 'manager'){
+        req.permissions = teamMembership.dataValues.permissions;
+        next()
+      } else {
+        res
             .status(400)
             .send({ error: "You need to be an owner OR manager to perform this action" });
+      }
+      
+        
     }
   }
 };

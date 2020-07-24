@@ -1,15 +1,28 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('TeamRoles', {
+    await queryInterface.createTable('EmployeeRoles', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
-        type: Sequelize.STRING
+      TeamMembershipId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "TeamMemberships",
+          key: "id",
+        },
+      },
+      TeamRoleId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "TeamRoles",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -20,30 +33,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()'),
-      },
-      TeamId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Teams",
-          key: "id",
-        },
-      },
-      casualRate:{
-        type: Sequelize.DECIMAL(10,2),
-        allowNull:false,
-      },
-      partTimeRate: {
-        type: Sequelize.DECIMAL(10,2),
-        allowNull:false,
-      },
-      fullTimeRate:{
-        type: Sequelize.DECIMAL(10,2),
-        allowNull:false,
       }
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('TeamRoles');
+    await queryInterface.dropTable('EmployeeRoles');
   }
 };

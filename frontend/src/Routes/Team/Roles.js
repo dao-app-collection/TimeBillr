@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {Collapse, Menu, Modal, Form, Input, Button, Descriptions} from 'antd';
+import {Collapse, Menu, Modal, Form, Input, Button, Descriptions, AutoComplete} from 'antd';
 import { CenteredContainer } from "../../styled-components/styled";
 import { DiffOutlined } from '@ant-design/icons';
 import ButtonWithSpinner from '../../Components/ButtonWithSpinner';
@@ -93,7 +93,7 @@ const Roles = () => {
                 {rolesComponents}
                 
             
-            <CreateRole openModal={openModal} submitNewRole={submitNewRole} sending={sending} toggleModal={toggleModal}/>
+            <CreateRole openModal={openModal} submit={submitNewRole} sending={sending} toggleModal={toggleModal}/>
         </CenteredContainer>
     );
 };
@@ -103,13 +103,13 @@ const formLayout = {
     wrapperCol: { span: 14 },
   };
 
-const CreateRole = ({openModal, submitNewRole, form, sending, toggleModal}) => {
+const CreateRole = ({openModal, submit, form, sending, toggleModal,}) => {
     console.log(sending);
     return(
         <Modal
             title='Create a new Employee Role'
             visible={openModal}
-            // onOk={submitNewRole}
+            // onOk={submit}
             // confirmLoading={!sending}
             onCancel={toggleModal}
             footer={[
@@ -119,7 +119,7 @@ const CreateRole = ({openModal, submitNewRole, form, sending, toggleModal}) => {
             <Form
                 name='createRole'
                 form={form}
-                onFinish={submitNewRole}
+                onFinish={submit}
                 {...formLayout}
                 id='roles-form'
             >
@@ -179,6 +179,19 @@ const Role = ({rolesArray}) => {
     // The Collapse component MUST be rendered in the same component as Panel's
     // Otherwise the Panels do not render. This is an issue with antd
     // It is currently not scheduled to be fixed.
+
+    const [openModal, setOpenModal] = useState(false);
+    const [roleForApi, setRoleForApi] = useState({})
+
+    const toggleModal = (e, role) => {
+        if(role){
+            setRoleForApi(role);
+            setOpenModal(!openModal);
+        } else {
+            setRoleForApi({});
+            setOpenModal(false);
+        }
+    }
     return (
         <Collapse accordion>
             {rolesArray.map((role) => (
@@ -203,26 +216,165 @@ const Role = ({rolesArray}) => {
                         <Button danger type='primary' style={ButtonStyle}>
                             Delete
                         </Button>
-                        <Button type='primary' style={ButtonStyle}>
+                        <Button type='primary' style={ButtonStyle} onClick={(e)=>{toggleModal( e, role)}}>
                             Add Employee
                         </Button>
                     </div>
                     <Collapse>
                         <Panel header='Employees'>
-                            Hello
+                        {role.EmployeeRoles.map((employeeRole) => (
+                            <Panel header={employeeRole.TeamMembership.User.firstName + ' ' + employeeRole.TeamMembership.User.lastName}>
+                                {/* <Button danger type='primary'>Delete</Button> */}
+                                <Descriptions title='some title'>
+                                    <Descriptions.Item label='remove'>
+                                        remove
+                                    </Descriptions.Item>
+                                </Descriptions>
+                            </Panel>
+                        ))}
                         </Panel>
+                        
                     </Collapse>
                 </Panel>
                 
             ))}
-            
+            <AddEmployeeToRole open={openModal} role={roleForApi} close={toggleModal}/>
         </Collapse>              
     );
 };
 // A modal, which will have a box where you can search your employees,
 // Chose an employee, then add to the role.
-const AddEmployeeToRole = () => {
+const AddEmployeeToRole = ({open, role, close}) => {
+    const orgContext = useContext(OrganizationContext);
+    const teamId = useParams().teamId;
+    const alert = useAlert();
+    const [sending, setSending] = useState(false);
+    const [form] = Form.useForm();
+    const [autoCompleteOptions, setAutoCompleteOptions] = useState([]);
 
+    useEffect(() => {
+        createOptions();
+    }, [role]);
+
+    const submit = async (values) => {
+        const user = autoCompleteOptions.filter(employee => {return employee.value === values.name})[0];
+        console.log(user);
+        setSending(true);
+        console.log(teamId);
+        try {
+            const res = await apiClient.post('teams/roles/addUser', {
+                roleTitle: role.title,
+                name: user.name,
+                TeamId: teamId,
+                TeamRoleId: role.id,
+                TeamMembershipId: user.TeamMembershipId
+            });
+            console.log(res);
+            // const res = await apiClient.post('teams/roles/addUser');
+            if(res.status === 200){
+                orgContext.getAllOrganizationData(teamId);
+                alert.show(res.data.success,{
+                    type: 'success'
+                })
+            }
+        } catch (error) {
+            alert.show(error.response.data.message, {
+                type: "error",
+              });
+        }
+        setTimeout(() => {
+            setSending(false);
+            close();
+        }, 500)
+    };
+
+    // Creates the options array for the Auto Complete feature.
+    const createOptions = () => {
+        // Will hold the options to be passed to auto complete
+        let options = [];
+        // Map through all employees, find all employees that aren't already part of the current role
+        let candidatesArray = orgContext.organizationData.TeamMemberships.filter(membership => {
+            return (membership.EmployeeRoles.filter((employeeRoles) => {
+                console.log(employeeRoles.TeamRoleId);
+                console.log(employeeRoles.TeamRoleId !== role.id)
+                return(employeeRoles.TeamRoleId === role.id)
+            })).length === 0;
+        });
+        // Set the options objects array with only the relevant information about the employee
+        options = candidatesArray.map(candidate => {
+            return {
+                        value: candidate.User.firstName + ' ' + candidate.User.lastName,
+                        TeamMembershipId: candidate.id,
+                    }
+        });
+        console.log(role.id);
+        console.log(options);
+        setAutoCompleteOptions(options);
+    };
+    return (
+        <Modal
+            title={`${role.title}`}
+            visible={open}
+            // onOk={submit}
+            // confirmLoading={!sending}
+            onCancel={close}
+            footer={[
+                <ButtonWithSpinner sending={sending} form={'employee-add-role'} innerHtml={'Submit'}/>
+            ]}
+        >
+            <Form
+                name='createRole'
+                form={form}
+                onFinish={submit}
+                {...formLayout}
+                id='employee-add-role'
+            >
+                <Form.Item
+                    name='name'
+                    label='Employee Name'
+                    rules={[{
+                        required:true
+                    }]}
+                >
+                    <AutoComplete
+                        options={autoCompleteOptions}
+                        placeholder='Search Employee'
+                        filterOption={(inputValue, option) => 
+                            option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                        }
+                    />
+                </Form.Item>
+                {/* <Form.Item
+                    name='casualRate'
+                    label='Casual Rate'
+                    rules={[{
+                        required: true,
+                    }]}
+                >
+                    <Input type='number'/>
+                </Form.Item>
+                <Form.Item
+                    name='partTimeRate'
+                    label='Part-Time Rate'
+                    rules={[{
+                        required: true,
+                    }]}
+                >
+                    <Input type='number'/>
+                </Form.Item>
+                <Form.Item
+                    name='fullTimeRate'
+                    label='Full Time Rate'
+                    rules={[{
+                        required: true,
+                    }]}
+                >
+                    <Input type='number'/>
+                </Form.Item> */}
+            </Form>
+
+        </Modal>
+    )
 };
 
 export default Roles;

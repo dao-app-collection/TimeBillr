@@ -45,12 +45,28 @@ module.exports = {
         include: [
           {
             model: db.TeamMembership,
+            include:[{
+              model: db.User,
+            }, {
+              model: db.EmployeeRole,
+            }]
           },
           {
             model: db.TeamMembershipRequest,
           },
           {
             model: db.TeamRoles,
+            include: [
+              {
+                model: db.EmployeeRole,
+                include: [{
+                  model: db.TeamMembership,
+                  include:[{
+                    model: db.User
+                  }]
+                }]
+              }
+            ]
           }, 
           {
             model: db.TeamSettings,

@@ -27,7 +27,8 @@ export class OrganizationProvider extends React.Component {
       this.setState({ organizations: [...res.data] });
     });
   };
-
+  // this function needs to be updated so we can just use this.state.organization instead of passing id
+  // that means t.s.organization must ALWAYS be up to date
   getAllOrganizationData = async (id) => {
     console.log(id);
     console.log(this.state.organization);

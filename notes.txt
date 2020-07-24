@@ -1,0 +1,4 @@
+Each team member can have multiple roles
+
+Each role has a wage, depending on age.
+

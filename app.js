@@ -1,4 +1,4 @@
-const app = require("./config");
+// const app = require("./config");
 const {
   handleError,
   ErrorHandler,
