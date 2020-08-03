@@ -1,22 +1,27 @@
-import React, { useEffect } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { Switch, Route, Redirect, useParams } from "react-router-dom";
 import TeamHome from "./TeamHome";
 import AddMember from "./AddMember";
+import Employees from './Employees';
 import Roles from "./Roles";
+import { OrganizationContext } from "../../Context/OrganizationContext";
 
 const TeamRouter = () => {
+  const TeamId = useParams().teamId;
+  const orgContext = useContext(OrganizationContext);
   useEffect(() => {
     document.title = "Team Members";
-  });
+    
+  }, []);
   return (
     <>
     <TeamHome />
     <Switch>
       <Route exact path='/app/:teamId/team'>
-        <Redirect to='/app/:teamId/team/view' />
+        <Redirect to={`/app/${TeamId}/team`} />
       </Route>
       <Route exact path="/app/:teamId/team/view">
-        <p>the view component</p>
+        <Employees />
       </Route>
       <Route path="/app/:teamId/team/addMember">
         <AddMember />

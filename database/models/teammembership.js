@@ -12,15 +12,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.TeamId = this.belongsTo(models.Team);
       this.UserId = this.belongsTo(models.User);
-      this.hasMany(models.EmployeeRole)
+      this.hasMany(models.EmployeeRole, { onDelete: 'cascade' })
     }
   }
   TeamMembership.init(
     {
       permissions: DataTypes.STRING,
+      employmentType: DataTypes.STRING,
     },
     {
       sequelize,
+      paranoid: true,
       modelName: "TeamMembership",
     }
   );

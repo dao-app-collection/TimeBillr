@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     TeamRoleId: DataTypes.INTEGER
   }, {
     sequelize,
+    paranoid: true,
     modelName: 'EmployeeRole',
   });
   return EmployeeRole;

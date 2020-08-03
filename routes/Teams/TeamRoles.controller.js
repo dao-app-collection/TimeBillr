@@ -3,6 +3,7 @@ const mailer = require("../../mailer/config");
 const mailOptions = require("../../mailer/mailOptions");
 
 const { ErrorHandler } = require("../Middleware/ErrorHandler");
+// const { sequelize } = require("../../database/models/index");
 
 
 const TeamRolesController ={
@@ -40,12 +41,58 @@ const TeamRolesController ={
         }
     },
 
-    async delete(){
+    async delete(req, res, next){
+        console.log('----------------Delete Route----------------');
+        const {TeamRoleId} = req.body;
 
+        try {
+            if(!(req.permissions === 'owner' || req.permissions === 'manager')){
+                throw new ErrorHandler(400, 'Need to be an owner or manager');
+            }
+
+            let roleToDelete = await db.TeamRoles.findOne({where: {id: TeamRoleId}});
+
+            // this needs to delete all of the things related to it.
+            // perhaps not even delete the role, just give it a flag of 'retired role' = true orsomething,
+            // So it can be undone
+            // Looks into deleted paranoid
+            const deleted = await roleToDelete.destroy();
+            console.log(deleted);
+            if(deleted){
+                console.log(deleted);
+                res.status(200).send({success: 'Employee Role deleted'});
+            }
+        } catch (error) {
+            next(error)
+        }
     },
 
-    async update(){
+    async update(req,res,next){
+        console.log('---------------In Update---------------')
+        let {TeamRoleId, TeamId, title, casualRate, partTimeRate, fullTimeRate} = req.body;
 
+        try {
+            const t = await db.sequelize.transaction(async t => {
+                const roleToUpdate = await db.TeamRoles.findOne({where: {id: TeamRoleId}});
+
+                updatedRole = await roleToUpdate.update({
+                    title: title,
+                    casualRate: parseFloat(casualRate),
+                    partTimeRate: parseFloat(partTimeRate),
+                    fullTimeRate: parseFloat(fullTimeRate),
+                })
+
+                return updatedRole
+            });
+            if(t){
+                res.status(200).send({success: `Role ${title} has been updated.`})
+            } else {
+                throw new ErrorHandler(400, 'Error updating Role');
+            }
+            
+        } catch (error) {
+            next(error);
+        }
     },
 
     async addUser(req, res, next){

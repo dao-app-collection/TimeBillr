@@ -81,11 +81,6 @@ const AddMember = () => {
           </Radio.Group>
         </Form.Item>
         <Divider />
-        <Form.Item {...buttonLayout}>
-          <Button type="primary" htmlType="submit">
-            Add Member
-          </Button>
-        </Form.Item>
         <Form.Item 
           name='employmentType'
           label='Employment Type'
@@ -100,6 +95,13 @@ const AddMember = () => {
             <Option value='casual'>Casual</Option>
           </Select>
         </Form.Item>
+        <Divider />
+        <Form.Item {...buttonLayout}>
+          <Button type="primary" htmlType="submit">
+            Add Member
+          </Button>
+        </Form.Item>
+        
       </Form>
     </CenteredContainer>
   );

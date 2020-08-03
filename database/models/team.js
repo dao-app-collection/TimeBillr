@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.TeamMembership);
-      this.hasMany(models.TeamMembershipRequest);
+      this.hasMany(models.TeamMembership, { onDelete: 'cascade' });
+      this.hasMany(models.TeamMembershipRequest, { onDelete: 'cascade' });
       
       this.hasOne(models.TeamSettings);
-      this.hasMany(models.TeamRoles);
+      this.hasMany(models.TeamRoles, { onDelete: 'cascade' });
     }
   }
   Team.init(
@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
+      paranoid: true,
       modelName: "Team",
     }
   );

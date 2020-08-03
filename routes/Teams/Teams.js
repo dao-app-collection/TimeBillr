@@ -6,6 +6,7 @@ const TeamRolesController = require('./TeamRoles.controller');
 
 const authorization = require("../Middleware/authorization");
 const permissions = require("../Middleware/permissions");
+const { checkOwnerOrManager } = require("../Middleware/permissions");
 
 router.get("/findAll", authorization, TeamsController.findAll);
 
@@ -33,10 +34,18 @@ router.delete(
   TeamsController.removeMember
 );
 
+router.put('/members/edit', authorization, permissions.checkOwnerOrManager, TeamsController.membersEdit);
+
 // Roles routes
+
+router.delete('/roles', authorization, permissions.checkOwnerOrManager, TeamRolesController.delete);
 
 router.post('/roles/create', authorization, permissions.checkOwnerOrManager, TeamRolesController.create);
 
 router.post('/roles/addUser', authorization, permissions.checkOwnerOrManager, TeamRolesController.addUser);
+
+router.put('/roles/edit', authorization, checkOwnerOrManager,TeamRolesController.update);
+
+
 
 module.exports = router;

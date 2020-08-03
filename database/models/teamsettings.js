@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     shiftReminders: DataTypes.BOOLEAN
   }, {
     sequelize,
+    paranoid: true,
     modelName: 'TeamSettings',
   });
   return TeamSettings;

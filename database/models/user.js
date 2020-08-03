@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.teamMembership = this.hasMany(models.TeamMembership);
+      this.teamMembership = this.hasMany(models.TeamMembership, { onDelete: 'cascade' });
       this.emailVerification = this.hasOne(models.EmailVerification);
     }
   }
@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
+      paranoid: true,
       modelName: "User",
     }
   );

@@ -12,9 +12,7 @@ import Invitation from "../Routes/Invitation/Invitation";
 
 const Skeleton = () => {
   return (
-    <OrganizationProvider>
-      <OrganizationConsumer>
-        {(value) => (
+    
           <Layout style={{ height: "auto", minHeight: '100vh' }}>
             <Switch>
               <Route path="/app/invitation/:id">
@@ -39,9 +37,7 @@ const Skeleton = () => {
               TimeBiller &copy;2020 Clinnygee
             </Layout.Footer>
           </Layout>
-        )}
-      </OrganizationConsumer>
-    </OrganizationProvider>
+       
   );
 };
 

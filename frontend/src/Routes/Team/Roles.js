@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {Collapse, Menu, Modal, Form, Input, Button, Descriptions, AutoComplete} from 'antd';
+import {Collapse, Menu, Modal, Form, Input, Button, Descriptions, AutoComplete, List} from 'antd';
 import { CenteredContainer } from "../../styled-components/styled";
 import { DiffOutlined } from '@ant-design/icons';
 import ButtonWithSpinner from '../../Components/ButtonWithSpinner';
@@ -7,6 +7,7 @@ import apiClient from '../../config/axios';
 import { useParams } from 'react-router-dom';
 import { OrganizationContext } from '../../Context/OrganizationContext';
 import { useAlert } from "react-alert";
+import ConfirmationModal from '../../Components/ConfirmationModal';
 
 const {Panel} = Collapse;
 
@@ -93,7 +94,7 @@ const Roles = () => {
                 {rolesComponents}
                 
             
-            <CreateRole openModal={openModal} submit={submitNewRole} sending={sending} toggleModal={toggleModal}/>
+            <CreateOrEditRole openModal={openModal} submit={submitNewRole} sending={sending} toggleModal={toggleModal}/>
         </CenteredContainer>
     );
 };
@@ -103,8 +104,9 @@ const formLayout = {
     wrapperCol: { span: 14 },
   };
 
-const CreateRole = ({openModal, submit, form, sending, toggleModal,}) => {
+const CreateOrEditRole = ({openModal, submit, form, sending, toggleModal, role = null}) => {
     console.log(sending);
+    console.log(role);
     return(
         <Modal
             title='Create a new Employee Role'
@@ -115,6 +117,7 @@ const CreateRole = ({openModal, submit, form, sending, toggleModal,}) => {
             footer={[
                 <ButtonWithSpinner sending={sending} form={'roles-form'} innerHtml={'Submit'}/>
             ]}
+            key={role ? role.id : 1}
         >
             <Form
                 name='createRole'
@@ -130,7 +133,7 @@ const CreateRole = ({openModal, submit, form, sending, toggleModal,}) => {
                         required:true
                     }]}
                 >
-                    <Input />
+                    <Input defaultValue={role ? role.title : null}/>
                 </Form.Item>
                 <Form.Item
                     name='casualRate'
@@ -139,7 +142,7 @@ const CreateRole = ({openModal, submit, form, sending, toggleModal,}) => {
                         required: true,
                     }]}
                 >
-                    <Input type='number'/>
+                    <Input type='number' defaultValue={role ? role.casualRate : null}/>
                 </Form.Item>
                 <Form.Item
                     name='partTimeRate'
@@ -148,7 +151,7 @@ const CreateRole = ({openModal, submit, form, sending, toggleModal,}) => {
                         required: true,
                     }]}
                 >
-                    <Input type='number'/>
+                    <Input type='number' defaultValue={role ? role.partTimeRate : null}/>
                 </Form.Item>
                 <Form.Item
                     name='fullTimeRate'
@@ -157,7 +160,7 @@ const CreateRole = ({openModal, submit, form, sending, toggleModal,}) => {
                         required: true,
                     }]}
                 >
-                    <Input type='number'/>
+                    <Input type='number' defaultValue={role ? role.fullTimeRate : null}/>
                 </Form.Item>
             </Form>
 
@@ -179,9 +182,19 @@ const Role = ({rolesArray}) => {
     // The Collapse component MUST be rendered in the same component as Panel's
     // Otherwise the Panels do not render. This is an issue with antd
     // It is currently not scheduled to be fixed.
+    const teamId = useParams().teamId;
+    const orgContext = useContext(OrganizationContext);
+    const alert = useAlert();
 
     const [openModal, setOpenModal] = useState(false);
-    const [roleForApi, setRoleForApi] = useState({})
+    const [roleForApi, setRoleForApi] = useState({});
+    const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+
+
+    const [editRoleModalOpen, setEditRoleModalOpen] = useState(false);
+    const [editRoleData, setEditRoleData] = useState({});
+    const [sending, setSending] = useState(false);
+    const [form] = Form.useForm();
 
     const toggleModal = (e, role) => {
         if(role){
@@ -191,6 +204,89 @@ const Role = ({rolesArray}) => {
             setRoleForApi({});
             setOpenModal(false);
         }
+    };
+
+    const editRoleSubmit = async (values) => {
+
+        console.log(values);
+        console.log(teamId);
+        console.log(editRoleData);
+        try {
+            const res = await apiClient.put('teams/roles/edit', {
+                TeamRoleId: editRoleData.id,
+                TeamId: teamId,
+                title: values.title,
+                casualRate: values.casualRate,
+                partTimeRate: values.partTimeRate,
+                fullTimeRate:values.fullTimeRate,
+            });
+            console.log(res);
+            if(res.status === 200){
+                alert.show(res.data.success, {
+                    type: 'success',
+                })
+                orgContext.getAllOrganizationData(teamId);
+            }
+        } catch (error) {
+            alert.show(error.response.data.message, {
+                type: 'error'
+            })
+        }
+    }
+
+    const toggleEditModal = (e, role) => {
+        console.log('In Toggle Edit Modal');
+        console.log(role);
+        
+        if(role){
+            setEditRoleData(role);
+            console.log(editRoleData);
+            setEditRoleModalOpen(true)
+        } else {
+            setEditRoleData({});
+            setEditRoleModalOpen(false);
+        }
+        
+        
+    };
+
+    const toggleConfirmationModal = (e, role) => {
+        if(role){
+            setEditRoleData(role);
+            console.log(editRoleData);
+            setOpenConfirmationModal(true)
+        } else {
+            setEditRoleData({});
+            setOpenConfirmationModal(false);
+        }
+    };
+
+    const onConfirmDelete = async () => {
+        console.log(teamId);
+        console.log(editRoleData.id);
+        try {
+            const res = await apiClient.delete('teams/roles', {
+                data: {
+                TeamRoleId: editRoleData.id,
+                TeamId: teamId,
+                }
+            });
+            console.log(res);
+            if(res.status === 200){
+                alert.show(res.data.success, {
+                    type: 'success',
+                });
+                toggleConfirmationModal();
+                 return orgContext.getAllOrganizationData(teamId);
+
+            }
+        } catch (error) {
+            alert.show(error.response.data.message, {
+                type: 'error'
+            })
+            return new Promise().reject('Error deleting Role');
+        }
+        console.log('call to delete the role')
     }
     return (
         <Collapse accordion>
@@ -210,10 +306,10 @@ const Role = ({rolesArray}) => {
                     </Descriptions>
                     </div>
                     <div style={{display:'flex'}}>
-                        <Button type='primary' style={GreenButtonStyle}>
+                        <Button type='primary' style={GreenButtonStyle} onClick={(e) => {toggleEditModal(e, role)}}>
                             Edit
                         </Button>
-                        <Button danger type='primary' style={ButtonStyle}>
+                        <Button danger type='primary' style={ButtonStyle} onClick={e => {toggleConfirmationModal(e,role)}}>
                             Delete
                         </Button>
                         <Button type='primary' style={ButtonStyle} onClick={(e)=>{toggleModal( e, role)}}>
@@ -222,16 +318,34 @@ const Role = ({rolesArray}) => {
                     </div>
                     <Collapse>
                         <Panel header='Employees'>
-                        {role.EmployeeRoles.map((employeeRole) => (
+                            <List
+                                dataSource={role.EmployeeRoles}
+                                renderItem={item => (
+                                    <List.Item
+                                        
+                                    >
+                                        <List.Item.Meta 
+                                        title={item.TeamMembership.User.firstName + ' ' + item.TeamMembership.User.lastName}
+                                        />
+                                        <Button type='primary' danger >
+                                            Remove Employee From Role
+                                        </Button>
+                                    </List.Item>
+                                )}
+                            >
+
+                            </List>
+                        {/* {role.EmployeeRoles.map((employeeRole) => (
+                            
                             <Panel header={employeeRole.TeamMembership.User.firstName + ' ' + employeeRole.TeamMembership.User.lastName}>
-                                {/* <Button danger type='primary'>Delete</Button> */}
+                                <Button danger type='primary'>Delete</Button>
                                 <Descriptions title='some title'>
                                     <Descriptions.Item label='remove'>
                                         remove
                                     </Descriptions.Item>
                                 </Descriptions>
                             </Panel>
-                        ))}
+                        ))} */}
                         </Panel>
                         
                     </Collapse>
@@ -239,6 +353,15 @@ const Role = ({rolesArray}) => {
                 
             ))}
             <AddEmployeeToRole open={openModal} role={roleForApi} close={toggleModal}/>
+            <CreateOrEditRole 
+                openModal={editRoleModalOpen}
+                sending={sending}
+                form={form}
+                submit={editRoleSubmit}
+                toggleModal={toggleEditModal}
+                role={editRoleData}
+            />
+            <ConfirmationModal onConfirm={onConfirmDelete} open={openConfirmationModal} toggle={toggleConfirmationModal} />
         </Collapse>              
     );
 };
@@ -321,6 +444,7 @@ const AddEmployeeToRole = ({open, role, close}) => {
             footer={[
                 <ButtonWithSpinner sending={sending} form={'employee-add-role'} innerHtml={'Submit'}/>
             ]}
+            
         >
             <Form
                 name='createRole'
@@ -344,33 +468,6 @@ const AddEmployeeToRole = ({open, role, close}) => {
                         }
                     />
                 </Form.Item>
-                {/* <Form.Item
-                    name='casualRate'
-                    label='Casual Rate'
-                    rules={[{
-                        required: true,
-                    }]}
-                >
-                    <Input type='number'/>
-                </Form.Item>
-                <Form.Item
-                    name='partTimeRate'
-                    label='Part-Time Rate'
-                    rules={[{
-                        required: true,
-                    }]}
-                >
-                    <Input type='number'/>
-                </Form.Item>
-                <Form.Item
-                    name='fullTimeRate'
-                    label='Full Time Rate'
-                    rules={[{
-                        required: true,
-                    }]}
-                >
-                    <Input type='number'/>
-                </Form.Item> */}
             </Form>
 
         </Modal>

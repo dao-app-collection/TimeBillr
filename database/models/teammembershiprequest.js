@@ -16,9 +16,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       email: DataTypes.STRING,
       permissions: DataTypes.STRING,
+      employmentType: DataTypes.STRING,
     },
     {
       sequelize,
+      paranoid: true,
       modelName: "TeamMembershipRequest",
     }
   );

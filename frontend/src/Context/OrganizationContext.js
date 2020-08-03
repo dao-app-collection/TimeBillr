@@ -2,6 +2,7 @@ import React, { createContext } from "react";
 import apiClient from "../config/axios";
 
 export const OrganizationContext = createContext({
+  loadedOrganizationData: false,
   organizations: [],
   organization: {},
   organizationData: {},
@@ -41,6 +42,7 @@ export class OrganizationProvider extends React.Component {
         this.setState({
           organizationData: Object.assign({}, organizationDataResponse.data),
         }, () => {
+          this.setState({loadedOrganizationData: true});
           resolve('Organization Data updated');
         });
       } else {
@@ -56,6 +58,7 @@ export class OrganizationProvider extends React.Component {
 
   };
   state = {
+    loadedOrganizationData: false,
     organizations: [],
     organization: {},
     organizationData: {},

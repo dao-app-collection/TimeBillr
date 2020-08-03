@@ -18,7 +18,7 @@ const ApplicationHeader = () => {
   const handleNavigationClick = (e) => {
     setActiveLink(e.key);
     console.log(e.key);
-    history.push(`/app/${orgContext.organization.id}/${e.key}`);
+    history.push(`/app/${orgContext.organizationData.id}/${e.key}`);
   };
 
   const handleLogOut = async () => {

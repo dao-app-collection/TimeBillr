@@ -40,7 +40,10 @@ module.exports = {
       fullTimeRate:{
         type: Sequelize.DECIMAL(10,2),
         allowNull:false,
-      }
+      },
+      deletedAt: {
+        type: Sequelize.DATE
+    }
     });
   },
   down: async (queryInterface, Sequelize) => {
