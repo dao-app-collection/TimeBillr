@@ -40,7 +40,7 @@ const ApplicationHeader = () => {
           style={{ width: "100%" }}
         >
           <Menu.Item key="home" icon={<HomeOutlined />}></Menu.Item>
-          <Menu.Item key="time">Time</Menu.Item>
+          <Menu.Item key="rosters">Rosters</Menu.Item>
           <Menu.Item key="projects">Projects</Menu.Item>
           <Menu.Item key="team">Team</Menu.Item>
           <Menu.Item key="reports">Reports</Menu.Item>

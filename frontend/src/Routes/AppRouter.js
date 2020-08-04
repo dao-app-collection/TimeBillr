@@ -3,6 +3,7 @@ import { Switch, Route, useParams, useHistory } from "react-router-dom";
 import ApplicationHeader from "../Components/ApplicationHeader";
 import {OrganizationContext} from '../Context/OrganizationContext';
 import TeamRouter from "./Team/TeamRouter";
+import RostersRouter from './Rosters/RostersRouter';
 import { Layout } from "antd";
 
 const AppRouter = () => {
@@ -45,6 +46,9 @@ const AppRouter = () => {
             </Route>
             <Route path="/app/:teamId/invoices">
               <div>invoices</div>
+            </Route>
+            <Route path='/app/:teamId/rosters'>
+              <RostersRouter />
             </Route>
             <Route path="/app/:teamId"></Route>
           </Switch>

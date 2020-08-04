@@ -8,7 +8,7 @@ const TeamHome = () => {
   const history = useHistory();
   const orgContext = useContext(OrganizationContext);
   const handleNavigationClick = (e) => {
-    history.push(`/app/${orgContext.organization.id}/team${e.key}`);
+    history.push(`/app/${orgContext.organizationData.id}/team${e.key}`);
   };
   return (
     <Layout.Header style={{ width: "100%", backgroundColor: "white" }}>
