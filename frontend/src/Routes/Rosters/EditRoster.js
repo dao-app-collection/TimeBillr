@@ -7,20 +7,17 @@ import { OrganizationContext } from "../../Context/OrganizationContext";
 import Modal from "antd/lib/modal/Modal";
 
 import Roster from './Roster';
-import { RosterContext, useRosterContext } from "../../Context/RosterContext";
+import {RosterSteps} from './CreateRoster';
 
 
 const { Step } = Steps;
 const { Option } = Select;
 const {Panel} = Collapse;
-// A week start picker is shown, giving options of what sunday to start the roster on,
-// You cannot create a roster for the past, but you can create rosters up to 3 months in advance. i.e 12 weeks.
 
-const CreateRoster = () => {
+const EditRoster = () => {
     const orgContext = useContext(OrganizationContext);
-    const rosterContext = useRosterContext();
-  const [form] = Form.useForm();
-  const dates = useWeekStarts(false);
+   const [form] = Form.useForm();
+//   const dates = useWeekStarts();
   const [rosterStart, setRosterStart] = useState(null);
   const [step, setStep] = useState(0);
   const [roster, setRoster] = useState({})
@@ -30,21 +27,21 @@ const CreateRoster = () => {
   };
 
   const onSelectStartDate = async (values) => {
-    
+    // console.log(values);
+    // setRosterStart(moment(values.weekStart));
+    // console.log(moment(values.weekStart));
     let weekStart = moment(values.weekStart);
-    
+    // console.log(weekStart);
+    // console.log(weekStart.format("YYYY-MM-DD HH:MM:SS"));
     const newRoster = await apiClient.post('teams/rosters/initialize', {
         TeamId: orgContext.organizationData.id,
         weekStart: weekStart.format("YYYY-MM-DD HH:mm:SS"),
     })
     if(newRoster.status === 200){
-      rosterContext.addNewRoster(newRoster.data);
         setRoster(newRoster.data);
     }
     console.log(newRoster);
   };
-
-  console.log(rosterContext);
   
   if (!(Object.keys(roster).length === 0 && roster.constructor === Object)) {
     return (
@@ -82,71 +79,3 @@ const CreateRoster = () => {
     );
   }
 };
-
-export const RosterSteps = ({ step, onChange }) => {
-  return (
-    <Steps type="navigation" current={step} onChange={onChange} labelPlacement='vertical' size='small'>
-      <Step title="Sunday" />
-      <Step title="Monday" />
-      <Step title="Tuesday" />
-      <Step title="Wednesday" />
-      <Step title="Thursday" />
-      <Step title="Friday" />
-      <Step title="Saturday" />
-    </Steps>
-  );
-};
-
-
-
-
-
-// const RosterModal = ({}) => {
-
-//   const handleOk = () => {
-
-//   }
-
-//   const handleCancel = () => {
-
-//   }
-//   return (
-//     <Modal
-//       visible={true}
-//       title='set title'
-//       onOk={handleOk}
-//       onCancel={handleCancel}
-//       style={{width: '100vw', height: '100vh'}}
-//       bodyStyle={{width: '100%', height: '100%'}}
-//     >
-
-//     </Modal>
-//   )
-// }
-
-const useWeekStarts = (edit) => {
-  const rosterContext = useContext(RosterContext);
-  const [weekStarts, setWeekStarts] = useState([]);
-
-  console.log(rosterContext);
-
-  useEffect(() => {
-    const today = moment();
-    const weekStart = today.startOf("week");
-
-    let startDays = [];
-
-    for (let i = 0; i < 13; i++) {
-      startDays.push(moment(weekStart.add(1, "w")));
-    }
-
-    // const filteredStartDays = startDays.filter(start => {
-    //   return rosterContext.rosterData
-    // })
-    setWeekStarts(startDays);
-  }, []);
-
-  return weekStarts;
-};
-
-export default CreateRoster;

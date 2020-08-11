@@ -46,11 +46,14 @@ module.exports = {
           {
             model: db.TeamMembership,
             // attributes: ['id, UserId, TeamId, permissions, employmentType'],
-            include:[{
-              model: db.User,
-            }, {
-              model: db.EmployeeRole,
-            }]
+            include: [
+              {
+                model: db.User,
+              },
+              {
+                model: db.EmployeeRole,
+              },
+            ],
           },
           {
             model: db.TeamMembershipRequest,
@@ -60,18 +63,22 @@ module.exports = {
             include: [
               {
                 model: db.EmployeeRole,
-                include: [{
-                  model: db.TeamMembership,
-                  include:[{
-                    model: db.User
-                  }]
-                }]
-              }
-            ]
-          }, 
+                include: [
+                  {
+                    model: db.TeamMembership,
+                    include: [
+                      {
+                        model: db.User,
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
           {
             model: db.TeamSettings,
-          }
+          },
         ],
       });
       if (!team) {
@@ -99,7 +106,7 @@ module.exports = {
           permissions: "owner",
           TeamId: newTeam.dataValues.id,
           UserId: req.userId,
-          employmentType: 'full-time'
+          employmentType: "full-time",
         });
         console.log(newMembership);
         return newTeam;
@@ -150,12 +157,10 @@ module.exports = {
         res.status(400).send({ error: error });
       }
     } else {
-      res
-        .status(400)
-        .send({
-          error:
-            "You can not add a new member if you are only a member of the team. You need higher permissions.",
-        });
+      res.status(400).send({
+        error:
+          "You can not add a new member if you are only a member of the team. You need higher permissions.",
+      });
     }
   },
   // Removes a member of the organization
@@ -163,32 +168,40 @@ module.exports = {
   // Associated records remain
   async removeMember(req, res, next) {},
 
-  async membersEdit(req, res, next){
+  async membersEdit(req, res, next) {
     const permissions = req.permissions;
-    const {employee, values, TeamId} = req.body;
-    console.log(permissions)
-    console.log('------this is the member-----')
+    const { employee, values, TeamId } = req.body;
+    console.log(permissions);
+    console.log("------this is the member-----");
     console.log(req.body);
-    if(permissions === 'owner' || permissions === 'manager'){
-      console.log('can update');
+    if (permissions === "owner" || permissions === "manager") {
+      console.log("can update");
       try {
-        const update = await db.sequelize.transaction(async t => {
-          let user = await db.TeamMembership.findOne({where: {UserId: employee.id, TeamId: parseInt(TeamId)}});
+        const update = await db.sequelize.transaction(async (t) => {
+          let user = await db.TeamMembership.findOne({
+            where: { UserId: employee.id, TeamId: parseInt(TeamId) },
+          });
           user.permissions = values.permissions.toLowerCase();
-          user.employmentType =values.employmentType;
-  
+          user.employmentType = values.employmentType;
+
           await user.save();
-  
+
           return user;
         });
 
-        res.status(200).send({success: `Updated user: ${employee.User.firstName} ${employee.User.lastName}`})
+        res
+          .status(200)
+          .send({
+            success: `Updated user: ${employee.User.firstName} ${employee.User.lastName}`,
+          });
       } catch (error) {
-        console.log('-------new error----');
+        console.log("-------new error----");
         console.log(error);
-        throw new ErrorHandler(400, `Unable to update user: ${employee.User.firstName} ${employee.User.lastName}`);
+        throw new ErrorHandler(
+          400,
+          `Unable to update user: ${employee.User.firstName} ${employee.User.lastName}`
+        );
       }
-      
     }
   },
   // Sends information on a memmbership request,

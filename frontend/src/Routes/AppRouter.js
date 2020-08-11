@@ -1,32 +1,31 @@
 import React, { useEffect, useContext } from "react";
 import { Switch, Route, useParams, useHistory } from "react-router-dom";
 import ApplicationHeader from "../Components/ApplicationHeader";
-import {OrganizationContext} from '../Context/OrganizationContext';
+import { OrganizationContext } from "../Context/OrganizationContext";
 import TeamRouter from "./Team/TeamRouter";
-import RostersRouter from './Rosters/RostersRouter';
+import RostersRouter from "./Rosters/RostersRouter";
 import { Layout } from "antd";
 
 const AppRouter = () => {
-
   const teamId = useParams().organization_id;
   const history = useHistory();
   const orgContext = useContext(OrganizationContext);
 
-  useEffect(()=> {
+  useEffect(() => {
     console.log(teamId);
-    if(teamId === 'undefined'){
-      history.push('/app');
+    if (teamId === "undefined") {
+      history.push("/app");
     }
   }, [teamId, history]);
 
   useEffect(() => {
     console.log(teamId);
-    if(Object.keys(orgContext.organization).length === 0){
+    if (Object.keys(orgContext.organization).length === 0) {
       orgContext.getAllOrganizationData(teamId);
     }
-  }, [ teamId]);
+  }, [teamId]);
 
-  if(orgContext.loadedOrganizationData){
+  if (orgContext.loadedOrganizationData) {
     return (
       <>
         <ApplicationHeader />
@@ -47,7 +46,7 @@ const AppRouter = () => {
             <Route path="/app/:teamId/invoices">
               <div>invoices</div>
             </Route>
-            <Route path='/app/:teamId/rosters'>
+            <Route path="/app/:teamId/rosters">
               <RostersRouter />
             </Route>
             <Route path="/app/:teamId"></Route>
@@ -58,14 +57,13 @@ const AppRouter = () => {
   } else {
     return (
       <>
-      <ApplicationHeader />
-      <Layout.Content style={{backgroundColor: 'white'}}>
-        <p>Loading data...</p>
-      </Layout.Content>
+        <ApplicationHeader />
+        <Layout.Content style={{ backgroundColor: "white" }}>
+          <p>Loading data...</p>
+        </Layout.Content>
       </>
-    )
+    );
   }
-  
 };
 
 export default AppRouter;

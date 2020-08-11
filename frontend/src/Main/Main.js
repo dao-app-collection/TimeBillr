@@ -1,7 +1,10 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../Context/UserAuthContext";
 import Authentication from "../Authentication/Authentication";
-import {OrganizationProvider, OrganizationConsumer} from '../Context/OrganizationContext'
+import {
+  OrganizationProvider,
+  OrganizationConsumer,
+} from "../Context/OrganizationContext";
 import Skeleton from "../Skeleton/Skeleton";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { Spin, Alert } from "antd";
@@ -14,19 +17,19 @@ const Main = () => {
   } else if (authContext.authenticated) {
     return (
       <OrganizationProvider>
-      <OrganizationConsumer>
-        {(value) => (
-      <Switch>
-        <Route path="/app">
-          <Skeleton />
-        </Route>
-        <Route path="/app*">
-          <Redirect to="/app" />
-        </Route>
-      </Switch>
-       )}
-       </OrganizationConsumer>
-     </OrganizationProvider>
+        <OrganizationConsumer>
+          {(value) => (
+            <Switch>
+              <Route path="/app">
+                <Skeleton />
+              </Route>
+              <Route path="/app*">
+                <Redirect to="/app" />
+              </Route>
+            </Switch>
+          )}
+        </OrganizationConsumer>
+      </OrganizationProvider>
       // <Skeleton />
     );
   } else {

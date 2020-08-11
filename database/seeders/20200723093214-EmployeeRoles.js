@@ -1,22 +1,28 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    
     // Add seed commands here.
     //     Example:
-    await queryInterface.bulkInsert('EmployeeRoles', [{
-      TeamMembershipId: 1,
-      TeamRoleId: 1,
-      
-    },{
-      TeamMembershipId: 2,
-      TeamRoleId: 2,
-    }, {
-      TeamMembershipId: 3,
-      TeamRoleId: 3,
-    }], {});
-      },
+    await queryInterface.bulkInsert(
+      "EmployeeRoles",
+      [
+        {
+          TeamMembershipId: 1,
+          TeamRoleId: 1,
+        },
+        {
+          TeamMembershipId: 2,
+          TeamRoleId: 2,
+        },
+        {
+          TeamMembershipId: 3,
+          TeamRoleId: 3,
+        },
+      ],
+      {}
+    );
+  },
 
   down: async (queryInterface, Sequelize) => {
     /**
@@ -25,5 +31,5 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-  }
+  },
 };

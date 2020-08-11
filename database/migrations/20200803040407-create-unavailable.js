@@ -1,15 +1,18 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("TeamRoles", {
+    await queryInterface.createTable("Unavailables", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      title: {
-        type: Sequelize.STRING,
+      start: {
+        type: Sequelize.DATE,
+      },
+      end: {
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
@@ -31,24 +34,21 @@ module.exports = {
           key: "id",
         },
       },
-      casualRate: {
-        type: Sequelize.DECIMAL(10, 2),
+      TeamMembershipId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: "TeamMemberships",
+          key: "id",
+        },
       },
-      partTimeRate: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-      },
-      fullTimeRate: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-      },
-      deletedAt: {
-        type: Sequelize.DATE,
+      approved: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("TeamRoles");
+    await queryInterface.dropTable("Unavailables");
   },
 };

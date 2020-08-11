@@ -28,8 +28,8 @@ module.exports = {
         type: Sequelize.DATE,
       },
       deletedAt: {
-        type: Sequelize.DATE
-    }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {

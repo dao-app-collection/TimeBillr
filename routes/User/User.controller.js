@@ -38,8 +38,7 @@ const UserController = {
     console.log(User);
     console.log(req.body);
     const { firstName, lastName, password, email } = req.body;
-   
-    
+
     try {
       let hash = await bcrypt.hash(password, saltRounds);
       console.log(hash);
@@ -50,8 +49,11 @@ const UserController = {
           email: email,
           password: hash,
         });
-        if(!newUser){
-          throw new ErrorHandler(400, 'Error: A User already exists for this Email. Please Log In, or register under a different email.');
+        if (!newUser) {
+          throw new ErrorHandler(
+            400,
+            "Error: A User already exists for this Email. Please Log In, or register under a different email."
+          );
         }
         const verificationEmail = await EmailVerification.create({
           UserId: newUser.dataValues.id,
@@ -74,7 +76,9 @@ const UserController = {
         return newUser;
       });
     } catch (error) {
-      console.log('--------------------------- Hit error handling block -----------------------');
+      console.log(
+        "--------------------------- Hit error handling block -----------------------"
+      );
       console.log(error);
       next(
         new ErrorHandler(
@@ -90,12 +94,10 @@ const UserController = {
     // const token = jwt.sign(payload, secret, {
     //     expiresIn: '24h'
     // });
-    res
-      .status(200)
-      .send({
-        success:
-          "Account registered, please check your email and follow the link to verify your address.",
-      });
+    res.status(200).send({
+      success:
+        "Account registered, please check your email and follow the link to verify your address.",
+    });
   },
   async logIn(req, res, next) {
     const { email, password } = req.body;

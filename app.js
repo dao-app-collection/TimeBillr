@@ -13,7 +13,9 @@ application.use("/api/user", UserRouter);
 application.use("/api/teams", TeamsRouter);
 
 application.use((err, req, res, next) => {
-  console.log('||||||||||||||||||||||||||||||||||in error handler middleware |||||||||||||||||||||||||||||||||||||||||||')
+  console.log(
+    "||||||||||||||||||||||||||||||||||in error handler middleware |||||||||||||||||||||||||||||||||||||||||||"
+  );
   console.log(err);
   console.log("An error has been thrown");
   handleError(err, res);

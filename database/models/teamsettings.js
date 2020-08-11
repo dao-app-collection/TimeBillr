@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class TeamSettings extends Model {
     /**
@@ -13,14 +11,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(models.Team);
     }
-  };
-  TeamSettings.init({
-    weekStart: DataTypes.STRING,
-    shiftReminders: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    paranoid: true,
-    modelName: 'TeamSettings',
-  });
+  }
+  TeamSettings.init(
+    {
+      weekStart: DataTypes.STRING,
+      shiftReminders: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      paranoid: true,
+      modelName: "TeamSettings",
+    }
+  );
   return TeamSettings;
 };

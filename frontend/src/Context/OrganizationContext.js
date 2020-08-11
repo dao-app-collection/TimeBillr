@@ -17,10 +17,9 @@ export class OrganizationProvider extends React.Component {
     let organization = this.state.organizations.filter((organization) => {
       return organization.id === id;
     });
-    this.setState(
-      { organization: Object.assign({}, organization[0]) },
-      () => {this.getAllOrganizationData(id)}
-    );
+    this.setState({ organization: Object.assign({}, organization[0]) }, () => {
+      this.getAllOrganizationData(id);
+    });
   };
   updateOrganizations = () => {
     return apiClient.get("teams/findAll").then((res) => {
@@ -33,30 +32,28 @@ export class OrganizationProvider extends React.Component {
   getAllOrganizationData = async (id) => {
     console.log(id);
     console.log(this.state.organization);
-    const returnPromise = new Promise( async (resolve, reject) => {
-      const organizationDataResponse = await apiClient.get(
-        `teams/data/${id}`
-      );
+    const returnPromise = new Promise(async (resolve, reject) => {
+      const organizationDataResponse = await apiClient.get(`teams/data/${id}`);
       if (organizationDataResponse.status === 200) {
         console.log(organizationDataResponse);
-        this.setState({
-          organizationData: Object.assign({}, organizationDataResponse.data),
-        }, () => {
-          this.setState({loadedOrganizationData: true});
-          resolve('Organization Data updated');
-        });
+        this.setState(
+          {
+            organizationData: Object.assign({}, organizationDataResponse.data),
+          },
+          () => {
+            this.setState({ loadedOrganizationData: true });
+            resolve("Organization Data updated");
+          }
+        );
       } else {
-        reject('Organization Data not updated.')
-      };
-  
+        reject("Organization Data not updated.");
+      }
     });
-    
+
     return returnPromise;
   };
 
-  componentDidMount(){
-
-  };
+  componentDidMount() {}
   state = {
     loadedOrganizationData: false,
     organizations: [],

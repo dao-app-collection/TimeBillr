@@ -26,11 +26,9 @@ module.exports = {
     } else {
       teamMembership.dataValues.permissions === "manager"
         ? (req.permissions = "manager" && next())
-        : res
-            .status(400)
-            .send({
-              error: "You need to be an manager to perform this action",
-            });
+        : res.status(400).send({
+            error: "You need to be an manager to perform this action",
+          });
     }
   },
 
@@ -59,16 +57,19 @@ module.exports = {
     if (!teamMembership) {
       res.status(400).send({ error: "You are not a member of this Team" });
     } else {
-      if(teamMembership.dataValues.permissions === "owner" || teamMembership.dataValues.permissions === 'manager'){
+      if (
+        teamMembership.dataValues.permissions === "owner" ||
+        teamMembership.dataValues.permissions === "manager"
+      ) {
         req.permissions = teamMembership.dataValues.permissions;
-        next()
+        next();
       } else {
         res
-            .status(400)
-            .send({ error: "You need to be an owner OR manager to perform this action" });
+          .status(400)
+          .send({
+            error: "You need to be an owner OR manager to perform this action",
+          });
       }
-      
-        
     }
-  }
+  },
 };

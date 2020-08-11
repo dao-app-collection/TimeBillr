@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const TeamsController = require("./Teams.controller");
-const TeamRolesController = require('./TeamRoles.controller');
+const TeamRolesController = require("./TeamRoles.controller");
+const TeamRostersController = require("./TeamRosters.controller");
 
 const authorization = require("../Middleware/authorization");
 const permissions = require("../Middleware/permissions");
@@ -34,18 +35,51 @@ router.delete(
   TeamsController.removeMember
 );
 
-router.put('/members/edit', authorization, permissions.checkOwnerOrManager, TeamsController.membersEdit);
+router.put(
+  "/members/edit",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamsController.membersEdit
+);
 
 // Roles routes
 
-router.delete('/roles', authorization, permissions.checkOwnerOrManager, TeamRolesController.delete);
+router.delete(
+  "/roles",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamRolesController.delete
+);
 
-router.post('/roles/create', authorization, permissions.checkOwnerOrManager, TeamRolesController.create);
+router.post(
+  "/roles/create",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamRolesController.create
+);
 
-router.post('/roles/addUser', authorization, permissions.checkOwnerOrManager, TeamRolesController.addUser);
+router.post(
+  "/roles/addUser",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamRolesController.addUser
+);
 
-router.put('/roles/edit', authorization, checkOwnerOrManager,TeamRolesController.update);
+router.put(
+  "/roles/edit",
+  authorization,
+  checkOwnerOrManager,
+  TeamRolesController.update
+);
 
+// Initializes a new weekly roster, creating a empty roster with all 7 daysshifts linked to it(0 -6)
+router.post(
+  "/rosters/initialize",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamRostersController.initialize
+);
 
+router.get("/rosters/:teamId", authorization, TeamRostersController.getAll);
 
 module.exports = router;

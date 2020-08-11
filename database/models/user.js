@@ -9,7 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.teamMembership = this.hasMany(models.TeamMembership, { onDelete: 'cascade' });
+      this.teamMembership = this.hasMany(models.TeamMembership, {
+        onDelete: "cascade",
+      });
       this.emailVerification = this.hasOne(models.EmailVerification);
     }
   }

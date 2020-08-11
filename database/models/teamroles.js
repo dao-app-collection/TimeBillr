@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class TeamRoles extends Model {
     /**
@@ -12,18 +10,21 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.Team);
-      this.hasMany(models.EmployeeRole, { onDelete: 'cascade' });
+      this.hasMany(models.EmployeeRole, { onDelete: "cascade" });
     }
-  };
-  TeamRoles.init({
-    title: DataTypes.STRING,
-    casualRate: DataTypes.DECIMAL,
-    partTimeRate: DataTypes.DECIMAL,
-    fullTimeRate: DataTypes.DECIMAL,
-  }, {
-    sequelize,
-    paranoid: true,
-    modelName: 'TeamRoles',
-  });
+  }
+  TeamRoles.init(
+    {
+      title: DataTypes.STRING,
+      casualRate: DataTypes.DECIMAL,
+      partTimeRate: DataTypes.DECIMAL,
+      fullTimeRate: DataTypes.DECIMAL,
+    },
+    {
+      sequelize,
+      paranoid: true,
+      modelName: "TeamRoles",
+    }
+  );
   return TeamRoles;
 };

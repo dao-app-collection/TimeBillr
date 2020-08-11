@@ -1,30 +1,28 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class TeamMembership extends Model {
+  class DaysShift extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      console.log(models);
+      this.belongsTo(models.Roster);
+      this.hasMany(models.Shift);
       // define association here
-      this.TeamId = this.belongsTo(models.Team);
-      this.UserId = this.belongsTo(models.User);
-      this.hasMany(models.EmployeeRole, { onDelete: "cascade" });
     }
   }
-  TeamMembership.init(
+  DaysShift.init(
     {
-      permissions: DataTypes.STRING,
-      employmentType: DataTypes.STRING,
+      RosterId: DataTypes.INTEGER,
+      day: DataTypes.INTEGER,
+      date: DataTypes.DATE,
     },
     {
       sequelize,
-      paranoid: true,
-      modelName: "TeamMembership",
+      modelName: "DaysShift",
     }
   );
-  return TeamMembership;
+  return DaysShift;
 };

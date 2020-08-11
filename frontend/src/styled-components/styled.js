@@ -16,3 +16,15 @@ export const AuthFormContainer = styled.div`
 export const CenteredContainer = styled.div`
   margin: 24px auto;
 `;
+
+export const CreateRosterContainer = styled.div`
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+`
+
+export const ColumnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`

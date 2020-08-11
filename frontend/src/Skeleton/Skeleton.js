@@ -12,32 +12,32 @@ import Invitation from "../Routes/Invitation/Invitation";
 
 const Skeleton = () => {
   return (
-    
-          <Layout style={{ height: "auto", minHeight: '100vh' }}>
-            <Switch>
-              <Route path="/app/invitation/:id">
-                <Invitation />
-              </Route>
-              <Route path={"/app/login"}>
-                <Redirect to={"/app"} />
-              </Route>
+    <Layout style={{ height: "auto", minHeight: "100vh" }}>
+      <Switch>
+        <Route path="/app/invitation/:id">
+          <Invitation />
+        </Route>
+        <Route path={"/app/login"}>
+          <Redirect to={"/app"} />
+        </Route>
 
-              <Route path={"/app/:organization_id"}>
-                <AppRouter />
-              </Route>
-              <Route path={"/app"}>
-                <OrganizationSelectOrCreate />
-              </Route>
-              <Route path={"/*"}>
-                <Redirect to={"/app"} />
-              </Route>
-            </Switch>
+        <Route path={"/app/:organization_id"}>
+          <AppRouter />
+        </Route>
+        <Route path={"/app"}>
+          <OrganizationSelectOrCreate />
+        </Route>
+        <Route path={"/*"}>
+          <Redirect to={"/app"} />
+        </Route>
+      </Switch>
 
-            <Layout.Footer style={{ textAlign: "center", position: 'sticky', bottom: '0' }}>
-              TimeBiller &copy;2020 Clinnygee
-            </Layout.Footer>
-          </Layout>
-       
+      <Layout.Footer
+        style={{ textAlign: "center", position: "sticky", bottom: "0" }}
+      >
+        TimeBiller &copy;2020 Clinnygee
+      </Layout.Footer>
+    </Layout>
   );
 };
 

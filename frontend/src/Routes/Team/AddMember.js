@@ -5,7 +5,7 @@ import { CenteredContainer } from "../../styled-components/styled";
 import { Typography } from "antd";
 import apiClient from "../../config/axios";
 
-const {Option} = Select;
+const { Option } = Select;
 
 const formLayout = {
   labelCol: { span: 4 },
@@ -42,7 +42,7 @@ const AddMember = () => {
       </h4>
       <Divider />
       <Form
-      form={form}
+        form={form}
         {...formLayout}
         name="AddMember"
         initialValues={{ remember: true }}
@@ -70,29 +70,26 @@ const AddMember = () => {
         >
           <Radio.Group>
             <Radio value="employee">
-              Member: Basic permissions, can only view rosters and change availability.
+              Member: Basic permissions, can only view rosters and change
+              availability.
             </Radio>
             <Radio value="manager">
               Manager: Can create rosters, change shifts, add new shifts etc.
             </Radio>
-            <Radio value="owner">
-              Owner: Full permissions.
-            </Radio>
+            <Radio value="owner">Owner: Full permissions.</Radio>
           </Radio.Group>
         </Form.Item>
         <Divider />
-        <Form.Item 
-          name='employmentType'
-          label='Employment Type'
+        <Form.Item
+          name="employmentType"
+          label="Employment Type"
           extra="On what basis is this employee paid?"
-          rules={[
-            {required: true,}
-          ]}
+          rules={[{ required: true }]}
         >
-          <Select defaultValue='full-time'>
-            <Option value='full-time'>Full Time</Option>
-            <Option value='part-time'>Part Time</Option>
-            <Option value='casual'>Casual</Option>
+          <Select defaultValue="full-time">
+            <Option value="full-time">Full Time</Option>
+            <Option value="part-time">Part Time</Option>
+            <Option value="casual">Casual</Option>
           </Select>
         </Form.Item>
         <Divider />
@@ -101,7 +98,6 @@ const AddMember = () => {
             Add Member
           </Button>
         </Form.Item>
-        
       </Form>
     </CenteredContainer>
   );

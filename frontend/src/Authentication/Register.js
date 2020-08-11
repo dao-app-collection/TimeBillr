@@ -15,17 +15,15 @@ function Register(props) {
         firstName: values.firstName,
         lastName: values.lastName,
       });
-      
+
       alert.show(response.data.success, {
         type: "success",
       });
-      
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       alert.show(error.response.data.message, {
         type: "error",
       });
-      
     }
   };
   return (
@@ -104,9 +102,8 @@ function Register(props) {
         </Form.Item>
         Already registered? <a href="/app/login">Log in!</a>
       </Form>
-      
     </>
   );
-};
+}
 
 export default Register;

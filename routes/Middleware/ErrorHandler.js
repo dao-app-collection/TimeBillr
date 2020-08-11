@@ -7,8 +7,8 @@ class ErrorHandler extends Error {
 }
 
 const handleError = (err, res) => {
-  console.log('|||||||||||||||||In error handling function |||||||||||||');
-  
+  console.log("|||||||||||||||||In error handling function |||||||||||||");
+
   const { statusCode, message } = err;
   console.log(statusCode + message);
   res.status(statusCode).send({
