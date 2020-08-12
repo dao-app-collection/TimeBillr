@@ -86,6 +86,42 @@ const TeamRostersController = {
       console.log(error);
     }
   },
+  async addShifts(req,res,next){
+    const TeamId = req.params.teamId;
+    const permissions = req.permissions;
+    const shifts = req.body.shifts;
+
+    console.log(TeamId);
+    console.log(permissions);
+    console.log(shifts);
+    try {
+      if (permissions === "owner" || permissions === "manager"){
+        const result = await db.sequelize.transaction(async t => {
+          return Promise.all(shifts.map(async shift => {
+            return await db.Shift.create({
+              start: shift.start,
+              end: shift.end,
+              TeamMembershipId: shift.TeamMembershipId,
+              TeamRoleId: shift.TeamRoleId,
+              DaysShiftId: shift.DaysShiftId,
+            })
+          }))
+        });
+        if(result){
+          res.status(200).send({success: 'Shifts saved successfully'})
+        } else {
+          throw new ErrorHandler(400, 'Could not save shifts - try again');
+        }
+      }else {
+        throw new ErrorHandler(400, 'Permission denied - need to be an owner or manager');
+      }
+    } catch (error) {
+      throw new ErrorHandler(400, 'Could not save shifts - try again');
+    }
+    
+
+
+  }
 };
 
 module.exports = TeamRostersController;

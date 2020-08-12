@@ -82,4 +82,6 @@ router.post(
 
 router.get("/rosters/:teamId", authorization, TeamRostersController.getAll);
 
+router.post('/rosters/:teamId/addShift', authorization, permissions.checkOwnerOrManager, TeamRostersController.addShifts);
+
 module.exports = router;

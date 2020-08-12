@@ -31,7 +31,7 @@ const RostersRouter = () => {
           <Route path="/app/:teamId/rosters/create">
             <CreateRoster />
           </Route>
-          <Route path='/app/:teamId/:rosterId'>
+          <Route path='/app/:teamId/rosters/:rosterId'>
             <Roster />
           </Route>
         </Switch>

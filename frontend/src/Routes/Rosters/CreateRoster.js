@@ -8,6 +8,7 @@ import Modal from "antd/lib/modal/Modal";
 
 import Roster from './Roster';
 import { RosterContext, useRosterContext } from "../../Context/RosterContext";
+import { useHistory } from "react-router-dom";
 
 
 const { Step } = Steps;
@@ -19,6 +20,7 @@ const {Panel} = Collapse;
 const CreateRoster = () => {
     const orgContext = useContext(OrganizationContext);
     const rosterContext = useRosterContext();
+    const history = useHistory();
   const [form] = Form.useForm();
   const dates = useWeekStarts(false);
   const [rosterStart, setRosterStart] = useState(null);
@@ -39,63 +41,78 @@ const CreateRoster = () => {
     })
     if(newRoster.status === 200){
       rosterContext.addNewRoster(newRoster.data);
-        setRoster(newRoster.data);
+      history.push(`/app/${orgContext.organizationData.id}/rosters/${newRoster.data.id}`);
+        // setRoster(newRoster.data);
     }
     console.log(newRoster);
   };
 
   console.log(rosterContext);
+
+  return (
+    <CenteredContainer style={{ maxWidth: "800px" }}>
+      <Form form={form} onFinish={onSelectStartDate}>
+        <Form.Item
+          name="weekStart"
+          label="Week Start Date"
+          extra="Enter the date this roster will start on."
+          rules={[{ required: true }]}
+        >
+          <Select defaultActiveFirstOption>
+            {dates.map((date) => (
+              <Option value={date.toString()} key={date.toString()}>
+                {date.toString()}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Start Roster
+          </Button>
+        </Form.Item>
+      </Form>
+    </CenteredContainer>
+  );
   
-  if (!(Object.keys(roster).length === 0 && roster.constructor === Object)) {
-    return (
-      <CenteredContainer style={{ maxWidth: "calc(100vw - 100px)" }}>
-        <RosterSteps step={step} onChange={changeStep} />
-        <Roster step={step} roster={roster} />
-        {/* <div>{rosterStart.toString()}</div> */}
-      </CenteredContainer>
-    );
-  } else {
-    return (
-      <CenteredContainer style={{ maxWidth: "800px" }}>
-        <Form form={form} onFinish={onSelectStartDate}>
-          <Form.Item
-            name="weekStart"
-            label="Week Start Date"
-            extra="Enter the date this roster will start on."
-            rules={[{ required: true }]}
-          >
-            <Select defaultActiveFirstOption>
-              {dates.map((date) => (
-                <Option value={date.toString()} key={date.toString()}>
-                  {date.toString()}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Start Roster
-            </Button>
-          </Form.Item>
-        </Form>
-      </CenteredContainer>
-    );
-  }
+  // if (!(Object.keys(roster).length === 0 && roster.constructor === Object)) {
+  //   return (
+  //     <CenteredContainer style={{ maxWidth: "calc(100vw - 100px)" }}>
+  //       <RosterSteps step={step} onChange={changeStep} />
+  //       <Roster step={step} roster={roster} />
+  //       {/* <div>{rosterStart.toString()}</div> */}
+  //     </CenteredContainer>
+  //   );
+  // } else {
+  //   return (
+  //     <CenteredContainer style={{ maxWidth: "800px" }}>
+  //       <Form form={form} onFinish={onSelectStartDate}>
+  //         <Form.Item
+  //           name="weekStart"
+  //           label="Week Start Date"
+  //           extra="Enter the date this roster will start on."
+  //           rules={[{ required: true }]}
+  //         >
+  //           <Select defaultActiveFirstOption>
+  //             {dates.map((date) => (
+  //               <Option value={date.toString()} key={date.toString()}>
+  //                 {date.toString()}
+  //               </Option>
+  //             ))}
+  //           </Select>
+  //         </Form.Item>
+  //         <Form.Item>
+  //           <Button type="primary" htmlType="submit">
+  //             Start Roster
+  //           </Button>
+  //         </Form.Item>
+  //       </Form>
+  //     </CenteredContainer>
+  //   );
+  // }
 };
 
-export const RosterSteps = ({ step, onChange }) => {
-  return (
-    <Steps type="navigation" current={step} onChange={onChange} labelPlacement='vertical' size='small'>
-      <Step title="Sunday" />
-      <Step title="Monday" />
-      <Step title="Tuesday" />
-      <Step title="Wednesday" />
-      <Step title="Thursday" />
-      <Step title="Friday" />
-      <Step title="Saturday" />
-    </Steps>
-  );
-};
+
 
 
 

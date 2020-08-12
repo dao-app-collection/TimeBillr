@@ -6,13 +6,15 @@ const ButtonWithSpinner = ({
   form,
   innerHtml,
   submittable = true,
+  onSubmit
 }) => {
   console.log(sending);
   return (
     <>
       {sending ? (
         <Button
-          form={form}
+          
+          form={form ? form : null}
           key="submit"
           htmlType="submit"
           disabled={!submittable}
@@ -21,7 +23,8 @@ const ButtonWithSpinner = ({
         </Button>
       ) : (
         <Button
-          form={form}
+        onClick={onSubmit ? onSubmit : null}
+          form={form ? form : null}
           key="submit"
           htmlType="submit"
           disabled={!submittable}
