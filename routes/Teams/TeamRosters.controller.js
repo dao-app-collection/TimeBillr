@@ -90,14 +90,16 @@ const TeamRostersController = {
     const TeamId = req.params.teamId;
     const permissions = req.permissions;
     const shifts = req.body.shifts;
+    const shiftsToDelete = req.body.shiftsToDelete;
 
     console.log(TeamId);
     console.log(permissions);
     console.log(shifts);
+    console.log(shiftsToDelete);
     try {
       if (permissions === "owner" || permissions === "manager"){
         const result = await db.sequelize.transaction(async t => {
-          return Promise.all(shifts.map(async shift => {
+          return Promise.all([shifts.map(async shift => {
             return await db.Shift.create({
               start: shift.start,
               end: shift.end,
@@ -105,7 +107,13 @@ const TeamRostersController = {
               TeamRoleId: shift.TeamRoleId,
               DaysShiftId: shift.DaysShiftId,
             })
-          }))
+          })], [
+            shiftsToDelete.map(async shift => {
+              return await db.Shift.destroy({
+                where:{id: shift.id}
+              })
+            }),
+          ]);
         });
         if(result){
           res.status(200).send({success: 'Shifts saved successfully'})
@@ -117,10 +125,38 @@ const TeamRostersController = {
       }
     } catch (error) {
       throw new ErrorHandler(400, 'Could not save shifts - try again');
-    }
+    }  
+
+
+  },
+
+  async toggleComplete(req, res,next){
+    const TeamId = req.params.teamId;
+    const permissions = req.permissions;
+    const roster = req.body.roster;
+    console.log(roster);
     
-
-
+    try {
+      if (permissions === "owner" || permissions === "manager"){
+        const result = await db.sequelize.transaction(async t => {
+          const rosterToUpdate = await db.Roster.findOne({where: {id: roster.id}});
+          console.log(rosterToUpdate.dataValues.complete ? false : true);
+          console.log(rosterToUpdate.dataValues.complete === false);
+          await rosterToUpdate.update({complete: rosterToUpdate.dataValues.complete ? false : true});
+          await rosterToUpdate.save();
+          return roster;
+        })
+        if(result){
+          res.status(200).send({success: 'Roster Marked as Complete'});
+        } else {
+          throw new ErrorHandler(400, 'Could not complete roster');
+        }
+      } else {
+        throw new ErrorHandler(400, 'Permission denied - need to be an owner or manager');
+      }
+    } catch (error) {
+      throw new ErrorHandler(400, 'Could not complete roster');
+    }
   }
 };
 

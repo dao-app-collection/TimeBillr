@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect}from 'react';
 import {OrganizationContext} from '../../Context/OrganizationContext';
-import {Collapse, Card, Form, Select} from 'antd';
+import {Collapse, Card, Form, Select, Button} from 'antd';
 
 import {CreateRosterContainer, ColumnContainer, CenteredContainer} from '../../styled-components/styled';
 import moment from 'moment';
@@ -37,12 +37,19 @@ const Roster = () => {
     const [roles, setRoles] = useState([]);
 
     const [shiftsToSubmit, setShiftsToSubmit] = useState([]);
+    const [shiftsToDelete, setShiftsToDelete] = useState([]);
     const [sending, setSending] = useState(false);
-    // const [currentDaysShift, setCurrentDaysShift] = useState({});
 
-    const changeStep = (newStep) => {
+    const changeStep = async (newStep) => {
+        console.log(newStep);
         // here we need to force save all of the new entries
-        setStep(newStep)
+        if(shiftsToSubmit.length > 0 || shiftsToDelete.length > 0){
+            await submitShifts();
+            setStep(newStep);
+        } else {
+            setStep(newStep);
+        }
+        
     };
 
     useEffect(() => {
@@ -52,9 +59,12 @@ const Roster = () => {
 
     const submitShifts = async () => {
         setSending(true);
-        console.log(shiftsToSubmit);
+        let returnPromise = new Promise(async (resolve, reject) => {
+
+        
+        // console.log(shiftsToSubmit);
         const shiftsWithMomentsFormatted = shiftsToSubmit.map(shift => {
-            console.log(shift.start_time);
+            // console.log(shift.start_time);
             return {
                 
                 TeamMembershipId: shift.id,
@@ -63,34 +73,55 @@ const Roster = () => {
                 start: shift.start_time.format('YYYY-MM-DD HH:mm:SS'),
                 end: shift.end_time.format('YYYY-MM-DD HH:mm:SS')
             }
-        })
+        });
         try {
             const res = await apiClient.post(`/teams/rosters/${orgContext.organizationData.id}/addShift`, {
                 shifts: shiftsWithMomentsFormatted,
+                shiftsToDelete: shiftsToDelete,
                 TeamId: orgContext.organizationData.id,
             });
             if(res.status === 200){
                 alert.show(res.data.success, {
                     type: "success",
                   });
+                  setShiftsToDelete([]);
+                  setShiftsToSubmit([]);
+                  resolve('success');
             } else {
-                console.log(res);
+                
+                reject('Failed');
+                // console.log(res);
             }
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             alert.show(error.response.data.message, {
                 type: "error",
               });
+             
+              reject();
         }
+        });
         setSending(false);
-        
-        console.log('submitting....')
-        console.log(shiftsToSubmit);
+        return returnPromise;
     };
 
     const saveShifts = (shifts) => {
         setShiftsToSubmit(shiftsToSubmit.concat(shifts));
-    }
+    };
+
+    const removeShifts = (shifts) => {
+        let temp = shiftsToDelete;
+        if(shifts.existingId){
+            // console.log(selectedDaysShift);
+            // console.log(shifts);
+
+            let shift = selectedDaysShift.Shifts.filter(shift => {return shift.id === shifts.existingId});
+            // console.log(shift);
+            temp = temp.concat(shift);
+        };
+        
+        setShiftsToDelete(temp);
+    };
 
     return (
         <>
@@ -99,32 +130,70 @@ const Roster = () => {
         <Collapse>
             {roles.map(role => (
                 <Panel header={role.title} key={role.id}>
-                    <RosterCalendar role={role} step={step} daysShifts={selectedDaysShift} saveShifts={saveShifts}/>
+                    <RosterCalendar role={role} step={step} daysShifts={selectedDaysShift} saveShifts={saveShifts} removeShifts={removeShifts}/>
                 </Panel>
             ))}
         </Collapse>
         <ButtonContainer>
         <ButtonWithSpinner 
-            sending={false}
+            sending={sending}
             // form={"shift-times"}
             onSubmit={submitShifts}
             innerHtml={"Save"}
             submittable={true}
         />
         </ButtonContainer>
+        <RosterComplete roster={roster} step={step} />
         </CenteredContainer>
         </>
     )
 };
 
-const RosterCalendar = ({role, step, daysShifts, saveShifts}) => {
+const RosterComplete = ({roster, step}) => {
+    const alert = useAlert();
+    const orgContext = useContext(OrganizationContext);
+    console.log(orgContext.organizationData.id);
+    const completeRoster = async () => {
+        try {
+            const res = await apiClient.post(`/teams/rosters/${orgContext.organizationData.id}/toggleComplete`, {
+                TeamId: orgContext.organizationData.id,
+                roster
+            });
+            if(res.status === 200){
+                alert.show(res.data.success, {
+                    type: "success",
+                  });
+            }
+        } catch (error) {
+            alert.show(error.response.data.message, {
+                type: 'error'
+            })
+        }
+    };
+    if(step === 6){
+        return (
+            <ButtonContainer>
+                <Button
+                    onClick={completeRoster}
+                >
+                    {roster.complete ? 'Mark Roster as Incomplete' : 'Mark Roster as Complete'}
+                </Button>
+            </ButtonContainer>
+        )
+    } else {
+        return null;
+    }
+}
+
+const RosterCalendar = ({role, step, daysShifts, saveShifts, removeShifts}) => {
     const [addShiftModal, setAddShiftModal] =useState(false);
     const [selectedEmployee,setSelectedEmployee] = useState({});
     const [newItems, setNewItems] = useState([]);
-    const items = useCreateItems(daysShifts.Shifts, newItems);
-    console.log(role);
-    console.log(step);
-    console.log(daysShifts);
+    const [itemsToRemove, setItemsToRemove] = useState([]);
+    const items = useCreateItems(daysShifts.Shifts, newItems, role, itemsToRemove);
+    // console.log(role);
+    // console.log(step);
+    // console.log(daysShifts);
 
     useEffect(() => {
 
@@ -139,7 +208,7 @@ const RosterCalendar = ({role, step, daysShifts, saveShifts}) => {
 
     // const newItems = [{id: 1,group: 1, start_time: moment(daysShifts.date),end_time: moment(daysShifts.date).add(3, 'h')}];
 
-    console.log(groups);
+    // console.log(groups);
 
     // const newItems = [];
     const selectUser = (employee) => {
@@ -147,7 +216,7 @@ const RosterCalendar = ({role, step, daysShifts, saveShifts}) => {
     };
 
     const toggleModal = (e, employee) => {
-        console.log(employee);
+        // console.log(employee);
         if(employee){
             setSelectedEmployee(employee);
             setAddShiftModal(true);
@@ -158,24 +227,31 @@ const RosterCalendar = ({role, step, daysShifts, saveShifts}) => {
     };
 
     const addItem = (item) => {
-        console.log(daysShifts);
-        console.log(item);
+        // console.log(daysShifts);
+        // console.log(item);
         let temp = [...newItems];
         temp.push({id: newItems.length +1, group: item.id, start_time: moment(item.shiftStart), end_time: moment(item.shiftEnd), TeamRoleId: role.id, DaysShiftId: daysShifts.id});
-        console.log(temp);
+        // console.log(temp);
         saveShifts(temp);
         setNewItems(temp);
 
-        console.log(newItems);
+        // console.log(newItems);
 
     };
 
     const removeItem = (itemId, e, time) => {
-        console.log(itemId);
-        console.log(e);
-        console.log(time);
+        const temp = [...itemsToRemove]
+        temp.push(itemId);
+        // remove it from the items array, by passing it to the hook, through itemsToRemove
+        setItemsToRemove(temp);
+        // pass it up a level, IF it already exists, where it will be stored to be removed from the server on save
+
+        removeShifts(items.find(item => { return item.id === itemId}));
+        // console.log(itemId);
+        // console.log(e);
+        // console.log(time);
     }
-    console.log(moment(daysShifts.date))
+    // console.log(moment(daysShifts.date))
     return (
         <CreateRosterContainer>
             <ColumnContainer>
@@ -185,7 +261,7 @@ const RosterCalendar = ({role, step, daysShifts, saveShifts}) => {
             </ColumnContainer>
             <Timeline
                 groups={groups}
-                items={newItems}
+                items={items}
                 visibleTimeStart={moment(daysShifts.date)}
                 visibleTimeEnd={moment(daysShifts.date).add(1, 'd')}
                 onItemClick={removeItem}
@@ -196,18 +272,22 @@ const RosterCalendar = ({role, step, daysShifts, saveShifts}) => {
 };
 
 // newItems are the unsaved shifts that have just been created, items are the currently existing saved shifts.
-const useCreateItems = (items, newItems) => {
+const useCreateItems = (items, newItems, role, itemsToRemove) => {
+    console.log(items);
+    console.log(newItems);
     const [returnItems, setReturnItems] = useState([]);
 
     useEffect(() => {
-        console.log(items);
-        const shiftItems = items.map((item, index) => {
-            return {id: newItems.length + index + 1,group: item.TeamMembershipId, start_time: moment(item.start),end_time: moment(item.end),}
+        // console.log(items);
+        const shiftItems = items.filter(item => {
+            return item.TeamRoleId === role.id
+        }).map((item, index) => {
+            return {id: newItems.length + index + 1,group: item.TeamMembershipId, start_time: moment(item.start),end_time: moment(item.end), existingId: item.id}
         });
-
-        setReturnItems(shiftItems.concat(newItems));
-    }, [newItems, items]);
-    console.log(returnItems);
+        // console.log(itemsToRemove);
+        setReturnItems(shiftItems.concat(newItems).filter(item => {return !itemsToRemove.includes(item.id)}));
+    }, [newItems, items, itemsToRemove, role]);
+    // console.log(returnItems);
     return returnItems
 };
 
@@ -232,7 +312,7 @@ const AddShiftModal = ({open, onCancel, addShift, daysShifts, role, employee}) =
             return time.isAfter(shiftStart);
         });
         setShiftEndTimes(shiftEnds);
-        console.log(shiftEnds);
+        // console.log(shiftEnds);
     }, [shiftStart, startTimes]);
 
     const createStartTimes = () => {
@@ -241,14 +321,14 @@ const AddShiftModal = ({open, onCancel, addShift, daysShifts, role, employee}) =
         for(let i = 0; i < 96; i++){
             dates.push(moment(dayStart.add(15, 'm')));
         };
-        console.log(dates);
+        // console.log(dates);
         setStartTimes(dates);
     };
 
     const onShiftStartChange = (start) => {
         setShiftStart(start);
         // setStartSelected(!startSelected);
-        console.log(start);
+        // console.log(start);
     };
 
     const onShiftEndChange = end => {
@@ -256,8 +336,9 @@ const AddShiftModal = ({open, onCancel, addShift, daysShifts, role, employee}) =
     }
 
     const onFinish = (values) => {
-        console.log('in on finish')
-        addShift({id: employee.id, shiftStart: values.shiftStart, shiftEnd: values.shiftEnd});
+        // console.log('in on finish');
+        // console.log(employee);
+        addShift({id: employee.TeamMembershipId, shiftStart: values.shiftStart, shiftEnd: values.shiftEnd});
     }
     
 
@@ -265,8 +346,8 @@ const AddShiftModal = ({open, onCancel, addShift, daysShifts, role, employee}) =
 
     // console.log(open);
     if(open){
-        console.log(employee);
-        console.log(role);
+        // console.log(employee);
+        // console.log(role);
         const user = employee.TeamMembership.User;
         return (
             <Modal
@@ -329,7 +410,7 @@ const AddShiftModal = ({open, onCancel, addShift, daysShifts, role, employee}) =
 
 const EmployeeCard = ({employee, selectUser}) => {
     const user = employee.TeamMembership.User;
-    console.log(user);
+    // console.log(user);
 
     
     const onSelect = () => {

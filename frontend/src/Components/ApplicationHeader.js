@@ -6,6 +6,7 @@ import { OrganizationContext } from "../Context/OrganizationContext";
 import apiClient from "../config/axios";
 import { AuthContext } from "../Context/UserAuthContext";
 import { useAlert } from "react-alert";
+
 const ApplicationHeader = () => {
   const [activeLink, setActiveLink] = useState("home");
   const history = useHistory();
@@ -41,10 +42,9 @@ const ApplicationHeader = () => {
         >
           <Menu.Item key="home" icon={<HomeOutlined />}></Menu.Item>
           <Menu.Item key="rosters">Rosters</Menu.Item>
-          <Menu.Item key="projects">Projects</Menu.Item>
           <Menu.Item key="team">Team</Menu.Item>
           <Menu.Item key="reports">Reports</Menu.Item>
-          <Menu.Item key="invoices">Invoices</Menu.Item>
+          <Menu.Item key="invoices">Settings</Menu.Item>
         </Menu>
         <Menu>
           <Menu.Item onClick={handleLogOut} icon={<LogoutOutlined />}>

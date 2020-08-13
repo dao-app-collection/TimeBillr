@@ -1,81 +1,110 @@
 import React, { useEffect, useState, useContext } from "react";
 import moment from "moment";
+import styled from 'styled-components'
 import { CenteredContainer } from "../../styled-components/styled";
-import { Form, Select, Button, Steps, Collapse } from "antd";
+import { Typography, Divider, Card } from "antd";
 import apiClient from "../../config/axios";
 import { OrganizationContext } from "../../Context/OrganizationContext";
-import Modal from "antd/lib/modal/Modal";
 
-import Roster from './Roster';
-import {RosterSteps} from './CreateRoster';
+import {CheckCircleTwoTone, CloseCircleTwoTone} from '@ant-design/icons';
+import { useHistory, Link } from "react-router-dom";
+import { useRosterContext } from "../../Context/RosterContext";
 
+const {Meta} = Card;
+const {Title} = Typography;
 
-const { Step } = Steps;
-const { Option } = Select;
-const {Panel} = Collapse;
+const CardContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`
+const incompleteColor = '#ff9494';
+const completeColor = '#52c41a'
 
 const EditRoster = () => {
+    const history = useHistory();
+    const rosterContext = useRosterContext();
     const orgContext = useContext(OrganizationContext);
-   const [form] = Form.useForm();
-//   const dates = useWeekStarts();
-  const [rosterStart, setRosterStart] = useState(null);
-  const [step, setStep] = useState(0);
-  const [roster, setRoster] = useState({})
+    const [current, future, previous] = useWeekSplit(rosterContext.rosterData);
+    console.log(current);
+    console.log(future);
+    console.log(previous);
 
-  const changeStep = (current) => {
-    setStep(current);
-  };
+    const onRosterSelect = (id) => {
 
-  const onSelectStartDate = async (values) => {
-    // console.log(values);
-    // setRosterStart(moment(values.weekStart));
-    // console.log(moment(values.weekStart));
-    let weekStart = moment(values.weekStart);
-    // console.log(weekStart);
-    // console.log(weekStart.format("YYYY-MM-DD HH:MM:SS"));
-    const newRoster = await apiClient.post('teams/rosters/initialize', {
-        TeamId: orgContext.organizationData.id,
-        weekStart: weekStart.format("YYYY-MM-DD HH:mm:SS"),
+    };
+
+    const arrayToCardRender = (array) => {
+      return array.map(roster => {
+        return( 
+          <Link to={`/app/${orgContext.organizationData.id}/rosters/${roster.id}`}>
+        <Card 
+          style={{width: 'auto', margin: '0 8px'}}
+          hoverable
+          actions={[
+            roster.complete ? <CheckCircleTwoTone twoToneColor={completeColor}/> : <CloseCircleTwoTone twoToneColor={incompleteColor} />
+          ]}
+        ><Meta title={moment(roster.weekStart).toString()}/></Card>
+        </Link>
+        )
     })
-    if(newRoster.status === 200){
-        setRoster(newRoster.data);
     }
-    console.log(newRoster);
-  };
-  
-  if (!(Object.keys(roster).length === 0 && roster.constructor === Object)) {
-    return (
-      <CenteredContainer style={{ maxWidth: "calc(100vw - 100px)" }}>
-        <RosterSteps step={step} onChange={changeStep} />
-        <Roster step={step} roster={roster} />
-        {/* <div>{rosterStart.toString()}</div> */}
-      </CenteredContainer>
-    );
-  } else {
-    return (
-      <CenteredContainer style={{ maxWidth: "800px" }}>
-        <Form form={form} onFinish={onSelectStartDate}>
-          <Form.Item
-            name="weekStart"
-            label="Week Start Date"
-            extra="Enter the date this roster will start on."
-            rules={[{ required: true }]}
-          >
-            <Select defaultActiveFirstOption>
-              {dates.map((date) => (
-                <Option value={date.toString()} key={date.toString()}>
-                  {date.toString()}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Start Roster
-            </Button>
-          </Form.Item>
-        </Form>
-      </CenteredContainer>
-    );
-  }
+
+  return (
+    <CenteredContainer style={{maxWidth: 'calc(100vw - 80px)'}}>
+      <Title level={3}>
+        Current Roster
+      </Title>
+      <CardContainer>
+        {arrayToCardRender(current)}
+        {/* <Card
+          style={{width: 200}}
+          actions={[
+            <CheckCircleTwoTone twoToneColor='#52c41a'/>
+          ]}
+        >
+          <Meta
+            title={'Some Date'}
+          />
+        </Card> */}
+      </CardContainer>
+      <Divider />
+      <Title level={3}>
+        Upcoming Rosters
+      </Title>
+      <CardContainer>
+        {arrayToCardRender(future)}
+      </CardContainer>
+      <Divider />
+      <Title level={3}>
+        Previous Rosters
+      </Title>
+      <CardContainer>
+        {arrayToCardRender(previous)}
+      </CardContainer>
+      
+    </CenteredContainer>
+  )
 };
+
+const useWeekSplit = (rosters) => {
+  const [current, setCurrent] = useState([]);
+  const [future, setFuture] = useState([]);
+  const [previous, setPrevious] = useState([]);
+  const startOfWeek = moment().startOf('week');
+  console.log(rosters);
+  useEffect(() => {
+    let tempCurrent = rosters.filter(roster => {return startOfWeek.isSame(moment(roster.weekStart))});
+    setCurrent(tempCurrent);
+    let tempFuture = rosters.filter(roster => {return startOfWeek.isBefore(moment(roster.weekStart))});
+    setFuture(tempFuture);
+    let tempPrevious = rosters.filter(roster => {return startOfWeek.isAfter(moment(roster.weekStart))});
+    setPrevious(tempPrevious);
+  }, [rosters]);
+
+  console.log(current, future, previous);
+
+  return [current, future, previous];
+};
+
+export default EditRoster;

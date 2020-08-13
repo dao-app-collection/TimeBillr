@@ -3,6 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import HomeMenu from "../../Components/HomeMenu";
 import { GroupOutlined, EditOutlined } from "@ant-design/icons";
 import CreateRoster from "./CreateRoster";
+import EditRoster from './EditRoster';
 import Roster from './Roster';
 import RosterProvider from "../../Context/RosterContext";
 
@@ -15,7 +16,7 @@ const routeKeys = [
   {
     key: '/edit',
     icon: <EditOutlined />,
-    title: 'Edit Roster',
+    title: 'Edit/View Rosters',
   },
 ];
 
@@ -30,6 +31,9 @@ const RostersRouter = () => {
           </Route>
           <Route path="/app/:teamId/rosters/create">
             <CreateRoster />
+          </Route>
+          <Route exact path='/app/:teamId/rosters/edit'>
+            <EditRoster />
           </Route>
           <Route path='/app/:teamId/rosters/:rosterId'>
             <Roster />
