@@ -80,9 +80,26 @@ router.post(
   TeamRostersController.initialize
 );
 
+router.post(
+  "/rosters/clone",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamRostersController.clone
+);
+
 router.get("/rosters/:teamId", authorization, TeamRostersController.getAll);
 
-router.post('/rosters/:teamId/addShift', authorization, permissions.checkOwnerOrManager, TeamRostersController.addShifts);
+router.post(
+  "/rosters/:teamId/addShift",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamRostersController.addShifts
+);
 
-router.post('/rosters/:teamId/toggleComplete', authorization, permissions.checkOwnerOrManager, TeamRostersController.toggleComplete)
+router.post(
+  "/rosters/:teamId/toggleComplete",
+  authorization,
+  permissions.checkOwnerOrManager,
+  TeamRostersController.toggleComplete
+);
 module.exports = router;

@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import apiClient from "../config/axios";
 import { OrganizationContext } from "./OrganizationContext";
-import {Spin} from 'antd';
+import { Spin } from "antd";
 
 export const RosterContext = createContext({
   rosterData: [],
@@ -24,7 +24,6 @@ const RosterProvider = (props) => {
     apiClient
       .get(`teams/rosters/${orgContext.organizationData.id}`)
       .then((result) => {
-
         setRosterData(result.data);
         setLoading(false);
         console.log(result);
@@ -32,13 +31,13 @@ const RosterProvider = (props) => {
   }, []);
 
   const addNewRoster = (roster) => {
-    console.log('-------adding new roster----');
+    console.log("-------adding new roster----");
     console.log(roster);
     const rosterCopy = [...rosterData];
     rosterCopy.push(roster);
 
     setRosterData(rosterCopy);
-  }
+  };
 
   const value = useMemo(
     () => ({
@@ -48,21 +47,19 @@ const RosterProvider = (props) => {
     }),
     [rosterData]
   );
-    if(loading){
-      return (
-        <RosterContext.Provider value={value}>
-          <Spin />
-        </RosterContext.Provider>
-      );
-    } else {
-      return (
-        <RosterContext.Provider value={value}>
-          
-          {props.children}
-        </RosterContext.Provider>
-      );
-    }
-  
+  if (loading) {
+    return (
+      <RosterContext.Provider value={value}>
+        <Spin />
+      </RosterContext.Provider>
+    );
+  } else {
+    return (
+      <RosterContext.Provider value={value}>
+        {props.children}
+      </RosterContext.Provider>
+    );
+  }
 };
 
 export default RosterProvider;

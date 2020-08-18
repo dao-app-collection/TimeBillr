@@ -189,11 +189,9 @@ module.exports = {
           return user;
         });
 
-        res
-          .status(200)
-          .send({
-            success: `Updated user: ${employee.User.firstName} ${employee.User.lastName}`,
-          });
+        res.status(200).send({
+          success: `Updated user: ${employee.User.firstName} ${employee.User.lastName}`,
+        });
       } catch (error) {
         console.log("-------new error----");
         console.log(error);

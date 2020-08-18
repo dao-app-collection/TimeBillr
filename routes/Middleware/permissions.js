@@ -64,11 +64,9 @@ module.exports = {
         req.permissions = teamMembership.dataValues.permissions;
         next();
       } else {
-        res
-          .status(400)
-          .send({
-            error: "You need to be an owner OR manager to perform this action",
-          });
+        res.status(400).send({
+          error: "You need to be an owner OR manager to perform this action",
+        });
       }
     }
   },

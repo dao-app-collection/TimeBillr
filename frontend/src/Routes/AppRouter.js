@@ -5,6 +5,7 @@ import { OrganizationContext } from "../Context/OrganizationContext";
 import TeamRouter from "./Team/TeamRouter";
 import RostersRouter from "./Rosters/RostersRouter";
 import { Layout } from "antd";
+import Home from "./Home/Home";
 
 const AppRouter = () => {
   const teamId = useParams().organization_id;
@@ -31,8 +32,8 @@ const AppRouter = () => {
         <ApplicationHeader />
         <Layout.Content style={{ backgroundColor: "white" }}>
           <Switch>
-            <Route path="/app/:teamId/time">
-              <div>Time</div>
+            <Route path="/app/:teamId/home">
+              <Home />
             </Route>
             <Route path="/app/:teamId/projects">
               <div>Projects</div>

@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(models.Team);
       // this.hasMany(models.Shift);
-      this.hasMany(models.DaysShift)
+      this.hasMany(models.DaysShift);
     }
   }
   Roster.init(

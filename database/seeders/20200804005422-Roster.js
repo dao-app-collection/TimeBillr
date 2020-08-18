@@ -26,32 +26,32 @@ module.exports = {
       {
         RosterId: 1,
         day: 1,
-        date: today.add(1, 'd').format("YYYY-MM-DD HH:mm:SS"),
+        date: today.add(1, "d").format("YYYY-MM-DD HH:mm:SS"),
       },
       {
         RosterId: 1,
         day: 2,
-        date: today.add(1, 'd').format("YYYY-MM-DD HH:mm:SS"),
+        date: today.add(1, "d").format("YYYY-MM-DD HH:mm:SS"),
       },
       {
         RosterId: 1,
         day: 3,
-        date: today.add(1, 'd').format("YYYY-MM-DD HH:mm:SS"),
+        date: today.add(1, "d").format("YYYY-MM-DD HH:mm:SS"),
       },
       {
         RosterId: 1,
         day: 4,
-        date: today.add(1, 'd').format("YYYY-MM-DD HH:mm:SS"),
+        date: today.add(1, "d").format("YYYY-MM-DD HH:mm:SS"),
       },
       {
         RosterId: 1,
         day: 5,
-        date: today.add(1, 'd').format("YYYY-MM-DD HH:mm:SS"),
+        date: today.add(1, "d").format("YYYY-MM-DD HH:mm:SS"),
       },
       {
         RosterId: 1,
         day: 6,
-        date: today.add(1, 'd').format("YYYY-MM-DD HH:mm:SS"),
+        date: today.add(1, "d").format("YYYY-MM-DD HH:mm:SS"),
       },
     ]);
   },
