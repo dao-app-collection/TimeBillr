@@ -62,13 +62,16 @@ const Roster = () => {
   }, [orgContext.organizationData.TeamRoles]);
 
   const submitShifts = async () => {
+    if(sending){
+      return;
+    }
     setSending(true);
     let returnPromise = new Promise(async (resolve, reject) => {
       // console.log(shiftsToSubmit);
       const shiftsWithMomentsFormatted = shiftsToSubmit.map((shift) => {
-        // console.log(shift.start_time);
+        console.log(shift);
         return {
-          TeamMembershipId: shift.id,
+          TeamMembershipId: shift.group,
           TeamRoleId: shift.TeamRoleId,
           DaysShiftId: shift.DaysShiftId,
           start: shift.start_time.format("YYYY-MM-DD HH:mm:SS"),
@@ -104,6 +107,8 @@ const Roster = () => {
         reject();
       }
     });
+    setShiftsToDelete([]);
+    setShiftsToSubmit([]);
     setSending(false);
     return returnPromise;
   };
@@ -163,7 +168,7 @@ const Roster = () => {
 const RosterComplete = ({ roster, step }) => {
   const alert = useAlert();
   const orgContext = useContext(OrganizationContext);
-  console.log(orgContext.organizationData.id);
+  // console.log(orgContext.organizationData.id);
   const completeRoster = async () => {
     try {
       const res = await apiClient.post(
@@ -256,7 +261,7 @@ const RosterCalendar = ({
   };
 
   const addItem = (item) => {
-    // console.log(daysShifts);
+    console.log(daysShifts);
     // console.log(item);
     let temp = [...newItems];
     temp.push({
@@ -321,8 +326,13 @@ const RosterCalendar = ({
 
 // newItems are the unsaved shifts that have just been created, items are the currently existing saved shifts.
 const useCreateItems = (items, newItems, role, itemsToRemove) => {
+  console.log('existing items, that have been retrieved from the db.');
+
   console.log(items);
+  console.log('new items, that have been created on the frontend yet not yet saved.')
   console.log(newItems);
+  console.log('the role');
+  console.log(role);
   const [returnItems, setReturnItems] = useState([]);
 
   useEffect(() => {

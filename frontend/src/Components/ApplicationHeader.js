@@ -7,7 +7,41 @@ import apiClient from "../config/axios";
 import { AuthContext } from "../Context/UserAuthContext";
 import { useAlert } from "react-alert";
 
-const ApplicationHeader = () => {
+const adminKeys = [
+  {key: 'home',
+  icon: <HomeOutlined/>,
+  title: 'home',
+}, {
+  key: 'rosters',
+  icon: null,
+  title: 'Rosters'
+}, {
+  key: 'team',
+  icon: null,
+  title: 'Team',
+}, {
+  key: 'reports',
+  icon: null,
+  title: 'Reports',
+}, {
+  key: 'settings',
+  icon: null,
+  title: 'Settings',
+}
+];
+
+const employeeKeys = [
+  {key: 'shifts',
+  icon: null,
+  title: 'Upcoming Shifts'
+}, {
+  key: 'availabilities',
+  icon: null,
+  title: 'Availabilities'
+}
+];
+
+const ApplicationHeader = ({userType}) => {
   const [activeLink, setActiveLink] = useState("home");
   const history = useHistory();
   const orgContext = useContext(OrganizationContext);
@@ -40,11 +74,14 @@ const ApplicationHeader = () => {
           mode={"horizontal"}
           style={{ width: "100%" }}
         >
-          <Menu.Item key="home" icon={<HomeOutlined />}></Menu.Item>
+          {userType === 'employee' ? employeeKeys.map(key => (
+            <Menu.Item key={key.key} icon={key.icon}>{key.title}</Menu.Item>
+          )): adminKeys.map(key => (<Menu.Item key ={key.key} icon={key.icon}>{key.title}</Menu.Item>))}
+          {/* <Menu.Item key="home" icon={<HomeOutlined />}></Menu.Item>
           <Menu.Item key="rosters">Rosters</Menu.Item>
           <Menu.Item key="team">Team</Menu.Item>
           <Menu.Item key="reports">Reports</Menu.Item>
-          <Menu.Item key="invoices">Settings</Menu.Item>
+          <Menu.Item key="invoices">Settings</Menu.Item> */}
         </Menu>
         <Menu>
           <Menu.Item onClick={handleLogOut} icon={<LogoutOutlined />}>

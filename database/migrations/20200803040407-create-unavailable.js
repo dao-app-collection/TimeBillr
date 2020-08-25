@@ -26,6 +26,10 @@ module.exports = {
           "CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()"
         ),
       },
+      day: {
+        
+        type: Sequelize.INTEGER,
+      },
       TeamId: {
         type: Sequelize.INTEGER,
         allowNull: false,

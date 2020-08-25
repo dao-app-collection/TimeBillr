@@ -5,12 +5,14 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import {
   OrganizationProvider,
   OrganizationConsumer,
+  useOrganizationContext,
 } from "../Context/OrganizationContext";
 import OrganizationSelectOrCreate from "../OrganizationSelectOrCreate/OrganizationSelectOrCreate";
 import AppRouter from "../Routes/AppRouter";
 import Invitation from "../Routes/Invitation/Invitation";
 
 const Skeleton = () => {
+  
   return (
     <Layout style={{ height: "auto", minHeight: "100vh" }}>
       <Switch>

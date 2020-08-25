@@ -15,25 +15,13 @@ export class AuthProvider extends React.Component {
   register = () => {};
 
   logIn = async (data) => {
-    // console.log('authenticated');
-    // console.log(data);
-    // this.setState({authenticated: true});
     let user = await apiClient.get("user");
     if (user.status === 200) {
+      console.log(user.data);
       this.setState({ userData: Object.assign({}, user.data) }, () => {
         this.setState({ authenticated: true });
       });
     }
-
-    // apiClient.get('http://localhost:8000/api/user').then(res => {
-    //     console.log(res);
-    // }).then(() => {
-    //     apiClient.get('http://localhost:8000/api/test').then((res) => {
-    //         apiClient.get('http://localhost:8000/api/test').then(res => {
-
-    //         })
-    //     })
-    // });
   };
 
   logOut = () => {
@@ -41,8 +29,6 @@ export class AuthProvider extends React.Component {
   };
 
   validateOnLoad = async () => {
-    // apiClient.default.withCredentials = true;
-    // let sanctumCookie = await apiClient.get('http://localhost:8000/sanctum/csrf-cookie');
 
     try {
       this.setState({ authenticating: true });
@@ -58,10 +44,6 @@ export class AuthProvider extends React.Component {
     } catch (error) {
       this.setState({ authenticating: false });
     }
-    // if(sanctumCookie.status === 204){
-
-    // console.log(user);
-    // }
   };
 
   componentDidMount() {

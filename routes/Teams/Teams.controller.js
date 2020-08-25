@@ -6,10 +6,44 @@ const { ErrorHandler } = require("../Middleware/ErrorHandler");
 const { sequelize } = require("../../database/models/index");
 
 module.exports = {
+  // this returns the users TeamMembership, this is to decide
+  // Whether the 'admin' part of the app, or general employee
+  // part of the app will be shown.
+  async user(req,res,next){
+    console.log(req.params);
+    console.log(req.params.id);
+    console.log(req.userId);
+
+    try {
+      const result= await db.sequelize.transaction(async t => {
+        const teamMembership = await db.TeamMembership
+        .findOne({where: {TeamId: req.params.id, UserId: req.userId},
+           include: [
+            {
+              model: db.Unavailable
+            },
+          ]});
+        console.log(teamMembership)
+          return teamMembership;
+      });
+      if(result){
+        console.log('------Team Membership Found ------')
+        console.log(result);
+        res.status(200).json(result);
+      } else {
+        console.log(result);
+        throw new ErrorHandler(400, 'Could not find TeamMembership');
+      }
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler(400, 'Could not find TeamMembership');
+    }
+  },
   // returns all organizations that one user is a member of
   async findAll(req, res) {
     console.log("in Find All");
     console.log(req.userId);
+
     try {
       const result = await db.sequelize.transaction(async (t) => {
         memberships = await db.TeamMembership.findAll({
@@ -37,6 +71,8 @@ module.exports = {
     }
   },
   async getAllTeamData(req, res, next) {
+    console.log('------------Get All Team Data--------')
+    console.log(req.params);
     try {
       let team = await db.Team.findOne({
         where: {
@@ -53,6 +89,9 @@ module.exports = {
               {
                 model: db.EmployeeRole,
               },
+              {
+                model: db.Unavailable,
+              }
             ],
           },
           {

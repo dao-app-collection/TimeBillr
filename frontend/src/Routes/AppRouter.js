@@ -1,16 +1,17 @@
 import React, { useEffect, useContext } from "react";
 import { Switch, Route, useParams, useHistory } from "react-router-dom";
 import ApplicationHeader from "../Components/ApplicationHeader";
-import { OrganizationContext } from "../Context/OrganizationContext";
+import { OrganizationContext, useOrganizationContext } from "../Context/OrganizationContext";
 import TeamRouter from "./Team/TeamRouter";
 import RostersRouter from "./Rosters/RostersRouter";
 import { Layout } from "antd";
 import Home from "./Home/Home";
+import EmployeeRoutes from "./EmployeeRoutes/EmployeeRoutes";
 
 const AppRouter = () => {
   const teamId = useParams().organization_id;
   const history = useHistory();
-  const orgContext = useContext(OrganizationContext);
+  const orgContext = useOrganizationContext();
 
   useEffect(() => {
     console.log(teamId);
@@ -26,10 +27,16 @@ const AppRouter = () => {
     }
   }, [teamId]);
 
-  if (orgContext.loadedOrganizationData) {
+
+  // if(Object.keys(orgContext.organizationData).length === 0 || orgContext.userTeamMembership)
+  console.log(orgContext.loadedOrganizationData);
+  console.log(orgContext.userTeamMembership);
+  console.log(orgContext.organizationData);
+  if (orgContext.loadedOrganizationData && orgContext.userTeamMembership.permissions !== 'employee') {
+    console.log(orgContext.userTeamMembership);
     return (
       <>
-        <ApplicationHeader />
+        <ApplicationHeader userType={'admin'}/>
         <Layout.Content style={{ backgroundColor: "white" }}>
           <Switch>
             <Route path="/app/:teamId/home">
@@ -55,6 +62,15 @@ const AppRouter = () => {
         </Layout.Content>
       </>
     );
+    // This leads to the employee part of the app, where a user can view their shifts, change their availibilites,
+    // and schedule holidays
+  } else if(orgContext.loadedOrganizationData && orgContext.userTeamMembership.permissions === 'employee'){
+    return (
+      <> 
+      <ApplicationHeader userType={'employee'}/>
+      <EmployeeRoutes/>
+      </>
+      )
   } else {
     return (
       <>

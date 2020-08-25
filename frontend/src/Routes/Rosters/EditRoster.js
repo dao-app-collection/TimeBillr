@@ -9,6 +9,7 @@ import { OrganizationContext } from "../../Context/OrganizationContext";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 import { useHistory, Link } from "react-router-dom";
 import { useRosterContext } from "../../Context/RosterContext";
+import useWeekSplit from './Hooks/useWeekSplit';
 
 const { Meta } = Card;
 const { Title } = Typography;
@@ -86,30 +87,6 @@ const EditRoster = () => {
   );
 };
 
-const useWeekSplit = (rosters) => {
-  const [current, setCurrent] = useState([]);
-  const [future, setFuture] = useState([]);
-  const [previous, setPrevious] = useState([]);
-  const startOfWeek = moment().startOf("week");
-  console.log(rosters);
-  useEffect(() => {
-    let tempCurrent = rosters.filter((roster) => {
-      return startOfWeek.isSame(moment(roster.weekStart));
-    });
-    setCurrent(tempCurrent);
-    let tempFuture = rosters.filter((roster) => {
-      return startOfWeek.isBefore(moment(roster.weekStart));
-    });
-    setFuture(tempFuture);
-    let tempPrevious = rosters.filter((roster) => {
-      return startOfWeek.isAfter(moment(roster.weekStart));
-    });
-    setPrevious(tempPrevious);
-  }, [rosters]);
 
-  console.log(current, future, previous);
-
-  return [current, future, previous];
-};
 
 export default EditRoster;

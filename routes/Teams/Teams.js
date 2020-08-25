@@ -11,6 +11,8 @@ const { checkOwnerOrManager } = require("../Middleware/permissions");
 
 router.get("/findAll", authorization, TeamsController.findAll);
 
+router.get("/user/:id", authorization, TeamsController.user);
+
 router.get("/data/:id", authorization, TeamsController.getAllTeamData);
 
 router.post("/create", authorization, TeamsController.create);
@@ -86,6 +88,8 @@ router.post(
   permissions.checkOwnerOrManager,
   TeamRostersController.clone
 );
+
+
 
 router.get("/rosters/:teamId", authorization, TeamRostersController.getAll);
 

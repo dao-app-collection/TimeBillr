@@ -8,9 +8,11 @@ const application = require("./config");
 
 const UserRouter = require("./routes/User/User");
 const TeamsRouter = require("./routes/Teams/Teams");
+const EmployeeRouter = require('./routes/Employee/Employee');
 
 application.use("/api/user", UserRouter);
 application.use("/api/teams", TeamsRouter);
+application.use('/api/employee', EmployeeRouter);
 
 application.use((err, req, res, next) => {
   console.log(
