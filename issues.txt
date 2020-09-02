@@ -1,0 +1,8 @@
+user entering invalid password causes server to crash LOL
+
+make in roster that it gives you a warning when you try to create a shift which is covered by unavailables
+
+*Home* should show you that there is either no shifts on today or
+Tell you to get started by creating a roster?
+
+Work on good looking emails

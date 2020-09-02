@@ -42,9 +42,14 @@ const Availabilities = () => {
     const [shiftStart, setShiftStart] = useState(null);
     const [shiftEnd, setShiftEnd] = useState(null);
     const [sending, setSending] = useState(false);
+  // The unavailables that have already been created
+    const[unavailables, setUnavailables] = useState({});
+
+    console.log(orgContext.userTeamMembership);
 
     useEffect(() => {
         createStartTimes();
+        
       }, []);
 
     useEffect(() => {
@@ -69,7 +74,18 @@ const Availabilities = () => {
         console.log(dates);
         setStartTimes(dates);
       };
+      
+      const findExistingUnavailable = (index) => {
+        // index is the day of the week for the unavailable item
+        console.log(orgContext.userTeamMembership);
+        let unavailable = orgContext.userTeamMembership.Unavailables.filter((unavailable => {
+          return unavailable.day === index
+        }))[0];
 
+        
+        console.log(unavailable);
+        return unavailable ? unavailable : null;
+      }
       const onShiftStartChange = (value) => {
         console.log(value);
       }
@@ -83,11 +99,15 @@ const Availabilities = () => {
 
             });
             if(res.status === 200){
+              const updatedContext = await orgContext.updateUserData(orgContext.organizationData.id);
+              if(updatedContext){
                 alert.show(res.data.success, {
-                    type: 'success'
-                });
+                  type: 'success'
+              });
+              }
+                
             }
-            console.log(res);
+            
         } catch (error) {
             alert.show(error.response.data.message, {
                 type: 'error'
@@ -108,14 +128,14 @@ const Availabilities = () => {
         >
             
             {startTimes ? 
-                days.map(day => (
+                days.map((day, index) => (
                     <SelectContainer>
                     <Form.Item
                         name={day}
                         label={day}
                     >
                         
-                            <Select defaultActiveFirstOption onChange={onShiftStartChange} style={selectStyle}>
+                            <Select defaultValue={findExistingUnavailable(index) ? moment(findExistingUnavailable(index).start).format('HH:mm:SS') : null} onChange={onShiftStartChange} style={selectStyle}>
                               {startTimes ? startTimes.map((date) => (
                                 <Option value={date.toString()} key={date.toString()}>
                                   {date.format("HH:mm:SS")}
@@ -128,7 +148,7 @@ const Availabilities = () => {
                         name={day + 'end'}
                         label={'End Time'}
                     >
-                            <Select defaultActiveFirstOption style={selectStyle}>
+                            <Select defaultValue={findExistingUnavailable(index) ? moment(findExistingUnavailable(index).end).format('HH:mm:SS') : null} style={selectStyle}>
                             {startTimes ? startTimes.map((date) => (
                                 <Option value={date.toString()} key={date.toString()}>
                                   {date.format("HH:mm:SS")}

@@ -7,6 +7,7 @@ import RostersRouter from "./Rosters/RostersRouter";
 import { Layout } from "antd";
 import Home from "./Home/Home";
 import EmployeeRoutes from "./EmployeeRoutes/EmployeeRoutes";
+import RequestsRouter from "./Requests/RequestsRouter";
 
 const AppRouter = () => {
   const teamId = useParams().organization_id;
@@ -56,6 +57,9 @@ const AppRouter = () => {
             </Route>
             <Route path="/app/:teamId/rosters">
               <RostersRouter />
+            </Route>
+            <Route path='/app/:teamId/requests'>
+              <RequestsRouter />
             </Route>
             <Route path="/app/:teamId"></Route>
           </Switch>

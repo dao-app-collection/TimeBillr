@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       approved: DataTypes.BOOLEAN,
       TeamId: DataTypes.INTEGER,
       TeamMembershipId: DataTypes.INTEGER,
+      day: DataTypes.INTEGER,
     },
     {
       sequelize,

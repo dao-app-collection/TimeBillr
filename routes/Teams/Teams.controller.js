@@ -22,6 +22,9 @@ module.exports = {
             {
               model: db.Unavailable
             },
+            {
+              model: db.Holidays
+            }
           ]});
         console.log(teamMembership)
           return teamMembership;
@@ -89,10 +92,10 @@ module.exports = {
               {
                 model: db.EmployeeRole,
               },
-              {
-                model: db.Unavailable,
-              }
             ],
+          },
+          {
+            model: db.Holidays,
           },
           {
             model: db.TeamMembershipRequest,
@@ -109,6 +112,12 @@ module.exports = {
                       {
                         model: db.User,
                       },
+                      {
+                        model: db.Unavailable,
+                      },
+                      {
+                        model: db.Holidays,
+                      }
                     ],
                   },
                 ],
@@ -322,4 +331,38 @@ module.exports = {
       next(error);
     }
   },
+
+  async handleHolidayRequest(req, res, next){
+    const {HolidayId, param} = req.body;
+    let message = null;
+
+    try {
+      const result = db.sequelize.transaction(async t => {
+        const holiday = await db.Holidays.findOne({
+          where: {id: HolidayId}
+        });
+        if(param === 'approve'){
+          holiday.approved = true;
+          holiday.save()
+          message = 'approved';
+        } else if (param === 'deny'){
+          holiday.denied = true;
+          holiday.save();
+          message = 'denied';
+        } else {
+          holiday.destroy();
+          message = 'deleted';
+        }
+        return holiday;
+      });
+      console.log(result);
+      if(result){
+        res.status(200).send({success: `Holiday request has been ${message}`});
+      } else {
+        throw new ErrorHandler(400, 'Could not handle holiday request');
+      }
+    } catch (error) {
+      throw new ErrorHandler(400, 'Could not handle holiday request');
+    }
+  }
 };

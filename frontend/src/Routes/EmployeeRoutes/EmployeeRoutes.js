@@ -9,18 +9,12 @@ import { CenteredContainer } from '../../styled-components/styled';
 import EmployeeProvider from '../../Context/EmployeeContext';
 import UpcomingShifts from './UpcomingShifts';
 import Availabilities from './Availabilities';
+import Holidays from './Holidays';
 
 const EmployeeRoutes = () => {
     const orgContext = useOrganizationContext();
     const rosterContext = useRosterContext();
-    console.log(orgContext);
-    console.log(rosterContext);
-
-    // useEffect(() => {
-    //     apiClient.get(`employee/${orgContext.organizationData.id}/${orgContext.userTeamMembership.id}`).then(res => {
-    //         console.log(res);
-    //     })
-    // }, [])
+    
     return (
         <EmployeeProvider>
         
@@ -32,6 +26,9 @@ const EmployeeRoutes = () => {
                 </Route>
                 <Route path='/app/:teamId/availabilities'>
                     <Availabilities />
+                </Route>
+                <Route path='/app/:teamId/holidays'>
+                    <Holidays />
                 </Route>
             </Switch>
         </CenteredContainer>

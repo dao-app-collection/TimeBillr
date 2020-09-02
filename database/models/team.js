@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
 
       this.hasOne(models.TeamSettings);
       this.hasMany(models.TeamRoles, { onDelete: "cascade" });
+
+      this.hasMany(models.Holidays);
     }
   }
   Team.init(

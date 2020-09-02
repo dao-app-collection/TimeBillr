@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       this.UserId = this.belongsTo(models.User);
       this.hasMany(models.EmployeeRole, { onDelete: 'cascade' });
       this.hasMany(models.Unavailable, {onDelete: 'cascade'});
+
+      this.hasMany(models.Holidays);
     }
   }
   TeamMembership.init(

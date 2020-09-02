@@ -27,6 +27,10 @@ const adminKeys = [
   key: 'settings',
   icon: null,
   title: 'Settings',
+}, {
+  key: 'requests',
+  icon: null,
+  title: 'Requests',
 }
 ];
 
@@ -38,6 +42,10 @@ const employeeKeys = [
   key: 'availabilities',
   icon: null,
   title: 'Availabilities'
+}, {
+  key:'holidays',
+  icon: null,
+  title: 'Holidays'
 }
 ];
 

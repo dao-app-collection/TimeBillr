@@ -19,7 +19,7 @@ const Skeleton = () => {
         <Route path="/app/invitation/:id">
           <Invitation />
         </Route>
-        <Route path={"/app/login"}>
+        <Route path={"/app/register"}>
           <Redirect to={"/app"} />
         </Route>
 

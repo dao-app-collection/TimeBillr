@@ -8,6 +8,7 @@ export const OrganizationContext = createContext({
   organization: {},
   organizationData: {},
   userTeamMembership: null,
+  updateUserData: () => {},
   getAllOrganizationData: () => {},
   updateUseOrganization: () => {},
   updateOrganizations: () => {},
@@ -38,18 +39,7 @@ export class OrganizationProvider extends React.Component {
 
     const result = await Promise.all([
       // The User permissions promise
-      new Promise(async (resolve, reject) => {
-        const userPermissionsResponse = await apiClient.get(`teams/user/${id}`);
-        if(userPermissionsResponse.status === 200){
-          console.log(userPermissionsResponse);
-          this.setState({userTeamMembership: Object.assign({}, userPermissionsResponse.data)}, () => {
-            this.checkLoadedOrganizationData();
-            resolve('User Team Membership Updated')
-          })
-        } else{
-          reject('Could not find Member Permissions');
-        }
-      })
+      this.updateUserData(id)
     , 
       // The Organization Data Promise
       new Promise(async (resolve, reject) => {
@@ -86,6 +76,24 @@ export class OrganizationProvider extends React.Component {
     };
   };
 
+   updateUserData = async (id) => {
+    const result = new Promise(async (resolve, reject) => {
+      const userPermissionsResponse = await apiClient.get(`teams/user/${id}`);
+      if(userPermissionsResponse.status === 200){
+        console.log(userPermissionsResponse);
+        console.log(this);
+        this.setState({userTeamMembership: Object.assign({}, userPermissionsResponse.data)}, () => {
+          this.checkLoadedOrganizationData();
+          resolve('User Team Membership Updated')
+        })
+      } else{
+        reject('Could not find Member Permissions');
+      }
+    });
+
+    return result;
+  };
+
   componentDidMount() {}
   state = {
     loadedOrganizationData: false,
@@ -93,6 +101,7 @@ export class OrganizationProvider extends React.Component {
     organization: {},
     organizationData: {},
     userTeamMembership: null,
+    updateUserData: this.updateUserData,
     updateUseOrganization: this.updateUseOrganization,
     updateOrganizations: this.updateOrganizations,
     getAllOrganizationData: this.getAllOrganizationData,

@@ -69,70 +69,81 @@ const EmployeeController = {
         console.log(Sunday);
 
         try {
-            if(Sunday){
-                const sunday = await db.Unavailable.create({
-                    day: 0,
-                    start: Sunday,
-                    end: Sundayend,
-                    TeamId: TeamId,
-                    TeamMembershipId: TeamMembershipId,
-                })
-            }
-            if(Monday){
-                const monday = await db.Unavailable.create({
-                    day: 1,
-                    start: Monday,
-                    end: Mondayend,
-                    TeamId: TeamId,
-                    TeamMembershipId: TeamMembershipId,
-                })
-            }
-            if(Tuesday){
-                const tuesday = await db.Unavailable.create({
-                    day: 2,
-                    start: Tuesday,
-                    end: Tuesdayend,
-                    TeamId: TeamId,
-                    TeamMembershipId: TeamMembershipId,
-                })
-            }
-            if(Wednesday){
-                const wednesday = await db.Unavailable.create({
-                    day: 3,
-                    start: Wednesday,
-                    end: Wednesdayend,
-                    TeamId: TeamId,
-                    TeamMembershipId: TeamMembershipId,
-                })
-            }
-            if(Thursday){
-                const thursday = await db.Unavailable.create({
-                    day: 4,
-                    start: Thursday,
-                    end: Thursdayend,
-                    TeamId: TeamId,
-                    TeamMembershipId: TeamMembershipId,
-                })
-            }
-            if(Friday){
-                const friday = await db.Unavailable.create({
-                    day: 5,
-                    start: Friday,
-                    end: Fridayend,
-                    TeamId: TeamId,
-                    TeamMembershipId: TeamMembershipId,
-                })
-            }
-            if(Saturday){
-                const saturday = await db.Unavailable.create({
-                    day: 6,
-                    start: Saturday,
-                    end: Saturdayend,
-                    TeamId: TeamId,
-                    TeamMembershipId: TeamMembershipId,
-                })
-            }
-            res.status(200).send({success: 'Availabilities updated'});
+            const result = await sequelize.transaction(async t => {
+                // find all existing availabilities
+                const existingAvailabilities = await db.Unavailable.findAll({
+                    where: {TeamMembershipId: TeamMembershipId}
+                });
+                // remove all existing availabilities.
+                const deleted = await Promise.all(existingAvailabilities.map(existing => {
+                    return await existing.destroy();
+                }));
+                if(Sunday){
+                    const sunday = await db.Unavailable.create({
+                        day: 0,
+                        start: Sunday,
+                        end: Sundayend,
+                        TeamId: TeamId,
+                        TeamMembershipId: TeamMembershipId,
+                    })
+                }
+                if(Monday){
+                    const monday = await db.Unavailable.create({
+                        day: 1,
+                        start: Monday,
+                        end: Mondayend,
+                        TeamId: TeamId,
+                        TeamMembershipId: TeamMembershipId,
+                    })
+                }
+                if(Tuesday){
+                    const tuesday = await db.Unavailable.create({
+                        day: 2,
+                        start: Tuesday,
+                        end: Tuesdayend,
+                        TeamId: TeamId,
+                        TeamMembershipId: TeamMembershipId,
+                    })
+                }
+                if(Wednesday){
+                    const wednesday = await db.Unavailable.create({
+                        day: 3,
+                        start: Wednesday,
+                        end: Wednesdayend,
+                        TeamId: TeamId,
+                        TeamMembershipId: TeamMembershipId,
+                    })
+                }
+                if(Thursday){
+                    const thursday = await db.Unavailable.create({
+                        day: 4,
+                        start: Thursday,
+                        end: Thursdayend,
+                        TeamId: TeamId,
+                        TeamMembershipId: TeamMembershipId,
+                    })
+                }
+                if(Friday){
+                    const friday = await db.Unavailable.create({
+                        day: 5,
+                        start: Friday,
+                        end: Fridayend,
+                        TeamId: TeamId,
+                        TeamMembershipId: TeamMembershipId,
+                    })
+                }
+                if(Saturday){
+                    const saturday = await db.Unavailable.create({
+                        day: 6,
+                        start: Saturday,
+                        end: Saturdayend,
+                        TeamId: TeamId,
+                        TeamMembershipId: TeamMembershipId,
+                    })
+                }
+                res.status(200).send({success: 'Availabilities updated'});
+            })
+            
         } catch (error) {
             console.log(error);
             throw new ErrorHandler(400, 'Could not update availabilities, ensure if you fill out a day, that the day end is filled. :)')
@@ -140,6 +151,28 @@ const EmployeeController = {
         console.log(req.params);
 
         console.log(TeamMembershipId);
+    },
+    async requestHoliday(req,res,next){
+        const TeamMembershipId = req.params.teamMembershipId;
+        const {TeamId, start, end} = req.body;
+
+        console.log(start);
+        console.log(end);
+
+        try {
+            const holidayRequest = await db.Holidays.create({
+                TeamId: TeamId,
+                TeamMembershipId: TeamMembershipId,
+                start: start,
+                end: end,
+            });
+
+            if(holidayRequest){
+                res.status(200).send({success: 'Holiday request sent, this will be approved by your employer and accepted/denied'});
+            }
+        } catch (error) {
+            throw new ErrorHandler(400, 'Could not submit Holiday Request, please try again.');
+        }
     }
 };
 

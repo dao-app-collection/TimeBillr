@@ -11,4 +11,6 @@ router.get('/:teamId/:teamMembershipId', authorization, EmployeeController.getAl
 router.post('/shift/confirm',authorization, EmployeeController.confirmShift);
 
 router.post('/changeAvailabilities/:teamMembershipId', authorization, EmployeeController.changeAvailabilities);
+
+router.post('/holidays/:teamMembershipId/request', authorization, EmployeeController.requestHoliday);
 module.exports = router;

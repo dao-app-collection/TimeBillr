@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { OrganizationContext } from "../../Context/OrganizationContext";
+import { OrganizationContext, useOrganizationContext } from "../../Context/OrganizationContext";
 import { Collapse, Card, Form, Select, Button } from "antd";
 
 import {
@@ -45,7 +45,7 @@ const Roster = () => {
   const [sending, setSending] = useState(false);
 
   const changeStep = async (newStep) => {
-    console.log(newStep);
+    // console.log(newStep);
     // here we need to force save all of the new entries
     if (shiftsToSubmit.length > 0 || shiftsToDelete.length > 0) {
       await submitShifts();
@@ -54,7 +54,7 @@ const Roster = () => {
       setStep(newStep);
     }
 
-    console.log(step);
+    // console.log(step);
   };
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const Roster = () => {
     let returnPromise = new Promise(async (resolve, reject) => {
       // console.log(shiftsToSubmit);
       const shiftsWithMomentsFormatted = shiftsToSubmit.map((shift) => {
-        console.log(shift);
+        // console.log(shift);
         return {
           TeamMembershipId: shift.group,
           TeamRoleId: shift.TeamRoleId,
@@ -219,7 +219,9 @@ const RosterCalendar = ({
     daysShifts.Shifts,
     newItems,
     role,
-    itemsToRemove
+    itemsToRemove,
+    daysShifts,
+    step
   );
   // console.log(role);
   // console.log(step);
@@ -239,6 +241,43 @@ const RosterCalendar = ({
         employee.TeamMembership.User.lastName,
     };
   });
+
+  // console.log(role.EmployeeRoles);
+  // These items will be shown in red, They are one the employee has specified that they are unavailable
+  const unavailableItems = role.EmployeeRoles.map((employee) => {
+    const thisDatesDate = moment(daysShifts.date);
+    // Within here we need to know the amount of days difference between
+    // When the available was created and this date that we're currently in,
+    // the item also needs to have itemProps: {style:{}} wherein we will define the background color of it
+    // unavailables should be filtered for step by day
+    let unavailables = employee.TeamMembership.Unavailables.filter(unavailable => {
+      return unavailable.day === step
+    }).map(unavailable => {
+      // console.log(unavailable.start);
+      // console.log(unavailable.end);
+      // console.log(thisDatesDate);
+      let start = moment(unavailable.start);
+      let end = moment(unavailable.end);
+      let difference = thisDatesDate.diff(start);
+      // console.log(difference);
+      // console.log(unavailable);
+      // console.log(daysShifts);
+
+      return {
+        group: employee.TeamMembershipId,
+        start_time: start.add(difference, 'ms'),
+        end_time: end.add(difference, 'ms'),
+        itemProps: {
+          style: {background: 'red'}
+        }
+      }
+    });
+    return unavailables;
+    
+    
+  });
+
+  // console.log(unavailableItems.flat())
 
   // const newItems = [{id: 1,group: 1, start_time: moment(daysShifts.date),end_time: moment(daysShifts.date).add(3, 'h')}];
 
@@ -261,7 +300,7 @@ const RosterCalendar = ({
   };
 
   const addItem = (item) => {
-    console.log(daysShifts);
+    // console.log(daysShifts);
     // console.log(item);
     let temp = [...newItems];
     temp.push({
@@ -271,6 +310,11 @@ const RosterCalendar = ({
       end_time: moment(item.shiftEnd),
       TeamRoleId: role.id,
       DaysShiftId: daysShifts.id,
+      canMove: false,
+      itemProps: {
+        onDoubleClick: () => {console.log('you double clicked')},
+        style: {zIndex: '100'}
+      }
     });
     // console.log(temp);
     saveShifts(temp);
@@ -308,7 +352,7 @@ const RosterCalendar = ({
         items={items}
         visibleTimeStart={moment(daysShifts.date)}
         visibleTimeEnd={moment(daysShifts.date).add(1, "d")}
-        onItemClick={removeItem}
+        // onItemClick={removeItem}
       />
       {addShiftModal ? (
         <AddShiftModal
@@ -325,14 +369,15 @@ const RosterCalendar = ({
 };
 
 // newItems are the unsaved shifts that have just been created, items are the currently existing saved shifts.
-const useCreateItems = (items, newItems, role, itemsToRemove) => {
-  console.log('existing items, that have been retrieved from the db.');
+const useCreateItems = (items, newItems, role, itemsToRemove, daysShifts, step) => {
+  const orgContext = useOrganizationContext();
+  // console.log('existing items, that have been retrieved from the db.');
 
-  console.log(items);
-  console.log('new items, that have been created on the frontend yet not yet saved.')
-  console.log(newItems);
-  console.log('the role');
-  console.log(role);
+  // console.log(items);
+  // console.log('new items, that have been created on the frontend yet not yet saved.')
+  // console.log(newItems);
+  // console.log('the role');
+  // console.log(role);
   const [returnItems, setReturnItems] = useState([]);
 
   useEffect(() => {
@@ -342,24 +387,82 @@ const useCreateItems = (items, newItems, role, itemsToRemove) => {
         return item.TeamRoleId === role.id;
       })
       .map((item, index) => {
+        console.log(item);
         return {
           id: newItems.length + index + 1,
           group: item.TeamMembershipId,
           start_time: moment(item.start),
           end_time: moment(item.end),
           existingId: item.id,
+          itemProps: {
+            style: {zIndex: '100'}
+          }
         };
       });
+      const thisDatesDate = moment(daysShifts.date);
+      const unavailableItems = role.EmployeeRoles.map((employee) => {
+        
+        let addToIndex = 0;
+        // Within here we need to know the amount of days difference between
+        // When the available was created and this date that we're currently in,
+        // the item also needs to have itemProps: {style:{}} wherein we will define the background color of it
+        // unavailables should be filtered for step by day
+        let unavailables = employee.TeamMembership.Unavailables.filter(unavailable => {
+          return unavailable.day === step
+        }).map(unavailable => {
+          addToIndex++;
+          // the start of the day of the unavailable entry, this is whenever the unavailable was created
+          // we need the difference between the start of THAT day, and the start and end time
+          // so we can add the difference onto the start of THIS day.
+          let day = moment(unavailable.start).startOf('day');
+          let start = moment(thisDatesDate).add(moment(unavailable.start).diff(day));
+          let end = moment(thisDatesDate).add(moment(unavailable.end).diff(day));
+    
+          return {
+            id: shiftItems.length + newItems.length + addToIndex,
+            group: employee.TeamMembershipId,
+            start_time: start,
+            end_time: end,
+            itemProps: {
+              style: {background: 'red'}
+            }
+          }
+        });
+        return unavailables;       
+      });
+      
+      const holidayItems = orgContext.organizationData.Holidays.filter(holiday => {
+        
+        return (thisDatesDate.isBetween(moment(holiday.start), moment(holiday.end)) && holiday.approved);
+      }).map((holidayToRender, index) => {
+        return {
+          id: shiftItems.length + newItems.length + unavailableItems.length + index,
+          group: holidayToRender.TeamMembershipId,
+          start_time: thisDatesDate,
+          end_time: moment(thisDatesDate).endOf('day'),
+          itemProps: {
+            style: {
+              background: 'red'
+            }
+          } 
+        }
+      })
+      // console.log(unavailableItems.flat());
     // console.log(itemsToRemove);
     setReturnItems(
-      shiftItems.concat(newItems).filter((item) => {
+      shiftItems.concat(newItems).concat(unavailableItems.flat()).concat(holidayItems.flat()).filter((item) => {
         return !itemsToRemove.includes(item.id);
       })
     );
-  }, [newItems, items, itemsToRemove, role]);
+  }, [newItems, items, itemsToRemove, role, daysShifts, step]);
   // console.log(returnItems);
+  // console.log(returnItems)
   return returnItems;
 };
+
+const useCreateUnavailableItems = () => {
+
+}
 
 const AddShiftModal = ({
   open,

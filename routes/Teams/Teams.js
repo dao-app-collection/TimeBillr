@@ -106,4 +106,6 @@ router.post(
   permissions.checkOwnerOrManager,
   TeamRostersController.toggleComplete
 );
+// For denying/deleting/accepting holiday requests
+router.post('/holidays/requests', authorization, TeamsController.handleHolidayRequest);
 module.exports = router;
