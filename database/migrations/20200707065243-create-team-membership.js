@@ -25,6 +25,11 @@ module.exports = {
         allowNull: false,
         defaultValue: "casual",
       },
+      minimumHours: {
+        type: Sequelize.NUMBER,
+        allowNull: false,
+        defaultValue: 0,
+      },
       TeamId: {
         type: Sequelize.INTEGER,
         allowNull: false,

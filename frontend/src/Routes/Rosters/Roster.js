@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { OrganizationContext, useOrganizationContext } from "../../Context/OrganizationContext";
 import { Collapse, Card, Form, Select, Button } from "antd";
 
+import AddShiftModal from './AddShiftModal';
 import {
   CreateRosterContainer,
   ColumnContainer,
@@ -21,6 +22,8 @@ import useSelectedDaysShift from "./Hooks/useSelectedDaysShift";
 import styled from "styled-components";
 import apiClient from "../../config/axios";
 import { useAlert } from "react-alert";
+import { DeleteOutlined } from "@ant-design/icons";
+import useCreateItems from "./Hooks/useCreateItems";
 const { Panel } = Collapse;
 const { Option } = Select;
 
@@ -35,14 +38,19 @@ const Roster = () => {
   const alert = useAlert();
   const roster = useRoster();
   const [step, setStep] = useState(0);
+  // will return the shifts of the current roster day
   const selectedDaysShift = useSelectedDaysShift(roster, step);
   const orgContext = useContext(OrganizationContext);
   const rosterContext = useRosterContext();
   const [roles, setRoles] = useState([]);
-
+  // an array of shifts, with the role, teammembership and daysshifts ID.
+  // has the start and end time of the shift as well.
   const [shiftsToSubmit, setShiftsToSubmit] = useState([]);
+  // an array of objects with a single property id, which is the id of the shift in the db.
   const [shiftsToDelete, setShiftsToDelete] = useState([]);
   const [sending, setSending] = useState(false);
+
+  console.log(selectedDaysShift);
 
   const changeStep = async (newStep) => {
     // console.log(newStep);
@@ -68,8 +76,9 @@ const Roster = () => {
     setSending(true);
     let returnPromise = new Promise(async (resolve, reject) => {
       // console.log(shiftsToSubmit);
+      console.warn(shiftsToSubmit);
       const shiftsWithMomentsFormatted = shiftsToSubmit.map((shift) => {
-        // console.log(shift);
+        console.log(shift);
         return {
           TeamMembershipId: shift.group,
           TeamRoleId: shift.TeamRoleId,
@@ -85,10 +94,14 @@ const Roster = () => {
             shifts: shiftsWithMomentsFormatted,
             shiftsToDelete: shiftsToDelete,
             TeamId: orgContext.organizationData.id,
+            DaysShiftId: roster.id,
           }
         );
         if (res.status === 200) {
-          alert.show(res.data.success, {
+          console.log(res.data);
+          
+          rosterContext.updateDaysShift(res.data);
+          alert.show('Shifts Saved Successfully', {
             type: "success",
           });
           setShiftsToDelete([]);
@@ -112,25 +125,80 @@ const Roster = () => {
     setSending(false);
     return returnPromise;
   };
+  // called each time a new shift is created on the timeline,
+  // this prepares the shifts for submitting to the DB,
+  const saveShifts = (newShift, shiftsToRemove) => {
+    console.log('in save shifts');
+    console.log(newShift);
+    // if the shift that is being saved, has the property .existingId, it is already saved in the database.
+    // check if we have already marked it for deletion, if we have, do nothing
+    // if we haven't, add it to the array of id's that is to be deleted
+    if(newShift.existingId){
+      let tempShiftsToDeleteFromDb = shiftsToDelete;
 
-  const saveShifts = (shifts) => {
-    setShiftsToSubmit(shiftsToSubmit.concat(shifts));
-  };
-
-  const removeShifts = (shifts) => {
-    let temp = shiftsToDelete;
-    if (shifts.existingId) {
-      // console.log(selectedDaysShift);
-      // console.log(shifts);
-
-      let shift = selectedDaysShift.Shifts.filter((shift) => {
-        return shift.id === shifts.existingId;
+      let alreadyMarkedForDeletion = tempShiftsToDeleteFromDb.find(shift => {
+        return shift.id === newShift.existingId
       });
-      // console.log(shift);
-      temp = temp.concat(shift);
+      console.log(alreadyMarkedForDeletion);
+      console.log(!alreadyMarkedForDeletion);
+      if(!alreadyMarkedForDeletion){
+        tempShiftsToDeleteFromDb.push({id: newShift.existingId});
+        setShiftsToDelete(tempShiftsToDeleteFromDb);
+      }
     }
+    // console.log(shiftsToRemove);
+    
 
-    setShiftsToDelete(temp);
+    
+    
+    let tempShiftsToSubmit = shiftsToSubmit;
+    // console.warn(shiftsToRemove);
+    // console.warn(tempShiftsToSubmit);
+
+    let tempFilteredShiftsToSubmit = tempShiftsToSubmit.filter(shift => {
+      return shiftsToRemove.indexOf(shift.id) === -1;
+    });
+    if(newShift){
+      // console.log(newShift);
+      tempFilteredShiftsToSubmit.push(newShift);
+      setShiftsToSubmit(tempFilteredShiftsToSubmit);
+    } else {
+      setShiftsToSubmit(tempFilteredShiftsToSubmit);
+    }
+    // console.warn(tempFilteredShiftsToSubmit);
+
+    setShiftsToSubmit(tempFilteredShiftsToSubmit);
+  }
+
+  
+  // shifts is an array, it contains the id of all the shifts that have been created,
+  // and potentially already exist on the DB. If a shift already exists in the DB,
+  // it will have the property .existingId
+  const removeShifts = (shift) => {
+    let temp = shiftsToDelete;
+
+    if(shift.existingId){
+      let tempShiftsToDeleteFromDb = shiftsToDelete;
+
+      let alreadyMarkedForDeletion = tempShiftsToDeleteFromDb.find(shift => {
+        return shift.id === shift.existingId
+      });
+      console.log(alreadyMarkedForDeletion);
+      console.log(!alreadyMarkedForDeletion);
+      if(!alreadyMarkedForDeletion){
+        tempShiftsToDeleteFromDb.push({id: shift.existingId});
+        setShiftsToDelete(tempShiftsToDeleteFromDb);
+      }
+    }
+    
+    let tempShiftsToSubmit = shiftsToSubmit;
+    
+
+    let tempFilteredShiftsToSubmit = tempShiftsToSubmit.filter(tempShift => {
+      return shift.id !== tempShift.id;
+    });
+
+    setShiftsToSubmit(tempFilteredShiftsToSubmit);
   };
 
   return (
@@ -215,19 +283,35 @@ const RosterCalendar = ({
   const [selectedEmployee, setSelectedEmployee] = useState({});
   const [newItems, setNewItems] = useState([]);
   const [itemsToRemove, setItemsToRemove] = useState([]);
+
+  const removeItem = (item, e, time) => {
+    const temp = [...itemsToRemove];
+    temp.push(item.id);
+    // remove it from the items array, by passing it to the hook, through itemsToRemove
+    setItemsToRemove(temp);
+    // pass it up a level, IF it already exists, where it will be stored to be removed from the server on save
+    removeShifts(item);
+    // const toDeleteFromApi = items.find(item => item.id === itemId);
+    // console.warn(itemsToRemove);
+    // if(toDeleteFromApi){
+    //   removeShifts(toDeleteFromApi)
+    // }    
+  };
+
   const items = useCreateItems(
     daysShifts.Shifts,
     newItems,
     role,
     itemsToRemove,
     daysShifts,
-    step
+    step,
+    removeItem,
   );
-  // console.log(role);
-  // console.log(step);
-  // console.log(daysShifts);
 
-  useEffect(() => {}, [newItems, daysShifts]);
+  useEffect(() => {
+    console.log('new items has changed');
+    console.log(newItems);
+  }, [newItems, daysShifts]);
 
   // The 'groups' are the employees, they are shown on the LHS of the calendar
   // The group id is the TeamMembershipId,
@@ -242,48 +326,7 @@ const RosterCalendar = ({
     };
   });
 
-  // console.log(role.EmployeeRoles);
-  // These items will be shown in red, They are one the employee has specified that they are unavailable
-  const unavailableItems = role.EmployeeRoles.map((employee) => {
-    const thisDatesDate = moment(daysShifts.date);
-    // Within here we need to know the amount of days difference between
-    // When the available was created and this date that we're currently in,
-    // the item also needs to have itemProps: {style:{}} wherein we will define the background color of it
-    // unavailables should be filtered for step by day
-    let unavailables = employee.TeamMembership.Unavailables.filter(unavailable => {
-      return unavailable.day === step
-    }).map(unavailable => {
-      // console.log(unavailable.start);
-      // console.log(unavailable.end);
-      // console.log(thisDatesDate);
-      let start = moment(unavailable.start);
-      let end = moment(unavailable.end);
-      let difference = thisDatesDate.diff(start);
-      // console.log(difference);
-      // console.log(unavailable);
-      // console.log(daysShifts);
-
-      return {
-        group: employee.TeamMembershipId,
-        start_time: start.add(difference, 'ms'),
-        end_time: end.add(difference, 'ms'),
-        itemProps: {
-          style: {background: 'red'}
-        }
-      }
-    });
-    return unavailables;
-    
-    
-  });
-
-  // console.log(unavailableItems.flat())
-
-  // const newItems = [{id: 1,group: 1, start_time: moment(daysShifts.date),end_time: moment(daysShifts.date).add(3, 'h')}];
-
-  // console.log(groups);
-
-  // const newItems = [];
+  
   const selectUser = (employee) => {
     toggleModal(null, employee);
   };
@@ -300,46 +343,107 @@ const RosterCalendar = ({
   };
 
   const addItem = (item) => {
-    // console.log(daysShifts);
-    // console.log(item);
+    
+    console.log(newItems);
     let temp = [...newItems];
-    temp.push({
-      id: newItems.length + 1,
+    let newItem = {
+      id: items.length,
       group: item.id,
       start_time: moment(item.shiftStart),
       end_time: moment(item.shiftEnd),
       TeamRoleId: role.id,
       DaysShiftId: daysShifts.id,
-      canMove: false,
+      canMove: true,
+      canResize: true,
+      onDelete: removeItem,
       itemProps: {
         onDoubleClick: () => {console.log('you double clicked')},
         style: {zIndex: '100'}
       }
-    });
+    };
+
+    temp.push(newItem);
     // console.log(temp);
-    saveShifts(temp);
+    saveShifts(newItem, itemsToRemove);
     setNewItems(temp);
 
     // console.log(newItems);
   };
 
-  const removeItem = (itemId, e, time) => {
-    const temp = [...itemsToRemove];
-    temp.push(itemId);
-    // remove it from the items array, by passing it to the hook, through itemsToRemove
-    setItemsToRemove(temp);
-    // pass it up a level, IF it already exists, where it will be stored to be removed from the server on save
+  
 
-    removeShifts(
-      items.find((item) => {
-        return item.id === itemId;
-      })
-    );
-    // console.log(itemId);
-    // console.log(e);
-    // console.log(time);
+  const handleItemResize = (itemId, time, edge) => {
+    console.log('in handle item resize');
+    let item = items.filter(item => {
+      return item.id === itemId
+    })[0];
+
+
+
+    // console.log(item);
+    // removeItem(itemId);
+    let newItemsToRemove = [...itemsToRemove];
+    newItemsToRemove.push(itemId);
+    // removeShifts(item);
+    // first, delete the old item.
+    let newItem = Object.assign({}, item, {
+      id: items.length + itemsToRemove.length,
+      start_time: edge === 'left' ? moment(time) : item.start_time,
+      end_time: edge === 'left' ? item.end_time : moment(time)
+    });
+    // console.log(newItem);
+    let temp = [...newItems];
+    temp.push(newItem);
+    // console.log(temp);
+    setNewItems(temp);
+    saveShifts(newItem, newItemsToRemove);
+    setItemsToRemove(newItemsToRemove);
+    // addItem(newItem);
+    // then, create a new item.
+  }
+  
+  const handleItemMove = (itemId, dragTime, newGroupOrder) => {
+    console.log('in handle item move');
+    // console.log(newGroupOrder);
+    // console.log(dragTime);
+    // setItemsToRemove([]);
+    // console.log(itemsToRemove);
+    let item = items.filter(item => {
+      return item.id === itemId
+    })[0];
+
+    console.log(groups);
+    console.log(newGroupOrder);
+
+
+
+    // console.log(item);
+    // removeItem(itemId);
+    // console.log(itemsToRemove);
+    // console.log([...itemsToRemove]);
+    let newItemsToRemove = [...itemsToRemove];
+    newItemsToRemove.push(itemId);
+    // console.log(newItemsToRemove);
+    // removeShifts(item);
+    // first, delete the old item.
+    console.log(newItems);
+    let newItem = Object.assign({}, item, {
+      id: items.length + newItemsToRemove.length,
+      group: groups[newGroupOrder].id,
+      start_time: moment(dragTime),
+      end_time: moment(dragTime + (  item.end_time.valueOf()- item.start_time.valueOf()))
+    });
+    console.log(newItem);
+    let temp = [...newItems];
+    
+    temp.push(newItem);
+    console.log(temp);
+    // console.log(temp);
+    saveShifts(newItem, newItemsToRemove);
+    setNewItems(temp);
+    setItemsToRemove(newItemsToRemove);
   };
-  // console.log(moment(daysShifts.date))
+  console.log(items);
   return (
     <CreateRosterContainer>
       <ColumnContainer>
@@ -350,8 +454,11 @@ const RosterCalendar = ({
       <Timeline
         groups={groups}
         items={items}
+        itemRenderer={itemRenderer}
         visibleTimeStart={moment(daysShifts.date)}
         visibleTimeEnd={moment(daysShifts.date).add(1, "d")}
+        onItemResize={handleItemResize}
+        onItemMove={handleItemMove}
         // onItemClick={removeItem}
       />
       {addShiftModal ? (
@@ -368,228 +475,41 @@ const RosterCalendar = ({
   );
 };
 
-// newItems are the unsaved shifts that have just been created, items are the currently existing saved shifts.
-const useCreateItems = (items, newItems, role, itemsToRemove, daysShifts, step) => {
-  const orgContext = useOrganizationContext();
-  // console.log('existing items, that have been retrieved from the db.');
 
-  // console.log(items);
-  // console.log('new items, that have been created on the frontend yet not yet saved.')
-  // console.log(newItems);
-  // console.log('the role');
-  // console.log(role);
-  const [returnItems, setReturnItems] = useState([]);
 
-  useEffect(() => {
-    // console.log(items);
-    const shiftItems = items
-      .filter((item) => {
-        return item.TeamRoleId === role.id;
-      })
-      .map((item, index) => {
-        console.log(item);
-        return {
-          id: newItems.length + index + 1,
-          group: item.TeamMembershipId,
-          start_time: moment(item.start),
-          end_time: moment(item.end),
-          existingId: item.id,
-          itemProps: {
-            style: {zIndex: '100'}
-          }
-        };
-      });
-      const thisDatesDate = moment(daysShifts.date);
-      const unavailableItems = role.EmployeeRoles.map((employee) => {
-        
-        let addToIndex = 0;
-        // Within here we need to know the amount of days difference between
-        // When the available was created and this date that we're currently in,
-        // the item also needs to have itemProps: {style:{}} wherein we will define the background color of it
-        // unavailables should be filtered for step by day
-        let unavailables = employee.TeamMembership.Unavailables.filter(unavailable => {
-          return unavailable.day === step
-        }).map(unavailable => {
-          addToIndex++;
-          // the start of the day of the unavailable entry, this is whenever the unavailable was created
-          // we need the difference between the start of THAT day, and the start and end time
-          // so we can add the difference onto the start of THIS day.
-          let day = moment(unavailable.start).startOf('day');
-          let start = moment(thisDatesDate).add(moment(unavailable.start).diff(day));
-          let end = moment(thisDatesDate).add(moment(unavailable.end).diff(day));
+
+
+const itemRenderer = ({item,
+  itemContext,
+  getItemProps,
+  getResizeProps}) => {
+    // console.log(item);
+    // console.log(itemContext);
+    // console.log(getItemProps());
+    // console.log(getResizeProps());
+
     
-          return {
-            id: shiftItems.length + newItems.length + addToIndex,
-            group: employee.TeamMembershipId,
-            start_time: start,
-            end_time: end,
-            itemProps: {
-              style: {background: 'red'}
-            }
-          }
-        });
-        return unavailables;       
-      });
-      
-      const holidayItems = orgContext.organizationData.Holidays.filter(holiday => {
-        
-        return (thisDatesDate.isBetween(moment(holiday.start), moment(holiday.end)) && holiday.approved);
-      }).map((holidayToRender, index) => {
-        return {
-          id: shiftItems.length + newItems.length + unavailableItems.length + index,
-          group: holidayToRender.TeamMembershipId,
-          start_time: thisDatesDate,
-          end_time: moment(thisDatesDate).endOf('day'),
-          itemProps: {
-            style: {
-              background: 'red'
-            }
-          } 
-        }
-      })
-      // console.log(unavailableItems.flat());
-    // console.log(itemsToRemove);
-    setReturnItems(
-      shiftItems.concat(newItems).concat(unavailableItems.flat()).concat(holidayItems.flat()).filter((item) => {
-        return !itemsToRemove.includes(item.id);
-      })
-    );
-  }, [newItems, items, itemsToRemove, role, daysShifts, step]);
-  // console.log(returnItems);
-  // console.log(returnItems)
-  return returnItems;
-};
+    const { left: leftResizeProps, right: rightResizeProps } = getResizeProps();
 
-const useCreateUnavailableItems = () => {
-
-}
-
-const AddShiftModal = ({
-  open,
-  onCancel,
-  addShift,
-  daysShifts,
-  role,
-  employee,
-}) => {
-  const [sending, setSending] = useState(false);
-  const [submittable, setSubmittable] = useState(false);
-  const [startSelected, setStartSelected] = useState(false);
-  const [startTimes, setStartTimes] = useState([]);
-  const [shiftEndTimes, setShiftEndTimes] = useState([]);
-  const [shiftStart, setShiftStart] = useState(null);
-  const [shiftEnd, setShiftEnd] = useState(null);
-  const [form] = Form.useForm();
-
-  useEffect(() => {
-    createStartTimes();
-  }, []);
-
-  useEffect(() => {
-    let shiftEnds = startTimes.filter((time) => {
-      return time.isAfter(shiftStart);
-    });
-    setShiftEndTimes(shiftEnds);
-    // console.log(shiftEnds);
-  }, [shiftStart, startTimes]);
-
-  const createStartTimes = () => {
-    const dayStart = moment(daysShifts.date);
-    const dates = [];
-    for (let i = 0; i < 96; i++) {
-      dates.push(moment(dayStart.add(15, "m")));
-    }
-    // console.log(dates);
-    setStartTimes(dates);
-  };
-
-  const onShiftStartChange = (start) => {
-    setShiftStart(start);
-    // setStartSelected(!startSelected);
-    // console.log(start);
-  };
-
-  const onShiftEndChange = (end) => {
-    setShiftEnd(end);
-  };
-
-  const onFinish = (values) => {
-    // console.log('in on finish');
-    // console.log(employee);
-    addShift({
-      id: employee.TeamMembershipId,
-      shiftStart: values.shiftStart,
-      shiftEnd: values.shiftEnd,
-    });
-  };
-
-  // console.log(daysShifts);
-
-  // console.log(open);
-  if (open) {
-    // console.log(employee);
-    // console.log(role);
-    const user = employee.TeamMembership.User;
     return (
-      <Modal
-        title={role.title + ": " + user.firstName + " " + user.lastName}
-        visible={open}
-        onCancel={onCancel}
-        // onOk={onFinish}
-        footer={[
-          <ButtonWithSpinner
-            sending={sending}
-            form={"shift-times"}
-            innerHtml={"Add Shift"}
-            submittable={shiftEnd && shiftStart}
-          />,
-        ]}
+    <div {...getItemProps(item.itemProps)}>
+      {itemContext.useResizeHandle ? <div {...leftResizeProps} /> : ''}
+
+      <div
+        className="rct-item-content"
+        style={{ maxHeight: `${itemContext.dimensions.height}` }}
       >
-        <Form
-          form={form}
-          onFinish={onFinish}
-          name="shiftTimes"
-          id="shift-times"
-        >
-          <Form.Item
-            name="shiftStart"
-            label="Shift Start Time"
-            extra="Enter the time this shift will start"
-            rules={[{ required: true }]}
-          >
-            <Select defaultActiveFirstOption onChange={onShiftStartChange}>
-              {startTimes.map((date) => (
-                <Option value={date.toString()} key={date.toString()}>
-                  {date.format("HH:mm:SS")}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="shiftEnd"
-            label="Shift End Time"
-            extra="Enter the time this shift will finish"
-            rules={[{ required: true }]}
-          >
-            <Select
-              defaultActiveFirstOption
-              onChange={onShiftEndChange}
-              disabled={!shiftStart}
-            >
-              {shiftEndTimes.map((date) => (
-                <Option value={date.toString()} key={date.toString()}>
-                  {date.format("HH:mm:SS")}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    );
-  } else {
-    return null;
-  }
+        {itemContext.title}
+      </div>
+      
+
+      {itemContext.useResizeHandle ? <div {...rightResizeProps} /> : ''}
+      {itemContext.selected && item.type !== 'unavailable' ? <div style={{position: 'absolute', top: '0', right: '0', maxHeight: `${itemContext.dimensions.height}`, zIndex: '101'}}><DeleteOutlined onClick={() => {item.onDelete(item)}}/> </div>: null}
+    </div>
+  )
 };
+
+
 
 const EmployeeCard = ({ employee, selectUser }) => {
   const user = employee.TeamMembership.User;
@@ -602,8 +522,9 @@ const EmployeeCard = ({ employee, selectUser }) => {
     <Card
       title={user.firstName + " " + user.lastName}
       hoverable={true}
-      style={{ width: "200px" }}
+      style={{ width: "200px", margin: '0 4px 8px 0' }}
       onClick={onSelect}
+      
     />
   );
 };

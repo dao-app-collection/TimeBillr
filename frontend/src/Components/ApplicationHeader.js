@@ -20,10 +20,6 @@ const adminKeys = [
   icon: null,
   title: 'Team',
 }, {
-  key: 'reports',
-  icon: null,
-  title: 'Reports',
-}, {
   key: 'settings',
   icon: null,
   title: 'Settings',

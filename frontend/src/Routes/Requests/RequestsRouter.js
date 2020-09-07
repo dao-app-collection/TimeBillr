@@ -5,6 +5,7 @@ import { useOrganizationContext } from '../../Context/OrganizationContext';
 import { CenteredContainer } from '../../styled-components/styled';
 import {Badge} from 'antd';
 import Pending from './Pending';
+import Approved from './Approved';
 
 
 const keys = [
@@ -65,7 +66,7 @@ const RequestsRouter = () => {
                 <Pending />
             </Route>
             <Route path='/app/:teamId/requests/approved'>
-                
+                <Approved />
             </Route>
             <Route path='/app/:teamId/requests/denied'>
                 

@@ -6,6 +6,7 @@ import TeamRouter from "./Team/TeamRouter";
 import RostersRouter from "./Rosters/RostersRouter";
 import { Layout } from "antd";
 import Home from "./Home/Home";
+import RosterProvider from "../Context/RosterContext";
 import EmployeeRoutes from "./EmployeeRoutes/EmployeeRoutes";
 import RequestsRouter from "./Requests/RequestsRouter";
 
@@ -37,6 +38,7 @@ const AppRouter = () => {
     console.log(orgContext.userTeamMembership);
     return (
       <>
+      <RosterProvider>
         <ApplicationHeader userType={'admin'}/>
         <Layout.Content style={{ backgroundColor: "white" }}>
           <Switch>
@@ -48,9 +50,6 @@ const AppRouter = () => {
             </Route>
             <Route path="/app/:teamId/team">
               <TeamRouter />
-            </Route>
-            <Route path="/app/:teamId/reports">
-              <div>reports</div>
             </Route>
             <Route path="/app/:teamId/invoices">
               <div>invoices</div>
@@ -64,6 +63,7 @@ const AppRouter = () => {
             <Route path="/app/:teamId"></Route>
           </Switch>
         </Layout.Content>
+        </RosterProvider>
       </>
     );
     // This leads to the employee part of the app, where a user can view their shifts, change their availibilites,

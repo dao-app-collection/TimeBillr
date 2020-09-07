@@ -75,7 +75,7 @@ const EmployeeController = {
                     where: {TeamMembershipId: TeamMembershipId}
                 });
                 // remove all existing availabilities.
-                const deleted = await Promise.all(existingAvailabilities.map(existing => {
+                const deleted = await Promise.all(existingAvailabilities.map( async existing => {
                     return await existing.destroy();
                 }));
                 if(Sunday){
@@ -140,7 +140,7 @@ const EmployeeController = {
                         TeamId: TeamId,
                         TeamMembershipId: TeamMembershipId,
                     })
-                }
+                };
                 res.status(200).send({success: 'Availabilities updated'});
             })
             

@@ -8,7 +8,6 @@ const ButtonWithSpinner = ({
   submittable = true,
   onSubmit,
 }) => {
-  console.log(sending);
   return (
     <>
       {sending ? (

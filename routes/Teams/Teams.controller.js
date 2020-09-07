@@ -218,7 +218,7 @@ module.exports = {
 
   async membersEdit(req, res, next) {
     const permissions = req.permissions;
-    const { employee, values, TeamId } = req.body;
+    const { employee, values, TeamId} = req.body;
     console.log(permissions);
     console.log("------this is the member-----");
     console.log(req.body);
@@ -229,6 +229,7 @@ module.exports = {
           let user = await db.TeamMembership.findOne({
             where: { UserId: employee.id, TeamId: parseInt(TeamId) },
           });
+          user.minimumHours = values.minimumHours ? values.minimumHours : 0;
           user.permissions = values.permissions.toLowerCase();
           user.employmentType = values.employmentType;
 

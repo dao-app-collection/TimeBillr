@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Collapse, List, Button, Modal, Form, Radio, Select } from "antd";
+import { Collapse, List, Button, Modal, Form, Radio, Select, Input } from "antd";
 
 import { CenteredContainer } from "../../styled-components/styled";
 import ButtonWithSpinner from "../../Components/ButtonWithSpinner";
@@ -204,6 +204,17 @@ const EditEmployeeModal = ({
               <Option value="part-time">Part Time</Option>
               <Option value="casual">Casual</Option>
             </Select>
+          </Form.Item>
+          <Form.Item
+            name='minimumHours'
+            label='Required Hours / Week'
+            extra={`How many hours has this employee agreed to work? We will track and let you know if this isn't met`}
+            rules={[{required: false}]}
+            
+          >
+            <Input type={'number'} defaultValue={employee.minimumHours} />             
+
+            
           </Form.Item>
         </Form>
       </Modal>

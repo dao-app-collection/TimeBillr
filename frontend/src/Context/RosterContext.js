@@ -39,11 +39,40 @@ const RosterProvider = (props) => {
     setRosterData(rosterCopy);
   };
 
+  const updateDaysShift = (DaysShifts) => {
+    console.log(rosterData);
+    console.log(DaysShifts);
+    let rosterDataIndex = 0;
+    let Roster = rosterData.filter((roster, index) => {
+      if(roster.id === DaysShifts.RosterId){
+        rosterDataIndex = index;
+      }
+      return roster.id === DaysShifts.RosterId;
+    })[0];
+    let daysshiftsindex = 0;
+    let ExistingDaysShifts = Roster.DaysShifts.filter((daysshifts, index) => {
+      if(daysshifts.day === DaysShifts.day){
+        daysshiftsindex = index;
+      }
+      return daysshifts.day === DaysShifts.day
+    })[0];
+
+    let tempRosters = rosterData;
+
+    tempRosters[rosterDataIndex].DaysShifts[daysshiftsindex] = DaysShifts;
+
+    console.log(tempRosters);
+    setRosterData(tempRosters);
+
+    console.log(Roster);
+  }
+
   const value = useMemo(
     () => ({
       rosterData,
       setRosterData,
       addNewRoster,
+      updateDaysShift,
     }),
     [rosterData]
   );

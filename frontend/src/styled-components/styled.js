@@ -26,5 +26,5 @@ export const CreateRosterContainer = styled.div`
 
 export const ColumnContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 `;

@@ -192,6 +192,7 @@ const TeamRostersController = {
   async addShifts(req, res, next) {
     const TeamId = req.params.teamId;
     const permissions = req.permissions;
+    const DaysShiftId = req.body.DaysShiftId;
     const shifts = req.body.shifts;
     const shiftsToDelete = req.body.shiftsToDelete;
 
@@ -220,7 +221,14 @@ const TeamRostersController = {
           );
         });
         if (result) {
-          res.status(200).send({ success: "Shifts saved successfully" });
+          console.log()
+          const returnShifts = await db.DaysShift.findOne({where: {id: DaysShiftId },
+          include: [
+            {
+              model: db.Shift,
+            }
+          ]})
+          res.status(200).json(returnShifts);
         } else {
           throw new ErrorHandler(400, "Could not save shifts - try again");
         }
