@@ -1,0 +1,12 @@
+Add copy from DAY of this roster.
+So you could choose to copy from yesterday for example
+
+Add automatic group reordering.
+Or groups automatically order when you create, 
+Then there is a button to reorder shifts when you want.
+
+Perhaps a button to reorder groups to alphebetic order?
+
+Add a way to complete a days roster, so you put in each employees end time
+
+A way to print rosters.

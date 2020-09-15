@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       permissions: DataTypes.STRING,
       employmentType: DataTypes.STRING,
-      minimumHours: DataTypes.NUMBER,
+      minimumHours: DataTypes.INTEGER,
     },
     {
       sequelize,

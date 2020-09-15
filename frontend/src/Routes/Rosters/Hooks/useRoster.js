@@ -11,7 +11,9 @@ const useRoster = () => {
     const daysRoster = rosterContext.rosterData.filter((roster) => {
       return roster.id === rosterId;
     });
-
+    console.log('in use roster');
+    console.log(rosterContext);
+    console.log(daysRoster);
     setRoster(daysRoster);
   }, [rosterId, rosterContext.rosterData]);
 

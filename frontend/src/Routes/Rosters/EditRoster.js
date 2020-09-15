@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import moment from "moment";
 import styled from "styled-components";
 import { CenteredContainer } from "../../styled-components/styled";
-import { Typography, Divider, Card, Modal, Button, Table } from "antd";
+import { Typography, Divider, Card, Modal, Button, Table, Collapse } from "antd";
 import apiClient from "../../config/axios";
 import { OrganizationContext, useOrganizationContext } from "../../Context/OrganizationContext";
 
@@ -11,6 +11,7 @@ import { useHistory, Link } from "react-router-dom";
 import { useRosterContext } from "../../Context/RosterContext";
 import useWeekSplit from './Hooks/useWeekSplit';
 
+const {Panel} = Collapse;
 const { Meta } = Card;
 const { Title } = Typography;
 
@@ -111,19 +112,39 @@ const columns = [
     title: 'Total Hours',
     dataIndex: 'totalHours'
     },
+];
+
+const employeeColumns = [
+  {
+    title: 'Name',
+    dataIndex: 'name'
+  },
+  {
+    title: 'Rostered Hours',
+    dataIndex: 'hours'
+  },
+  {
+    title: 'Required Hours',
+    dataIndex: 'requiredHours'
+  },
+  {
+    title: 'Difference',
+    dataIndex: 'difference'
+  }
 ]
 
 const RosterSummaryModal = ({roster, closeModal}) => {
   console.log(roster);
   const history = useHistory();
   const orgContext = useOrganizationContext();
-  const data = useCreateTotalCostData(roster);
-
-  // const data = [{
+  const costData = useCreateTotalCostData(roster);
+  const employeeData = useCreateTotalEmployeeHours(roster);
+  console.log(employeeData);
+  // const costData = [{
   //   key: 0, role: 'fuck', totalHours: 0, fullTime: 0, partTime: 0,
   //   casual: 0, horizontaltotal: 0,
   // }]
-  console.log(data);
+  // console.log(costData);
   const editRoster = () => {
     history.push(`/app/${orgContext.organizationData.id}/rosters/${roster.id}`)
   }
@@ -138,12 +159,14 @@ const RosterSummaryModal = ({roster, closeModal}) => {
         <Button type='danger'>Delete</Button>
       ]}
       >
-        <Table
+        <Collapse>
+          <Panel header={'Cost Summary'}>
+          <Table
           columns={columns}
-          dataSource={data}
+          dataSource={costData}
           pagination={false}
           summary={pageData => {
-            console.log(pageData);
+            // console.log(pageData);
             let fullTimeCost = 0;
             let partTimeCost = 0;
             let casualCost = 0;
@@ -153,7 +176,7 @@ const RosterSummaryModal = ({roster, closeModal}) => {
               partTimeCost += (parseFloat(data.partTime) * parseFloat(data.partTimeRate));
               casualCost += (parseFloat(data.casual) * parseFloat(data.casualRate));
             });
-            console.log(fullTimeCost)
+            // console.log(fullTimeCost)
             return (
               <>
                 <Table.Summary.Row style={{background: '#fafafa'}}>
@@ -168,12 +191,72 @@ const RosterSummaryModal = ({roster, closeModal}) => {
             )
           }}
         ></Table>
+
+          </Panel>
+        </Collapse>
+        
+        <Collapse>
+          <Panel header={'Employee Hours Summary'}>
+            <Table 
+              columns={employeeColumns}
+              dataSource={employeeData}
+              pagination
+            ></Table>
+          </Panel>
+        </Collapse>
+        
       </Modal>
     )
   } else {
     return null;
   }
 };
+
+function msToHours(ms){
+  return (ms / (1000 * 60 * 60)).toFixed(1);
+};
+function hoursToMs(hrs){
+  return (hrs * 60 * 60 * 1000);
+}
+const useCreateTotalEmployeeHours = (roster) => {
+  const [data, setData] = useState([]);
+  const orgContext = useOrganizationContext();
+  const teamMembers = orgContext.organizationData.TeamMemberships;
+  // console.log(teamMembers);
+
+  useEffect(() => {
+    const teamMemberships = teamMembers.map(member => {
+      console.log(member.User);
+      let name = member.User.firstName + " " + member.User.lastName;
+      return {id: member.id, employmentType: member.employmentType, minimumHours: member.minimumHours, name: name}
+    });
+    let tempData = [];
+    teamMemberships.forEach((member, index) => {
+      let rostered = 0;
+      let row = {name: member.name, requiredHours: member.minimumHours}
+      roster.DaysShifts.forEach(daysshift => {
+        // console.log(daysshift);
+        daysshift.Shifts.forEach(shift => {
+          if(shift.TeamMembershipId === member.id){
+            let start = moment(shift.start);
+            let end = moment(shift.end);
+            let duration = end.diff(start);
+            rostered += duration;
+          }
+          
+          
+        })
+      });
+      row.hours = msToHours(rostered);
+      row.difference = msToHours(rostered - hoursToMs(row.requiredHours));
+      tempData.push(row);
+    });
+    tempData.sort((a, b) => {return a.difference - b.difference});
+    setData(tempData);
+  }, [roster, teamMembers]);
+
+  return data;
+}
 
 const useCreateTotalCostData = (roster) => {
   // data is an array of objects, each object contains keys corresponding to the dataIndex
@@ -185,18 +268,16 @@ const useCreateTotalCostData = (roster) => {
   const teamRoles = orgContext.organizationData.TeamRoles;
   const teamMembers = orgContext.organizationData.TeamMemberships;
 
-  console.log(orgContext);
-  console.log(teamRoles);
-  console.log(teamMembers);
-  function msToHours(ms){
-    return (ms / (1000 * 60 * 60)).toFixed(1);
-  }
+  // console.log(orgContext);
+  // console.log(teamRoles);
+  // console.log(teamMembers);
+  
   useEffect(() => {
     let teamMemberships = teamMembers.map(member => {
       return {id: member.id, employmentType: member.employmentType,}
     });
     let tempData = [];
-    console.log(teamRoles);
+    // console.log(teamRoles);
     teamRoles.forEach((teamRole, index) => {
       let role = teamRole.title;
       let totalHours = 0;
@@ -207,9 +288,9 @@ const useCreateTotalCostData = (roster) => {
       let casual = 0;
       let casualRate = teamRole.casualRate;
       let horizontaltotal = 0;
-      console.log(roster);
+      // console.log(roster);
       roster.DaysShifts.forEach(daysshift => {
-        console.log(daysshift);
+        // console.log(daysshift);
         daysshift.Shifts.forEach(shift => {
           if(shift.TeamRoleId === teamRole.id){
             let member = teamMemberships.find(member => {return member.id === shift.TeamMembershipId});
@@ -243,8 +324,8 @@ const useCreateTotalCostData = (roster) => {
 
     });
     setData(tempData);
-  }, [teamRoles, teamMembers]);
-  console.log(data);
+  }, [teamRoles, teamMembers, roster]);
+  // console.log(data);
   return data;
 };
 

@@ -10,6 +10,7 @@ import {
 import OrganizationSelectOrCreate from "../OrganizationSelectOrCreate/OrganizationSelectOrCreate";
 import AppRouter from "../Routes/AppRouter";
 import Invitation from "../Routes/Invitation/Invitation";
+import Footer from "../Components/Footer";
 
 const Skeleton = () => {
   
@@ -34,11 +35,7 @@ const Skeleton = () => {
         </Route>
       </Switch>
 
-      <Layout.Footer
-        style={{ textAlign: "center", position: "sticky", bottom: "0" }}
-      >
-        TimeBiller &copy;2020 Clinnygee
-      </Layout.Footer>
+      <Footer />
     </Layout>
   );
 };

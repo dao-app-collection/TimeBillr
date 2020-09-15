@@ -19,6 +19,7 @@ const RosterProvider = (props) => {
   const orgContext = useContext(OrganizationContext);
   const [rosterData, setRosterData] = useState({});
   const [loading, setLoading] = useState(true);
+  // const [value, setValue] = useState();
 
   useEffect(() => {
     apiClient
@@ -57,7 +58,7 @@ const RosterProvider = (props) => {
       return daysshifts.day === DaysShifts.day
     })[0];
 
-    let tempRosters = rosterData;
+    let tempRosters = [...rosterData];
 
     tempRosters[rosterDataIndex].DaysShifts[daysshiftsindex] = DaysShifts;
 
@@ -65,7 +66,14 @@ const RosterProvider = (props) => {
     setRosterData(tempRosters);
 
     console.log(Roster);
-  }
+  };
+
+  // useEffect(() => {
+
+  // });
+  useEffect(() => {
+    console.log('roster data has changed in roster context');
+  }, [rosterData])
 
   const value = useMemo(
     () => ({
@@ -74,7 +82,7 @@ const RosterProvider = (props) => {
       addNewRoster,
       updateDaysShift,
     }),
-    [rosterData]
+    [rosterData,]
   );
   if (loading) {
     return (

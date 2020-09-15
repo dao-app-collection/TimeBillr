@@ -126,6 +126,11 @@ module.exports = {
           },
           {
             model: db.TeamSettings,
+            include: [
+              {
+                model: db.OpeningHours
+              }
+            ]
           },
         ],
       });
@@ -138,24 +143,32 @@ module.exports = {
     }
   },
   // creates a new organization, with the creator as a Member with permissions Owner
+  // currently untested
   async create(req, res) {
     const { name, description } = req.body;
 
     try {
       console.log(req.userId);
       const result = await db.sequelize.transaction(async (t) => {
-        newTeam = await db.Team.create({
+        let newTeam = await db.Team.create({
           name: name,
           description: description,
         });
         console.log(newTeam.dataValues.id);
 
-        newMembership = await db.TeamMembership.create({
+        let newMembership = await db.TeamMembership.create({
           permissions: "owner",
           TeamId: newTeam.dataValues.id,
           UserId: req.userId,
           employmentType: "full-time",
         });
+        let defaultSettings = await db.TeamSettings.create({shiftReminders:true, TeamId: newTeam.dataValues.id});
+
+        let days = [0, 1, 2, 3, 4, 5, 6];
+
+        let defaultOpeningHours = await Promise.all(days.map(async day => {
+          return db.OpeningHours.create({day: day, open: 32400000,close: 32400000,})
+        }))
         console.log(newMembership);
         return newTeam;
       });
@@ -250,6 +263,42 @@ module.exports = {
         );
       }
     }
+  },
+  async updateSettings(req,res,next){
+    const {TeamId, openingTimes, reminders} = req.body;
+    console.log(openingTimes);
+    console.log(reminders);
+
+    try {
+      let teamSettings = await db.TeamSettings.findOne({where: {TeamId: TeamId}});
+      if(!teamSettings){
+        teamSettings = await db.TeamSettings.create({shiftReminders: reminders, TeamId: TeamId})
+      }
+      const result = await db.sequelize.transaction(async t => {
+        console.log(teamSettings);
+        teamSettings.shiftReminders = reminders;
+        await teamSettings.save();
+        const openings = await db.OpeningHours.findAll({where: {TeamSettingId: teamSettings.dataValues.id}});
+
+        const deleted = await Promise.all(openings.map(async opening => {
+          return opening.destroy();
+        }));
+        let newOpenings = [];
+        for(let i = 0; i < 7; i++){
+          console.log(openingTimes[i]);
+          let newOpening = await db.OpeningHours.create({TeamSettingId: teamSettings.dataValues.id, open: openingTimes[i].open, close: openingTimes[i].close, day: i});
+          newOpenings.push(newOpening);
+        };
+        return newOpenings;
+      })
+      if(result){
+        res.status(200).send({message: 'Settings Updated'});
+      }
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler(400, 'Could not update settings')
+    }
+    
   },
   // Sends information on a memmbership request,
   // This route is hit when a membership email request is sent,

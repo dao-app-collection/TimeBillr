@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="EzRoster_logo.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="400"
+     inkscape:cy="560"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1025"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       id="path10"
+       cx="104.69939"
+       cy="121.99702"
+       rx="74.461304"
+       ry="67.657738"
+       style="fill:#ff6600;stroke-width:0.26458332" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot12"
+       style="font-style:normal;font-weight:normal;font-size:133.33333501px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;"
+       transform="scale(0.26458333)"><flowRegion
+         id="flowRegion14"
+         style="font-size:133.33333501px;"><rect
+           id="rect16"
+           width="291.42856"
+           height="120"
+           x="282.85715"
+           y="353.94824"
+           style="font-size:133.33333501px;" /></flowRegion><flowPara
+         id="flowPara18">EZ</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot20"
+       style="fill:black;fill-opacity:1;line-height:1.25;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:96px;letter-spacing:0px;word-spacing:0px;"><flowRegion
+         id="flowRegion22"
+         style="font-size:96px;"><rect
+           id="rect24"
+           width="354.28571"
+           height="165.71428"
+           x="231.42857"
+           y="311.09113"
+           style="font-size:96px;" /></flowRegion><flowPara
+         id="flowPara26"></flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:50.79999924px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="67.27977"
+       y="126.91071"
+       id="text30"><tspan
+         sodipodi:role="line"
+         id="tspan28"
+         x="67.27977"
+         y="126.91071"
+         style="font-size:50.79999924px;fill:#ffffff;stroke-width:0.26458332">EZ</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot32"
+       style="font-style:normal;font-weight:normal;font-size:96.00000121px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;"
+       transform="scale(0.26458333)"><flowRegion
+         id="flowRegion34"
+         style="font-size:96.00000121px;"><rect
+           id="rect36"
+           width="391.42856"
+           height="88.571426"
+           x="214.28572"
+           y="453.94824"
+           style="font-size:96.00000121px;" /></flowRegion><flowPara
+         id="flowPara38">ROSTER</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:25.39999962px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="52.916664"
+       y="155.63692"
+       id="text42"><tspan
+         sodipodi:role="line"
+         id="tspan40"
+         x="52.916664"
+         y="155.63692"
+         style="fill:#ffffff;stroke-width:0.26458332">ROSTER</tspan></text>
+  </g>
+</svg>

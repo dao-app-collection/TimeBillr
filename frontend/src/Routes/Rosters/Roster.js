@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { OrganizationContext, useOrganizationContext } from "../../Context/OrganizationContext";
-import { Collapse, Card, Form, Select, Button } from "antd";
+import { Collapse, Card, Form, Select, Button, Switch, Spin } from "antd";
 
 import AddShiftModal from './AddShiftModal';
 import {
@@ -12,7 +12,7 @@ import moment from "moment";
 
 import RosterSteps from "./RosterSteps";
 import ButtonWithSpinner from "../../Components/ButtonWithSpinner";
-import Timeline from "react-calendar-timeline";
+import Timeline, {DateHeader, TimelineMarkers, CustomMarker} from "react-calendar-timeline";
 import "react-calendar-timeline/lib/Timeline.css";
 import { useRosterContext } from "../../Context/RosterContext";
 import Modal from "antd/lib/modal/Modal";
@@ -23,7 +23,9 @@ import styled from "styled-components";
 import apiClient from "../../config/axios";
 import { useAlert } from "react-alert";
 import { DeleteOutlined } from "@ant-design/icons";
-import useCreateItems from "./Hooks/useCreateItems";
+import useCreateItemsAndGroups from "./Hooks/useCreateItemsAndGroups";
+import useCreateStartAndEnd from "./Hooks/useCreateStartAndEnd";
+import CloneModal from "./CloneModal";
 const { Panel } = Collapse;
 const { Option } = Select;
 
@@ -34,12 +36,18 @@ const ButtonContainer = styled.div`
   justify-content: center;
 `;
 
+const buttonStyles = {
+  margin: '0px 4px'
+}
+
 const Roster = () => {
   const alert = useAlert();
   const roster = useRoster();
   const [step, setStep] = useState(0);
   // will return the shifts of the current roster day
   const selectedDaysShift = useSelectedDaysShift(roster, step);
+  console.log(roster);
+  console.log(selectedDaysShift);
   const orgContext = useContext(OrganizationContext);
   const rosterContext = useRosterContext();
   const [roles, setRoles] = useState([]);
@@ -49,8 +57,10 @@ const Roster = () => {
   // an array of objects with a single property id, which is the id of the shift in the db.
   const [shiftsToDelete, setShiftsToDelete] = useState([]);
   const [sending, setSending] = useState(false);
+  // show/hide the clone roster modal
+  const [showCloneModal, setShowCloneModal] = useState(false);
 
-  console.log(selectedDaysShift);
+  // console.log(selectedDaysShift);
 
   const changeStep = async (newStep) => {
     // console.log(newStep);
@@ -78,7 +88,7 @@ const Roster = () => {
       // console.log(shiftsToSubmit);
       console.warn(shiftsToSubmit);
       const shiftsWithMomentsFormatted = shiftsToSubmit.map((shift) => {
-        console.log(shift);
+        // console.log(shift);
         return {
           TeamMembershipId: shift.group,
           TeamRoleId: shift.TeamRoleId,
@@ -98,7 +108,7 @@ const Roster = () => {
           }
         );
         if (res.status === 200) {
-          console.log(res.data);
+          // console.log(res.data);
           
           rosterContext.updateDaysShift(res.data);
           alert.show('Shifts Saved Successfully', {
@@ -128,8 +138,8 @@ const Roster = () => {
   // called each time a new shift is created on the timeline,
   // this prepares the shifts for submitting to the DB,
   const saveShifts = (newShift, shiftsToRemove) => {
-    console.log('in save shifts');
-    console.log(newShift);
+    // console.log('in save shifts');
+    // console.log(newShift);
     // if the shift that is being saved, has the property .existingId, it is already saved in the database.
     // check if we have already marked it for deletion, if we have, do nothing
     // if we haven't, add it to the array of id's that is to be deleted
@@ -139,8 +149,8 @@ const Roster = () => {
       let alreadyMarkedForDeletion = tempShiftsToDeleteFromDb.find(shift => {
         return shift.id === newShift.existingId
       });
-      console.log(alreadyMarkedForDeletion);
-      console.log(!alreadyMarkedForDeletion);
+      // console.log(alreadyMarkedForDeletion);
+      // console.log(!alreadyMarkedForDeletion);
       if(!alreadyMarkedForDeletion){
         tempShiftsToDeleteFromDb.push({id: newShift.existingId});
         setShiftsToDelete(tempShiftsToDeleteFromDb);
@@ -183,8 +193,8 @@ const Roster = () => {
       let alreadyMarkedForDeletion = tempShiftsToDeleteFromDb.find(shift => {
         return shift.id === shift.existingId
       });
-      console.log(alreadyMarkedForDeletion);
-      console.log(!alreadyMarkedForDeletion);
+      // console.log(alreadyMarkedForDeletion);
+      // console.log(!alreadyMarkedForDeletion);
       if(!alreadyMarkedForDeletion){
         tempShiftsToDeleteFromDb.push({id: shift.existingId});
         setShiftsToDelete(tempShiftsToDeleteFromDb);
@@ -200,6 +210,29 @@ const Roster = () => {
 
     setShiftsToSubmit(tempFilteredShiftsToSubmit);
   };
+
+  const toggleCloneRoster = () => {
+    setShowCloneModal(!showCloneModal);
+  };
+
+  const deleteAllShifts = async () => {
+    console.log(selectedDaysShift);
+    try {
+      const response = await apiClient.post(`teams/roster/${selectedDaysShift.id}/delete`, {
+        TeamId: orgContext.organizationData.id
+      });
+
+      if (response.status === 200){
+        alert.show('Shifts Deleted', {
+          type: "success",
+        });
+      }
+    } catch (error) {
+      alert.show(error.response.data.message, {
+        type: 'error'
+      })
+    }
+  }
 
   return (
     <>
@@ -226,9 +259,23 @@ const Roster = () => {
             innerHtml={"Save"}
             submittable={true}
           />
+          <Button 
+            danger
+            type='ghost'
+            style={buttonStyles}
+            onClick={deleteAllShifts}
+          >
+            Delete All
+          </Button>
+          <Button
+            type='ghost'
+            style={buttonStyles}
+            onClick={toggleCloneRoster}
+          >Clone From Day</Button>
         </ButtonContainer>
         <RosterComplete roster={roster} step={step} />
       </CenteredContainer>
+      <CloneModal open={showCloneModal} onCancel={toggleCloneRoster} roster={roster} step={step}/>
     </>
   );
 };
@@ -283,6 +330,16 @@ const RosterCalendar = ({
   const [selectedEmployee, setSelectedEmployee] = useState({});
   const [newItems, setNewItems] = useState([]);
   const [itemsToRemove, setItemsToRemove] = useState([]);
+  const {start, end} = useCreateStartAndEnd(daysShifts);
+  const [sortOrder, setSortOrder] = useState('start');
+
+  const [showSpinner, setShowSpinner] = useState(false);
+  
+
+  // console.log(start);
+  // console.log(end);
+
+  
 
   const removeItem = (item, e, time) => {
     const temp = [...itemsToRemove];
@@ -298,7 +355,7 @@ const RosterCalendar = ({
     // }    
   };
 
-  const items = useCreateItems(
+  const {items, groups} = useCreateItemsAndGroups(
     daysShifts.Shifts,
     newItems,
     role,
@@ -306,26 +363,25 @@ const RosterCalendar = ({
     daysShifts,
     step,
     removeItem,
+    sortOrder,
   );
 
   useEffect(() => {
-    console.log('new items has changed');
-    console.log(newItems);
+    // console.log('new items has changed');
+    // console.log(newItems);
   }, [newItems, daysShifts]);
 
   // The 'groups' are the employees, they are shown on the LHS of the calendar
   // The group id is the TeamMembershipId,
   // Items that appear next to this group, use the Id of the group.
-  const groups = role.EmployeeRoles.map((employee) => {
-    return {
-      id: employee.TeamMembershipId,
-      title:
-        employee.TeamMembership.User.firstName +
-        " " +
-        employee.TeamMembership.User.lastName,
-    };
-  });
-
+  
+  const toggleSortOrder = (checked) => {
+    if(checked){
+      setSortOrder('alphabetical')
+    } else {
+      setSortOrder('start')
+    }
+  }
   
   const selectUser = (employee) => {
     toggleModal(null, employee);
@@ -344,7 +400,7 @@ const RosterCalendar = ({
 
   const addItem = (item) => {
     
-    console.log(newItems);
+    // console.log(newItems);
     let temp = [...newItems];
     let newItem = {
       id: items.length,
@@ -443,7 +499,61 @@ const RosterCalendar = ({
     setNewItems(temp);
     setItemsToRemove(newItemsToRemove);
   };
+
+  const canvasDoubleClick = (groupId, time, e) => {
+    console.log(groupId);
+    console.log(time);
+    console.log(e);
+
+    console.log(newItems);
+    let temp = [...newItems];
+    let newItem = {
+      id: items.length,
+      group: groupId,
+      start_time: moment(time),
+      end_time: moment(time + 2 * (60 * 60 * 1000)),
+      TeamRoleId: role.id,
+      DaysShiftId: daysShifts.id,
+      canMove: true,
+      canResize: true,
+      onDelete: removeItem,
+      itemProps: {
+        
+        style: {zIndex: '100'}
+      }
+    };
+
+    temp.push(newItem);
+    // console.log(temp);
+    saveShifts(newItem, itemsToRemove);
+    setNewItems(temp);
+
+    // console.log(newItems);
+  };
+
+  useEffect(() => {
+    setShowSpinner(true);
+
+    // setTimeout(() => {
+    //   setShowSpinner(false);
+    // }, 1000);
+    // console.log('groups changed!')
+  }, [groups]);
+
+  useEffect(() => {
+    if(showSpinner){
+      setTimeout(() => {
+        setShowSpinner(false);
+      }, 700)
+    }
+  }, [showSpinner])
   console.log(items);
+  console.log(groups);
+   if(!start || !end){
+    return null;
+  } else if(showSpinner){
+    return <Spin />
+  } else{
   return (
     <CreateRosterContainer>
       <ColumnContainer>
@@ -451,16 +561,49 @@ const RosterCalendar = ({
           <EmployeeCard employee={role} selectUser={selectUser} />
         ))}
       </ColumnContainer>
+      <Switch 
+      checkedChildren='Alphabetical'
+      unCheckedChildren='Start Time'
+      style={{width: '120px', margin: '8px'}}
+      onChange={toggleSortOrder}
+      />
       <Timeline
         groups={groups}
         items={items}
         itemRenderer={itemRenderer}
+        onCanvasDoubleClick={canvasDoubleClick}
+        // visibleTimeStart={moment(start.valueOf())}
+        // visibleTimeEnd={moment(end.valueOf())}
         visibleTimeStart={moment(daysShifts.date)}
-        visibleTimeEnd={moment(daysShifts.date).add(1, "d")}
+        visibleTimeEnd={moment(daysShifts.date).add(1, 'd')}
         onItemResize={handleItemResize}
         onItemMove={handleItemMove}
         // onItemClick={removeItem}
-      />
+      >
+        <TimelineMarkers>
+          <CustomMarker date={start}>
+            {({styles, date}) => {
+              const customStyles = {
+                ...styles,
+                backgroundColor: '#c52020',
+                width: '4px'
+              }
+              return <div style={customStyles} />
+            }}
+          </CustomMarker>
+          <CustomMarker date={end} >
+          {({styles, date}) => {
+              const customStyles = {
+                ...styles,
+                backgroundColor: '#c52020',
+                width: '4px'
+              }
+              return <div style={customStyles} />
+            }}
+          </CustomMarker>
+        </TimelineMarkers>
+        <DateHeader labelFormat={'HH:mm:SS'}/>
+      </Timeline>
       {addShiftModal ? (
         <AddShiftModal
           open={addShiftModal}
@@ -469,10 +612,12 @@ const RosterCalendar = ({
           daysShifts={daysShifts}
           employee={selectedEmployee}
           role={role}
+          start={start}
+          end={end}
         />
       ) : null}
     </CreateRosterContainer>
-  );
+  );}
 };
 
 

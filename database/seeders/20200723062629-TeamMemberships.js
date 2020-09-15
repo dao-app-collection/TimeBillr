@@ -25,6 +25,24 @@ module.exports = {
           UserId: 3,
           TeamId: 1,
         },
+        {
+          permissions: "employee",
+          employmentType: "casual",
+          UserId: 4,
+          TeamId: 1,
+        },
+        {
+          permissions: "employee",
+          employmentType: "casual",
+          UserId: 5,
+          TeamId: 1,
+        },
+        {
+          permissions: "employee",
+          employmentType: "casual",
+          UserId: 6,
+          TeamId: 1,
+        },
       ],
       {}
     );

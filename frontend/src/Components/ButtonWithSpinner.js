@@ -15,7 +15,7 @@ const ButtonWithSpinner = ({
           form={form ? form : null}
           key="submit"
           htmlType="submit"
-          disabled={!submittable}
+          disabled={sending || !submittable}
         >
           <Spin />
         </Button>
@@ -25,7 +25,7 @@ const ButtonWithSpinner = ({
           form={form ? form : null}
           key="submit"
           htmlType="submit"
-          disabled={!submittable}
+          disabled={sending || !submittable}
         >
           {innerHtml}
         </Button>

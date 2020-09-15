@@ -9,6 +9,7 @@ import Home from "./Home/Home";
 import RosterProvider from "../Context/RosterContext";
 import EmployeeRoutes from "./EmployeeRoutes/EmployeeRoutes";
 import RequestsRouter from "./Requests/RequestsRouter";
+import Settings from "./Settings/Settings";
 
 const AppRouter = () => {
   const teamId = useParams().organization_id;
@@ -51,8 +52,8 @@ const AppRouter = () => {
             <Route path="/app/:teamId/team">
               <TeamRouter />
             </Route>
-            <Route path="/app/:teamId/invoices">
-              <div>invoices</div>
+            <Route path="/app/:teamId/settings">
+              <Settings />
             </Route>
             <Route path="/app/:teamId/rosters">
               <RostersRouter />

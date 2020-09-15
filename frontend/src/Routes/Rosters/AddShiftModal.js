@@ -13,6 +13,8 @@ const AddShiftModal = ({
     daysShifts,
     role,
     employee,
+    start,
+    end
   }) => {
     const [sending, setSending] = useState(false);
     const [submittable, setSubmittable] = useState(false);
@@ -37,8 +39,9 @@ const AddShiftModal = ({
   
     const createStartTimes = () => {
       const dayStart = moment(daysShifts.date);
+      let count = 96;
       const dates = [];
-      for (let i = 0; i < 96; i++) {
+      for (let i = 0; i < count; i++) {
         dates.push(moment(dayStart.add(15, "m")));
       }
       // console.log(dates);

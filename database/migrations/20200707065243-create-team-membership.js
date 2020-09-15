@@ -26,7 +26,7 @@ module.exports = {
         defaultValue: "casual",
       },
       minimumHours: {
-        type: Sequelize.NUMBER,
+        type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
       },

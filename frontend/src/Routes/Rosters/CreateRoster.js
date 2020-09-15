@@ -146,7 +146,7 @@ const useWeekStarts = (edit) => {
     const today = moment();
     const weekStart = today.startOf("week");
 
-    let startDays = [];
+    let startDays = [moment(weekStart)];
 
     for (let i = 0; i < 13; i++) {
       startDays.push(moment(weekStart.add(1, "w")));

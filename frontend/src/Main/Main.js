@@ -8,6 +8,7 @@ import {
 import Skeleton from "../Skeleton/Skeleton";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { Spin, Alert } from "antd";
+import Landing from "../Landing/Landing";
 
 const Main = () => {
   const authContext = useContext(AuthContext);
@@ -26,6 +27,9 @@ const Main = () => {
               <Route path="/app*">
                 <Redirect to="/app" />
               </Route>
+              <Route path='/'>
+                <Redirect to='/app' />
+              </Route>
             </Switch>
           )}
         </OrganizationConsumer>
@@ -33,7 +37,16 @@ const Main = () => {
       // <Skeleton />
     );
   } else {
-    return <Authentication />;
+    return (
+      <Switch>
+        <Route path='/app'>
+          <Authentication />
+        </Route>
+        <Route path='/*'>
+          <Landing />
+        </Route>
+      </Switch>
+    )
   }
 };
 

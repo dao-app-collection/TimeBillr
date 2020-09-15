@@ -31,6 +31,27 @@ module.exports = {
           email: "clinton.gillespie@outlook.com",
           emailVerified: true,
         },
+        {
+          firstName: "David",
+          lastName: "Young",
+          password: await bcrypt.hash("clinton2", process.env.SALTROUNDS || 10),
+          email: "david@outlook.com",
+          emailVerified: true,
+        },
+        {
+          firstName: "Steph",
+          lastName: "Young",
+          password: await bcrypt.hash("clinton2", process.env.SALTROUNDS || 10),
+          email: "steph@outlook.com",
+          emailVerified: true,
+        },
+        {
+          firstName: "Micheala",
+          lastName: "Nemhauser",
+          password: await bcrypt.hash("clinton2", process.env.SALTROUNDS || 10),
+          email: "micki@outlook.com",
+          emailVerified: true,
+        },
       ],
       {}
     );

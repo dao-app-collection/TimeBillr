@@ -19,6 +19,18 @@ module.exports = {
           TeamMembershipId: 3,
           TeamRoleId: 3,
         },
+        {
+          TeamMembershipId: 4,
+          TeamRoleId: 3,
+        },
+        {
+          TeamMembershipId: 5,
+          TeamRoleId: 3,
+        },
+        {
+          TeamMembershipId: 6,
+          TeamRoleId: 3,
+        },
       ],
       {}
     );

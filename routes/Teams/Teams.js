@@ -17,6 +17,8 @@ router.get("/data/:id", authorization, TeamsController.getAllTeamData);
 
 router.post("/create", authorization, TeamsController.create);
 
+router.post('/updateSettings', authorization, TeamsController.updateSettings);
+
 router.get("/invitation/:id", authorization, TeamsController.getRequest);
 
 router.post("/invitation/:id", authorization, TeamsController.acceptRequest);
@@ -86,10 +88,12 @@ router.post(
   "/rosters/clone",
   authorization,
   permissions.checkOwnerOrManager,
-  TeamRostersController.clone
+  TeamRostersController.cloneFullWeek
 );
 
+router.post('/roster/clone/day/:targetId/:fromId', authorization, permissions.checkOwnerOrManager, TeamRostersController.cloneDay);
 
+router.post('/roster/:daysShiftsId/delete', authorization, permissions.checkOwnerOrManager, TeamRostersController.deleteDay);
 
 router.get("/rosters/:teamId", authorization, TeamRostersController.getAll);
 

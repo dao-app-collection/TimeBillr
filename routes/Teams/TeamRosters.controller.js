@@ -73,7 +73,7 @@ const TeamRostersController = {
     }
   },
 
-  async clone(req, res, next) {
+  async cloneFullWeek(req, res, next) {
     const permissions = req.permissions;
     const TeamId = req.body.TeamId;
     const RosterId = req.body.RosterId;
@@ -161,6 +161,81 @@ const TeamRostersController = {
       }
     } catch (error) {
       throw new ErrorHandler(400, "Could not clone Roster");
+    }
+  },
+
+  async cloneDay(req,res,next){
+    targetId = req.params.targetId;
+    fromId = req.params.fromId;
+    const {TeamId} = req.body;
+
+    try {
+      const result = await db.sequelize.transaction(async t => {
+        const daysShiftsToClone = await db.DaysShift.findOne({where: {id: fromId}, include: [
+          {model: db.Shift,}
+        ]});
+
+        const targetDaysShifts = await db.DaysShift.findOne({where: {id: targetId}});
+
+        // find the difference between the days, because it needs to be used to get the correct start
+        // end times of the newly created shifts;
+        const cloneStart = moment(daysShiftsToClone.dataValues.date);
+        const targetStart = moment(targetDaysShifts.dataValues.date);
+
+        const dayOffset = targetStart.diff(cloneStart, 'days');
+        console.log(cloneStart.toString());
+        console.log(targetStart.toString());
+        console.log(targetStart.isAfter(cloneStart));
+        console.log(dayOffset);
+        if(targetStart.isBefore(cloneStart)){
+          dayOffset * -1;
+        }
+        const clonedShifts = await Promise.all(daysShiftsToClone.dataValues.Shifts.map( async shift => {
+          return await db.Shift.create({
+            start: moment(shift.start).add(dayOffset, 'd').format('YYYY-MM-DD HH:mm:SS'),
+            end: moment(shift.end).add(dayOffset, 'd').format('YYYY-MM-DD HH:mm:SS'),
+            DaysShiftId: targetId,
+            TeamMembershipId: shift.TeamMembershipId,
+            TeamRoleId: shift.TeamRoleId,
+          });
+        }));
+        return clonedShifts;
+      });
+      if(result){
+        const returnValue = await db.DaysShift.findOne({where: {id: targetId}, include: [
+          {model: db.Shift}
+        ]});
+        res.status(200).json(returnValue);
+      } else {
+        throw new ErrorHandler(400, 'Could not Clone day, try again');
+      }
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler(400, 'Could Not Clone day, try again');
+    }
+  },
+
+  async deleteDay(req,res,next){
+    console.log(req.params);
+    const deleteId = req.params.daysShiftsId;
+    console.log(deleteId);
+
+    try {
+      const result = await db.sequelize.transaction(async t => {
+        const toDelete = await db.Shift.findAll({where: {DaysShiftId: deleteId}});
+
+        const deleted = await Promise.all(toDelete.map( async shift => {
+          return await shift.destroy();
+        }));
+
+        return deleted;
+      })
+      if(result){
+        res.status(200).send({message: 'success'});
+      }
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler(400, 'Could not delete shifts');
     }
   },
 
