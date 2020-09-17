@@ -31,7 +31,7 @@ const HomeRoster = () => {
     const roster = useTodaysRoster();
     const orgContext = useOrganizationContext();
 
-    // console.log(roster);
+    console.log(roster);
 
     useEffect(() => {
         setRoles(orgContext.organizationData.TeamRoles);
@@ -40,7 +40,7 @@ const HomeRoster = () => {
     return (
         <>
         <CenteredContainer style={{maxWidth: '100%', padding: '0 24px'}}>
-        <Title level={3} style={{color: '#5f9bf1', margin: '8px', textAlign: 'center',}}>Today's Roster</Title>
+    <Title level={3} style={{color: '#5f9bf1', margin: '8px', textAlign: 'center',}}>Today's Roster {roster ? moment(roster.date).format('DD/MM/YYYY') : ''}</Title>
         <Collapse>
         {roles.map(role => (
             
@@ -98,10 +98,11 @@ const useOrderedFilteredShifts = (roster, role) => {
                 start_time: moment(filteredShift.start),
                 end_time: moment(filteredShift.end),
                 itemProps: {
-                  style: {zIndex: '100'}
+                  style: {zIndex: '100', background: filteredShift.confirmed ? '#00F704' : 'rgb(33, 150, 243)'}
                 }
               };
         });
+        
 
         let sortedShiftItems = shiftItems.sort((a, b) => {return a.start_time.valueOf() - b.start_time.valueOf()});
         

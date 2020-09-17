@@ -16,7 +16,7 @@ const adminKeys = [
   icon: null,
   title: 'Rosters'
 }, {
-  key: 'team',
+  key: 'team/view',
   icon: null,
   title: 'Team',
 }, {

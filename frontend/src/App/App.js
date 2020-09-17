@@ -9,7 +9,7 @@ import "antd/dist/antd.css";
 
 const options = {
   position: positions.BOTTOM_CENTER,
-  timeout: 5000,
+  timeout: 3000,
   offset: "30px",
   transition: transitions.SCALE,
 };

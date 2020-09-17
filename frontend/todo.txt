@@ -1,12 +1,13 @@
 Add copy from DAY of this roster.
 So you could choose to copy from yesterday for example
+DONE and it updates state, which updates everything..but the new items arent created?
 
-Add automatic group reordering.
-Or groups automatically order when you create, 
-Then there is a button to reorder shifts when you want.
+Add automatic group reordering. //DONE
+Or groups automatically order when you create, //DONE
+Then there is a button to reorder shifts when you want. //NOT DOING
 
-Perhaps a button to reorder groups to alphebetic order?
+Perhaps a button to reorder groups to alphebetic order? //NOT DOING
 
-Add a way to complete a days roster, so you put in each employees end time
+Add a way to complete a days roster, so you put in each employees end time //THIS IS KIND OF ALREADY A THING
 
 A way to print rosters.

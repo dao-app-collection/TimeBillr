@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { OrganizationContext, useOrganizationContext } from "../../Context/OrganizationContext";
 import { Collapse, Card, Form, Select, Button, Switch, Spin } from "antd";
 
@@ -42,10 +42,11 @@ const buttonStyles = {
 
 const Roster = () => {
   const alert = useAlert();
-  const roster = useRoster();
+  
   const [step, setStep] = useState(0);
+  const {roster, selectedDaysShift} = useRoster(step);
   // will return the shifts of the current roster day
-  const selectedDaysShift = useSelectedDaysShift(roster, step);
+  // const selectedDaysShift = useSelectedDaysShift(roster, step);
   console.log(roster);
   console.log(selectedDaysShift);
   const orgContext = useContext(OrganizationContext);
@@ -331,19 +332,17 @@ const RosterCalendar = ({
   const [newItems, setNewItems] = useState([]);
   const [itemsToRemove, setItemsToRemove] = useState([]);
   const {start, end} = useCreateStartAndEnd(daysShifts);
-  const [sortOrder, setSortOrder] = useState('start');
 
-  const [showSpinner, setShowSpinner] = useState(false);
+  
   
 
   // console.log(start);
   // console.log(end);
 
-  
-
-  const removeItem = (item, e, time) => {
+  const removeItem = useCallback((item) => {
     const temp = [...itemsToRemove];
     temp.push(item.id);
+    console.log(temp);
     // remove it from the items array, by passing it to the hook, through itemsToRemove
     setItemsToRemove(temp);
     // pass it up a level, IF it already exists, where it will be stored to be removed from the server on save
@@ -352,8 +351,14 @@ const RosterCalendar = ({
     // console.warn(itemsToRemove);
     // if(toDeleteFromApi){
     //   removeShifts(toDeleteFromApi)
-    // }    
-  };
+    // } 
+  }, [itemsToRemove, removeShifts]);
+
+  // function removeItem (item, e, time) {
+
+    
+       
+  // };
 
   const {items, groups} = useCreateItemsAndGroups(
     daysShifts.Shifts,
@@ -363,7 +368,7 @@ const RosterCalendar = ({
     daysShifts,
     step,
     removeItem,
-    sortOrder,
+    
   );
 
   useEffect(() => {
@@ -375,13 +380,13 @@ const RosterCalendar = ({
   // The group id is the TeamMembershipId,
   // Items that appear next to this group, use the Id of the group.
   
-  const toggleSortOrder = (checked) => {
-    if(checked){
-      setSortOrder('alphabetical')
-    } else {
-      setSortOrder('start')
-    }
-  }
+  // const toggleSortOrder = (checked) => {
+  //   if(checked){
+  //     setSortOrder('alphabetical')
+  //   } else {
+  //     setSortOrder('start')
+  //   }
+  // }
   
   const selectUser = (employee) => {
     toggleModal(null, employee);
@@ -413,7 +418,6 @@ const RosterCalendar = ({
       canResize: true,
       onDelete: removeItem,
       itemProps: {
-        onDoubleClick: () => {console.log('you double clicked')},
         style: {zIndex: '100'}
       }
     };
@@ -440,6 +444,7 @@ const RosterCalendar = ({
     // removeItem(itemId);
     let newItemsToRemove = [...itemsToRemove];
     newItemsToRemove.push(itemId);
+    console.log(newItemsToRemove);
     // removeShifts(item);
     // first, delete the old item.
     let newItem = Object.assign({}, item, {
@@ -479,6 +484,7 @@ const RosterCalendar = ({
     // console.log([...itemsToRemove]);
     let newItemsToRemove = [...itemsToRemove];
     newItemsToRemove.push(itemId);
+    console.log(newItemsToRemove);
     // console.log(newItemsToRemove);
     // removeShifts(item);
     // first, delete the old item.
@@ -530,29 +536,10 @@ const RosterCalendar = ({
 
     // console.log(newItems);
   };
-
-  useEffect(() => {
-    setShowSpinner(true);
-
-    // setTimeout(() => {
-    //   setShowSpinner(false);
-    // }, 1000);
-    // console.log('groups changed!')
-  }, [groups]);
-
-  useEffect(() => {
-    if(showSpinner){
-      setTimeout(() => {
-        setShowSpinner(false);
-      }, 700)
-    }
-  }, [showSpinner])
   console.log(items);
   console.log(groups);
    if(!start || !end){
     return null;
-  } else if(showSpinner){
-    return <Spin />
   } else{
   return (
     <CreateRosterContainer>
@@ -561,12 +548,6 @@ const RosterCalendar = ({
           <EmployeeCard employee={role} selectUser={selectUser} />
         ))}
       </ColumnContainer>
-      <Switch 
-      checkedChildren='Alphabetical'
-      unCheckedChildren='Start Time'
-      style={{width: '120px', margin: '8px'}}
-      onChange={toggleSortOrder}
-      />
       <Timeline
         groups={groups}
         items={items}

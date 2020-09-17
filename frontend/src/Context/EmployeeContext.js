@@ -11,6 +11,7 @@ import React, {
   
   export const EmployeeContext = createContext({
     employeeRosters: [],
+    markConfirmed: () => {},
   });
   
   export const useEmployeeContext = () => useContext(EmployeeContext);
@@ -21,19 +22,32 @@ import React, {
     const [loading, setLoading] = useState(true);
   
     useEffect(() => {
-      apiClient
+      setLoading(true);
+      getAllEmployeeData().then(result => {
+        setLoading(false);
+      });
+    }, []);
+
+    const getAllEmployeeData = () => {
+      return apiClient
         .get(`employee/${orgContext.organizationData.id}/${orgContext.userTeamMembership.id}`)
         .then((result) => {
           setEmployeeRosters(result.data);
-          setLoading(false);
+          
           console.log(result);
         });
-    }, []);
+    };
+
+    const markConfirmed = (shift) => {
+      getAllEmployeeData();
+
+    };
   
   
     const value = useMemo(
       () => ({
         employeeRosters,
+        markConfirmed,
         setEmployeeRosters,
       }),
       [employeeRosters]

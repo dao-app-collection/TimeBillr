@@ -3,19 +3,13 @@ import moment from 'moment';
 import { useOrganizationContext } from '../../../Context/OrganizationContext';
 
 // newItems are the unsaved shifts that have just been created, items are the currently existing saved shifts.
-const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShifts, step, removeItem, sortOrder) => {
+const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShifts, step, removeItem) => {
     const [groups, setGroups] = useState();
     const [existingShifts, setExistingShifts] = useState([]);
     const [unavailables, setUnavailables] = useState([]);
     const [holidays, setHolidays] = useState([]);
     const orgContext = useOrganizationContext();
-    // console.log('existing items, that have been retrieved from the db.');
-  
-    // console.log(items);
-    // console.log('new items, that have been created on the frontend yet not yet saved.')
-    // console.log(newItems);
-    // console.log('the role');
-    // console.log(role);
+    
     const [returnItems, setReturnItems] = useState([]);
 
     console.log(newItems);
@@ -107,7 +101,7 @@ const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShift
         setHolidays(holidayItems);
         setUnavailables(unavailableItems.flat());
         setExistingShifts(shiftItems);
-    }, [items, daysShifts, role, step, orgContext.organizationData.Holidays,]);    
+    }, [items, daysShifts, role, step, orgContext.organizationData.Holidays, removeItem]);    
   
     useEffect(() => {
       let tempReturn = existingShifts.concat(unavailables).concat(holidays).concat(newItems);
@@ -122,9 +116,15 @@ const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShift
     
     // creates the order of the group, can either be ordered by shift start, or by alphetical order of names
     useEffect(() => {
-      console.log(sortOrder);
-      if(sortOrder === 'start'){
-        let sortedShiftItems = returnItems.sort((a, b) => {return a.start_time.valueOf() - b.start_time.valueOf()});
+
+      
+        let sortedItems = returnItems.sort((a, b) => {return a.start_time.valueOf() - b.start_time.valueOf()});
+
+        let sortedShiftItems = sortedItems.filter(item => {return !item.type});
+
+        let sortedUnavailableItems = sortedItems.filter(item => {return item.type});
+
+        console.log(sortedShiftItems);
         
 
         let sortedStartOfGroups = sortedShiftItems.map(shiftItem => {
@@ -144,14 +144,37 @@ const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShift
             }
             
         }).filter(checkNullGroup => {return checkNullGroup });
+
+        let sortedUnavailableGroups = sortedUnavailableItems.map(shiftItem => {
+          let employee = role.EmployeeRoles.find(role => {
+              
+              return role.TeamMembershipId === shiftItem.group;
+          });
+          if(employee){
+            let firstName = employee.TeamMembership.User.firstName;
+          let lastName = employee.TeamMembership.User.lastName;
+          return {
+              id: shiftItem.group,
+              title: firstName + ' ' + lastName,
+          };
+          } else {
+            return null;
+          }
+          
+      }).filter(checkNullGroup => {return checkNullGroup });
         
         let remainingGroups = role.EmployeeRoles.map(role => {
-            let groupAlreadyExists = sortedStartOfGroups.filter(group => {
+            let groupAlreadyExistsFromShifts = sortedStartOfGroups.filter(group => {
                 
                 return role.TeamMembershipId === group.id;
             });
+
+          //   let groupAlreadyExistsFromUnavailables = sortedUnavailableGroups.filter(group => {
+                
+          //     return role.TeamMembershipId === group.id;
+          // }); 
             
-            if(groupAlreadyExists.length === 0){
+            if(groupAlreadyExistsFromShifts.length === 0){
                 let firstName = role.TeamMembership.User.firstName;
                 let lastName = role.TeamMembership.User.lastName;
                 return {
@@ -165,15 +188,10 @@ const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShift
         let groupItems = sortedStartOfGroups.concat(remainingGroups);
 
         setGroups(groupItems.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i));
-      } else {
-        setGroups(groups.sort((a,b) => {
-          console.log(a.title);
-          console.log(b.title);
-          return a.title.localeCompare(b.title, 'en', {sensitivity: 'base'})}))
-      }
+      
       
         
-    }, [sortOrder, returnItems, role.EmployeeRoles]);
+    }, [ returnItems, role.EmployeeRoles]);
     console.log(returnItems);
     return {items: returnItems, groups};
   };

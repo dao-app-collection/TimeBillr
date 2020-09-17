@@ -8,6 +8,7 @@ import moment from 'moment';
 import ButtonWithSpinner from '../../Components/ButtonWithSpinner';
 import apiClient from '../../config/axios';
 import { useOrganizationContext } from '../../Context/OrganizationContext';
+import { useAlert } from 'react-alert';
 
 const {Title} = Typography;
 const {Meta} = Card;
@@ -48,18 +49,34 @@ const UpcomingShifts = () => {
 };
 
 const ShiftRender = ({arrayOfShifts}) => {
-    const orgContext = useOrganizationContext()
+    const orgContext = useOrganizationContext();
+    const employeeContext = useEmployeeContext();
     const [sending, setSending] = useState(false);
+    const alert = useAlert();
 
     const markConfirmed = async (shift) => {
         console.log(shift);
         setSending(true);
-
-        const res = await apiClient.post('employee/shift/confirm', 
+        try {
+          const res = await apiClient.post('employee/shift/confirm', 
             {TeamId: orgContext.organizationData.id, ShiftId: shift.id}
         )
+          if(res.status === 200){
+            alert.show('Confirmed', {
+              type: 'success'
+            });
+            employeeContext.markConfirmed(shift);
+            setSending(false);
+          }
+        } catch (error) {
+          alert.show('Error: Could not confirm shift', {
+            type: 'error'
+          });
+          setSending(false);
+        }
+        
 
-        console.log(res);
+        
 
     }
     console.log(arrayOfShifts);

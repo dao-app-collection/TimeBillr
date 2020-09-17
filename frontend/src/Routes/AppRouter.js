@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { Switch, Route, useParams, useHistory } from "react-router-dom";
+import { Switch, Route, useParams, useHistory, Redirect } from "react-router-dom";
 import ApplicationHeader from "../Components/ApplicationHeader";
 import { OrganizationContext, useOrganizationContext } from "../Context/OrganizationContext";
 import TeamRouter from "./Team/TeamRouter";
@@ -61,7 +61,9 @@ const AppRouter = () => {
             <Route path='/app/:teamId/requests'>
               <RequestsRouter />
             </Route>
-            <Route path="/app/:teamId"></Route>
+            <Route path="/app/:teamId">
+              <Redirect to={`/app/${orgContext.organizationData.id}/home`} />
+            </Route>
           </Switch>
         </Layout.Content>
         </RosterProvider>
