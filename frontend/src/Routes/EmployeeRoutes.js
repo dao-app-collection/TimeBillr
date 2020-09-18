@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
-import ApplicationHeader from '../../Components/ApplicationHeader';
+import ApplicationHeader from '../Components/ApplicationHeader';
 import { Switch, Route } from 'react-router-dom';
-import { useOrganizationContext } from '../../Context/OrganizationContext';
-import { useRosterContext } from '../../Context/RosterContext';
-import apiClient from '../../config/axios';
+import { useOrganizationContext } from '../Context/OrganizationContext';
+import { useRosterContext } from '../Context/RosterContext';
+import apiClient from '../config/axios';
 import { Layout } from 'antd';
-import { CenteredContainer } from '../../styled-components/styled';
-import EmployeeProvider from '../../Context/EmployeeContext';
-import UpcomingShifts from './UpcomingShifts';
-import Availabilities from './Availabilities';
-import Holidays from './Holidays';
+import { CenteredContainer } from '../styled-components/styled';
+import EmployeeProvider from '../Context/EmployeeContext';
+import UpcomingShifts from '../Pages/EmployeePages/UpcomingShifts';
+import Availabilities from '../Pages/EmployeePages/Availabilities';
+import Holidays from '../Pages/EmployeePages/Holidays';
 
 const EmployeeRoutes = () => {
     const orgContext = useOrganizationContext();

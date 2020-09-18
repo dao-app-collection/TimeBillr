@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { useOrganizationContext } from '../../Context/OrganizationContext';
-import apiClient from '../../config/axios';
+import { useOrganizationContext } from '../Context/OrganizationContext';
+import apiClient from '../config/axios';
 import { useAlert } from 'react-alert';
-import HolidayCard from '../../Components/HolidayCard';
+import HolidayCard from '../Components/HolidayCard';
 import styled from 'styled-components'
 const CardContainer = styled.div`
   display: flex;

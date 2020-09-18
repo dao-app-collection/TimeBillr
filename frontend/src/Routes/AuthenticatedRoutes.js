@@ -2,16 +2,16 @@ import React, { useEffect, useContext } from "react";
 import { Switch, Route, useParams, useHistory, Redirect } from "react-router-dom";
 import ApplicationHeader from "../Components/ApplicationHeader";
 import { OrganizationContext, useOrganizationContext } from "../Context/OrganizationContext";
-import TeamRouter from "./Team/TeamRouter";
-import RostersRouter from "./Rosters/RostersRouter";
+import TeamRouter from "./TeamRouter";
+import RostersRouter from "./RostersRouter";
 import { Layout } from "antd";
-import Home from "./Home/Home";
+import Home from "../Pages/Home";
 import RosterProvider from "../Context/RosterContext";
-import EmployeeRoutes from "./EmployeeRoutes/EmployeeRoutes";
-import RequestsRouter from "./Requests/RequestsRouter";
-import Settings from "./Settings/Settings";
+import EmployeeRoutes from "./EmployeeRoutes";
+import RequestsRouter from "./RequestsRouter";
+import Settings from "../Pages/Settings";
 
-const AppRouter = () => {
+const AuthenticatedRoutes = () => {
   const teamId = useParams().organization_id;
   const history = useHistory();
   const orgContext = useOrganizationContext();
@@ -89,5 +89,6 @@ const AppRouter = () => {
     );
   }
 };
+// 
 
-export default AppRouter;
+export default AuthenticatedRoutes;

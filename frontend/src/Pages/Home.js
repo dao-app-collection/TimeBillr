@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { CenteredContainer, CreateRosterContainer } from '../../styled-components/styled';
+import { CenteredContainer, CreateRosterContainer } from '../styled-components/styled';
 import { Collapse, Typography } from 'antd';
-import { useOrganizationContext } from '../../Context/OrganizationContext';
+import { useOrganizationContext } from '../Context/OrganizationContext';
 import moment from 'moment';
-import { useRosterContext } from '../../Context/RosterContext';
+import { useRosterContext } from '../Context/RosterContext';
 
 import Timeline from "react-calendar-timeline";
 import "react-calendar-timeline/lib/Timeline.css";

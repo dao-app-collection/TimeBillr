@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../Context/UserAuthContext";
 import { Route, Switch, Redirect } from "react-router-dom";
-import Register from "./Register";
-import LogIn from "./LogIn";
-import Verification from "./Verification";
+import Register from "../Pages/Register";
+import LogIn from "../Pages/LogIn";
+import Verification from "../Pages/Verification";
 import {
   FullPageContainer,
   AuthFormContainer,

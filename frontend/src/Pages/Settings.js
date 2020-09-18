@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { useOrganizationContext } from '../../Context/OrganizationContext';
-import { CenteredContainer } from '../../styled-components/styled';
+import { useOrganizationContext } from '../Context/OrganizationContext';
+import { CenteredContainer } from '../styled-components/styled';
 import { Form, Checkbox, Select, Typography } from 'antd';
 import moment from 'moment';
 import styled from 'styled-components';
-import ButtonWithSpinner from '../../Components/ButtonWithSpinner';
-import apiClient from '../../config/axios';
+import ButtonWithSpinner from '../Components/ButtonWithSpinner';
+import apiClient from '../config/axios';
 import { useAlert } from 'react-alert';
 
 const InputContainer = styled.div`

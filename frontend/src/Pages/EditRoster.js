@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import moment from "moment";
 import styled from "styled-components";
-import { CenteredContainer } from "../../styled-components/styled";
+import { CenteredContainer } from "../styled-components/styled";
 import { Typography, Divider, Card, Modal, Button, Table, Collapse } from "antd";
-import apiClient from "../../config/axios";
-import { OrganizationContext, useOrganizationContext } from "../../Context/OrganizationContext";
+import apiClient from "../config/axios";
+import { OrganizationContext, useOrganizationContext } from "../Context/OrganizationContext";
 
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 import { useHistory, Link } from "react-router-dom";
-import { useRosterContext } from "../../Context/RosterContext";
-import useWeekSplit from './Hooks/useWeekSplit';
+import { useRosterContext } from "../Context/RosterContext";
+import useWeekSplit from '../Routes/Rosters/Hooks/useWeekSplit';
 
 const {Panel} = Collapse;
 const { Meta } = Card;

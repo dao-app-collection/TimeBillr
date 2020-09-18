@@ -10,14 +10,14 @@ import {
   AutoComplete,
   List,
 } from "antd";
-import { CenteredContainer } from "../../styled-components/styled";
+import { CenteredContainer } from "../styled-components/styled";
 import { DiffOutlined } from "@ant-design/icons";
-import ButtonWithSpinner from "../../Components/ButtonWithSpinner";
-import apiClient from "../../config/axios";
+import ButtonWithSpinner from "../Components/ButtonWithSpinner";
+import apiClient from "../config/axios";
 import { useParams } from "react-router-dom";
-import { OrganizationContext } from "../../Context/OrganizationContext";
+import { OrganizationContext } from "../Context/OrganizationContext";
 import { useAlert } from "react-alert";
-import ConfirmationModal from "../../Components/ConfirmationModal";
+import ConfirmationModal from "../Components/ConfirmationModal";
 
 const { Panel } = Collapse;
 

@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import moment from "moment";
-import { CenteredContainer } from "../../styled-components/styled";
+import { CenteredContainer } from "../styled-components/styled";
 import { Form, Select, Button, Steps, Collapse, Checkbox } from "antd";
-import apiClient from "../../config/axios";
-import { OrganizationContext } from "../../Context/OrganizationContext";
+import apiClient from "../config/axios";
+import { OrganizationContext } from "../Context/OrganizationContext";
 import Modal from "antd/lib/modal/Modal";
 
 import Roster from "./Roster";
-import { RosterContext, useRosterContext } from "../../Context/RosterContext";
+import { RosterContext, useRosterContext } from "../Context/RosterContext";
 import { useHistory } from "react-router-dom";
 
 const { Step } = Steps;

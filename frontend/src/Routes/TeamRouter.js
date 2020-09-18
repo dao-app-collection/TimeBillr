@@ -1,16 +1,16 @@
 import React, { useEffect, useContext } from "react";
 import { Switch, Route, Redirect, useParams } from "react-router-dom";
-import TeamHome from "./TeamHome";
-import AddMember from "./AddMember";
-import Employees from "./Employees";
-import Roles from "./Roles";
-import { OrganizationContext } from "../../Context/OrganizationContext";
+import TeamHome from "./Team/TeamHome";
+import AddMember from "../Pages/AddMember";
+import Employees from "../Pages/Employees";
+import Roles from "../Pages/Roles";
+import { OrganizationContext } from "../Context/OrganizationContext";
 import {
   UserAddOutlined,
   PartitionOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import HomeMenu from "../../Components/HomeMenu";
+import HomeMenu from "../Components/HomeMenu";
 
 const routeKeys = [
   {

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import HomeMenu from '../../Components/HomeMenu';
-import { useOrganizationContext } from '../../Context/OrganizationContext';
-import { CenteredContainer } from '../../styled-components/styled';
+import HomeMenu from '../Components/HomeMenu';
+import { useOrganizationContext } from '../Context/OrganizationContext';
+import { CenteredContainer } from '../styled-components/styled';
 import {Badge} from 'antd';
-import Pending from './Pending';
-import Approved from './Approved';
+import Pending from '../Pages/Pending';
+import Approved from '../Pages/Approved';
 
 
 const keys = [

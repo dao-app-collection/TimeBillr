@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import apiClient from "../../config/axios";
+import apiClient from "../config/axios";
 import { useParams, useHistory } from "react-router-dom";
 import {
   FullPageContainer,
   AuthFormContainer,
-} from "../../styled-components/styled";
+} from "../styled-components/styled";
 import { Spin, Button } from "antd";
 import { useAlert } from "react-alert";
 

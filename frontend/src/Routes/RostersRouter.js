@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import HomeMenu from "../../Components/HomeMenu";
+import HomeMenu from "../Components/HomeMenu";
 import { GroupOutlined, EditOutlined } from "@ant-design/icons";
-import CreateRoster from "./CreateRoster";
-import EditRoster from "./EditRoster";
-import Roster from "./Roster";
-import RosterProvider from "../../Context/RosterContext";
-import { OrganizationContext } from "../../Context/OrganizationContext";
+import CreateRoster from "../Pages/CreateRoster";
+import EditRoster from "../Pages/EditRoster";
+import Roster from "../Pages/Roster";
+import RosterProvider from "../Context/RosterContext";
+import { OrganizationContext } from "../Context/OrganizationContext";
 
 const routeKeys = [
   {

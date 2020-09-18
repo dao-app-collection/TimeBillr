@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../Context/UserAuthContext";
-import Authentication from "../Authentication/Authentication";
+import Authentication from "../Routes/AuthenticationRouter";
 import {
   OrganizationProvider,
   OrganizationConsumer,
@@ -8,7 +8,7 @@ import {
 import Skeleton from "../Skeleton/Skeleton";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { Spin, Alert } from "antd";
-import Landing from "../Landing/Landing";
+import Landing from "../Pages/Landing";
 
 const Main = () => {
   const authContext = useContext(AuthContext);

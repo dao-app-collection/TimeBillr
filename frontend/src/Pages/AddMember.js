@@ -1,9 +1,9 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Form, Input, Divider, Radio, Button, Select } from "antd";
-import { CenteredContainer } from "../../styled-components/styled";
+import { CenteredContainer } from "../styled-components/styled";
 import { Typography } from "antd";
-import apiClient from "../../config/axios";
+import apiClient from "../config/axios";
 
 const { Option } = Select;
 

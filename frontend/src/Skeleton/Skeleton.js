@@ -1,15 +1,11 @@
 import React, { useEffect } from "react";
 import Layout from "antd/es/layout";
-import axios from "../config/axios";
+
 import { Route, Switch, Redirect } from "react-router-dom";
-import {
-  OrganizationProvider,
-  OrganizationConsumer,
-  useOrganizationContext,
-} from "../Context/OrganizationContext";
-import OrganizationSelectOrCreate from "../OrganizationSelectOrCreate/OrganizationSelectOrCreate";
-import AppRouter from "../Routes/AppRouter";
-import Invitation from "../Routes/Invitation/Invitation";
+
+import OrganizationSelectOrCreate from "../Pages/OrganizationSelectOrCreate";
+import AuthenticatedRoutes from "../Routes/AuthenticatedRoutes";
+import Invitation from "../Pages/Invitation";
 import Footer from "../Components/Footer";
 
 const Skeleton = () => {
@@ -25,7 +21,7 @@ const Skeleton = () => {
         </Route>
 
         <Route path={"/app/:organization_id"}>
-          <AppRouter />
+          <AuthenticatedRoutes />
         </Route>
         <Route path={"/app"}>
           <OrganizationSelectOrCreate />
