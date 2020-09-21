@@ -505,7 +505,7 @@ table.wrapper(style='border-collapse: collapse;table-layout: fixed;min-width: 32
                     div(style='mso-line-height-rule: exactly;line-height: 15px;font-size: 1px;') &nbsp;
                   div(style='Margin-left: 20px;Margin-right: 20px;')
                     .btn.btn--flat.btn--medium(style='Margin-bottom: 20px;text-align: center;')
-                      a(style='border-radius: 4px;display: inline-block;font-size: 12px;font-weight: bold;line-height: 22px;padding: 10px 20px;text-align: center;text-decoration: none !important;transition: opacity 0.1s ease-in;color: #e31212 !important;background-color: #ffffff;font-family: sans-serif;' href='http://test.com') Log In
+                      a(href=`${process.env.HOSTNAME}/app/login` style='border-radius: 4px;display: inline-block;font-size: 12px;font-weight: bold;line-height: 22px;padding: 10px 20px;text-align: center;text-decoration: none !important;transition: opacity 0.1s ease-in;color: #e31212 !important;background-color: #ffffff;font-family: sans-serif;' ) Log In
                       //if mso
                         p(style='line-height:0;margin:0;') &nbsp;
                         v:roundrect(xmlns:v='urn:schemas-microsoft-com:vml' href='http://test.com' style='width:76px' arcsize='10%' fillcolor='#FFFFFF' stroke='f')

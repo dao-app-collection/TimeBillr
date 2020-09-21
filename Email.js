@@ -54,4 +54,21 @@ const verificationEmailRender = (emailAddress, link) => {
   });
 };
 
-module.exports = { verificationEmailRender };
+const shiftReminderEmailRender = (emailAddress, link) => {
+  const email = new Email({
+    juice: true,
+    juiceResources: {
+      preserveImportant: true,
+      webResources: {
+        relativeTo: path.resolve('emails'),
+      },
+    },
+  });
+
+  return email.render('reminder/newshifts', {
+    // the variables to be accessed
+    email: emailAddress,
+  })
+};
+
+module.exports = { verificationEmailRender, shiftReminderEmailRender };
