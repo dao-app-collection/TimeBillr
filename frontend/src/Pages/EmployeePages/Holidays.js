@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { FileAddOutlined } from '@ant-design/icons';
-import HomeMenu from '../../Components/HomeMenu';
+import HomeMenu from '../../Components/Ui/HomeMenu';
 import { Typography, Divider, Card, Button } from "antd";
 import { Switch, Route, useHistory } from 'react-router-dom';
 import moment from 'moment';
 
 import { DatePicker, Space } from 'antd';
-import ButtonWithSpinner from '../../Components/ButtonWithSpinner';
+import ButtonWithSpinner from '../../Components/Ui/ButtonWithSpinner';
 import apiClient from '../../config/axios';
 import { useOrganizationContext } from '../../Context/OrganizationContext';
 import { useAlert } from 'react-alert';
-import HolidayCard from '../../Components/HolidayCard';
+import HolidayCard from '../../Components/Ui/HolidayCard';
 import styled from 'styled-components';
 const { RangePicker } = DatePicker;
 

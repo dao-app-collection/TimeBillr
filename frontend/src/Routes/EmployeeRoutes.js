@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import ApplicationHeader from '../Components/ApplicationHeader';
+import ApplicationHeader from '../Components/Ui/ApplicationHeader';
 import { Switch, Route } from 'react-router-dom';
 import { useOrganizationContext } from '../Context/OrganizationContext';
 import { useRosterContext } from '../Context/RosterContext';

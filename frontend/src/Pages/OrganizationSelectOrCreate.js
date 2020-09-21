@@ -7,7 +7,7 @@ import Card from "antd/es/card";
 
 import axios from "../config/axios";
 
-import OrganizationCreate from "../OrganizationSelectOrCreate/OrganizationCreate";
+import OrganizationCreate from "../Components/Stateful/OrganizationCreate";
 
 const OrganizationSelectOrCreate = () => {
   const context = useContext(OrganizationContext);

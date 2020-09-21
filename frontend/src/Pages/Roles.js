@@ -12,12 +12,12 @@ import {
 } from "antd";
 import { CenteredContainer } from "../styled-components/styled";
 import { DiffOutlined } from "@ant-design/icons";
-import ButtonWithSpinner from "../Components/ButtonWithSpinner";
+import ButtonWithSpinner from "../Components/Ui/ButtonWithSpinner";
 import apiClient from "../config/axios";
 import { useParams } from "react-router-dom";
 import { OrganizationContext } from "../Context/OrganizationContext";
 import { useAlert } from "react-alert";
-import ConfirmationModal from "../Components/ConfirmationModal";
+import ConfirmationModal from "../Components/Ui/ConfirmationModal";
 
 const { Panel } = Collapse;
 

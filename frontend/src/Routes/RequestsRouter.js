@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import HomeMenu from '../Components/HomeMenu';
+import HomeMenu from '../Components/Ui/HomeMenu';
 import { useOrganizationContext } from '../Context/OrganizationContext';
 import { CenteredContainer } from '../styled-components/styled';
 import {Badge} from 'antd';

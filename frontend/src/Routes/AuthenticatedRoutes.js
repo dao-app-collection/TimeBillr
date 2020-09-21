@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { Switch, Route, useParams, useHistory, Redirect } from "react-router-dom";
-import ApplicationHeader from "../Components/ApplicationHeader";
+import ApplicationHeader from "../Components/Ui/ApplicationHeader";
 import { OrganizationContext, useOrganizationContext } from "../Context/OrganizationContext";
 import TeamRouter from "./TeamRouter";
 import RostersRouter from "./RostersRouter";

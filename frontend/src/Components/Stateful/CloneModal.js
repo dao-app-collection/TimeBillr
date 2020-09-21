@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 
 import moment from 'moment';
-import ButtonWithSpinner from '../../Components/ButtonWithSpinner';
+import ButtonWithSpinner from '../Ui/ButtonWithSpinner';
 import { Modal, Select, Form } from 'antd';
 import { useRosterContext } from '../../Context/RosterContext';
 import { useForm } from 'antd/lib/form/Form';

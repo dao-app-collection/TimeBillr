@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import moment from 'moment';
-import { useOrganizationContext } from '../../../Context/OrganizationContext';
+import { useOrganizationContext } from '../../Context/OrganizationContext';
 
 // newItems are the unsaved shifts that have just been created, items are the currently existing saved shifts.
 const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShifts, step, removeItem) => {
@@ -58,6 +58,8 @@ const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShift
               id: shiftItems.length + unavailableItems.length,
               deleteId: shiftItems.length + unavailableItems.length,
               group: unavailableShift.TeamMembershipId,
+              canMove: false,
+              canResize: false,
               start_time: start,
               end_time: end,
               itemProps: {
@@ -79,6 +81,8 @@ const useCreateItemsAndGroups = (items, newItems, role, itemsToRemove, daysShift
             group: holidayToRender.TeamMembershipId,
             start_time: thisDatesDate,
             end_time: moment(thisDatesDate).endOf('day'),
+            canMove: false,
+            canResize: false,
             itemProps: {
               style: {
                 background: 'red'

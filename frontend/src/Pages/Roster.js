@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useCallback } from "react";
 import { OrganizationContext, useOrganizationContext } from "../Context/OrganizationContext";
 import { Collapse, Card, Form, Select, Button, Switch, Spin } from "antd";
 
-import AddShiftModal from '../Routes/Rosters/AddShiftModal';
+import AddShiftModal from '../Components/Stateful/AddShiftModal';
 import {
   CreateRosterContainer,
   ColumnContainer,
@@ -10,22 +10,22 @@ import {
 } from "../styled-components/styled";
 import moment from "moment";
 
-import RosterSteps from "../Routes/Rosters/RosterSteps";
-import ButtonWithSpinner from "../Components/ButtonWithSpinner";
+import RosterSteps from "../Components/Ui/RosterSteps";
+import ButtonWithSpinner from "../Components/Ui/ButtonWithSpinner";
 import Timeline, {DateHeader, TimelineMarkers, CustomMarker} from "react-calendar-timeline";
 import "react-calendar-timeline/lib/Timeline.css";
 import { useRosterContext } from "../Context/RosterContext";
 import Modal from "antd/lib/modal/Modal";
-import useRoster from "../Routes/Rosters/Hooks/useRoster";
-import useSelectedDaysShift from "../Routes/Rosters/Hooks/useSelectedDaysShift";
+import useRoster from "../Components/Hooks/useRoster";
+import useSelectedDaysShift from "../Components/Hooks/useSelectedDaysShift";
 
 import styled from "styled-components";
 import apiClient from "../config/axios";
 import { useAlert } from "react-alert";
 import { DeleteOutlined } from "@ant-design/icons";
-import useCreateItemsAndGroups from "../Routes/Rosters/Hooks/useCreateItemsAndGroups";
-import useCreateStartAndEnd from "../Routes/Rosters/Hooks/useCreateStartAndEnd";
-import CloneModal from "../Routes/Rosters/CloneModal";
+import useCreateItemsAndGroups from "../Components/Hooks/useCreateItemsAndGroups";
+import useCreateStartAndEnd from "../Components/Hooks/useCreateStartAndEnd";
+import CloneModal from "../Components/Stateful/CloneModal";
 const { Panel } = Collapse;
 const { Option } = Select;
 

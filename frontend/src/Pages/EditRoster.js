@@ -9,7 +9,7 @@ import { OrganizationContext, useOrganizationContext } from "../Context/Organiza
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 import { useHistory, Link } from "react-router-dom";
 import { useRosterContext } from "../Context/RosterContext";
-import useWeekSplit from '../Routes/Rosters/Hooks/useWeekSplit';
+import useWeekSplit from '../Components/Hooks/useWeekSplit';
 
 const {Panel} = Collapse;
 const { Meta } = Card;

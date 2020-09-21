@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { useOrganizationContext } from '../../../Context/OrganizationContext';
+import { useOrganizationContext } from '../../Context/OrganizationContext';
 import moment from 'moment';
 
 const useCreateStartAndEnd = (roster) => {

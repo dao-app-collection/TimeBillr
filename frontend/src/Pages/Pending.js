@@ -6,7 +6,7 @@ import moment from 'moment';
 import { CheckCircleTwoTone, StopTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import apiClient from '../config/axios';
 import { useAlert } from 'react-alert';
-import HolidayCard from '../Components/HolidayCard'
+import HolidayCard from '../Components/Ui/HolidayCard'
 
 const CardContainer = styled.div`
   display: flex;

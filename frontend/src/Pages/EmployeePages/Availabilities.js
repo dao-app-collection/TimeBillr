@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Typography, Divider, Form, Select} from 'antd';
 import moment from 'moment';
 import styled from 'styled-components';
-import ButtonWithSpinner from '../../Components/ButtonWithSpinner';
+import ButtonWithSpinner from '../../Components/Ui/ButtonWithSpinner';
 import apiClient from '../../config/axios';
 import { useOrganizationContext } from '../../Context/OrganizationContext';
 import { useAlert } from 'react-alert';

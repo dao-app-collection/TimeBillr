@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Collapse, List, Button, Modal, Form, Radio, Select, Input } from "antd";
 
 import { CenteredContainer } from "../styled-components/styled";
-import ButtonWithSpinner from "../Components/ButtonWithSpinner";
+import ButtonWithSpinner from "../Components/Ui/ButtonWithSpinner";
 import { OrganizationContext } from "../Context/OrganizationContext";
 import apiClient from "../config/axios";
 import { useParams } from "react-router-dom";

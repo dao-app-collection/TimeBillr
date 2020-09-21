@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Layout, Menu } from "antd";
 // import { UserAddOutlined, PartitionOutlined, TeamOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
-import { OrganizationContext } from "../Context/OrganizationContext";
+import { OrganizationContext } from "../../Context/OrganizationContext";
 
 const HomeMenu = ({ param, keys }) => {
   const history = useHistory();

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout, Button, Typography, Carousel} from 'antd';
-import Footer from '../Components/Footer';
+import Footer from '../Components/Ui/Footer';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 

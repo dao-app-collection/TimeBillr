@@ -6,7 +6,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import OrganizationSelectOrCreate from "../Pages/OrganizationSelectOrCreate";
 import AuthenticatedRoutes from "../Routes/AuthenticatedRoutes";
 import Invitation from "../Pages/Invitation";
-import Footer from "../Components/Footer";
+import Footer from "../Components/Ui/Footer";
 
 const Skeleton = () => {
   

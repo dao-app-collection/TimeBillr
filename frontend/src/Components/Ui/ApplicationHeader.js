@@ -2,9 +2,9 @@ import React, { useContext, useState } from "react";
 import { Layout, Menu } from "antd";
 import { useHistory } from "react-router-dom";
 import { HomeOutlined, LogoutOutlined } from "@ant-design/icons";
-import { OrganizationContext } from "../Context/OrganizationContext";
-import apiClient from "../config/axios";
-import { AuthContext } from "../Context/UserAuthContext";
+import { OrganizationContext } from "../../Context/OrganizationContext";
+import apiClient from "../../config/axios";
+import { AuthContext } from "../../Context/UserAuthContext";
 import { useAlert } from "react-alert";
 
 const adminKeys = [

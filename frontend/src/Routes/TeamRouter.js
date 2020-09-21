@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { Switch, Route, Redirect, useParams } from "react-router-dom";
-import TeamHome from "./Team/TeamHome";
+import TeamHome from "../Components/Ui/TeamHome";
 import AddMember from "../Pages/AddMember";
 import Employees from "../Pages/Employees";
 import Roles from "../Pages/Roles";
@@ -10,7 +10,7 @@ import {
   PartitionOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import HomeMenu from "../Components/HomeMenu";
+import HomeMenu from "../Components/Ui/HomeMenu";
 
 const routeKeys = [
   {

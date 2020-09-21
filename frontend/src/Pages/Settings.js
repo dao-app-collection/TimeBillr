@@ -4,7 +4,7 @@ import { CenteredContainer } from '../styled-components/styled';
 import { Form, Checkbox, Select, Typography } from 'antd';
 import moment from 'moment';
 import styled from 'styled-components';
-import ButtonWithSpinner from '../Components/ButtonWithSpinner';
+import ButtonWithSpinner from '../Components/Ui/ButtonWithSpinner';
 import apiClient from '../config/axios';
 import { useAlert } from 'react-alert';
 

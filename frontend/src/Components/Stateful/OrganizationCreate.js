@@ -5,8 +5,8 @@ import { PlusSquareTwoTone } from "@ant-design/icons";
 import Modal from "antd/es/modal";
 import { BankOutlined } from "@ant-design/icons";
 import { Form, Input } from "antd";
-import apiClient from "../config/axios";
-import { OrganizationContext } from "../Context/OrganizationContext";
+import apiClient from "../../config/axios";
+import { OrganizationContext } from "../../Context/OrganizationContext";
 import { useAlert } from "react-alert";
 
 const OrganizationCreate = () => {

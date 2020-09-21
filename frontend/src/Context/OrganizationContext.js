@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import apiClient from "../config/axios";
-import FullPageSpinner from "../Components/FullPageSpinner";
+import FullPageSpinner from "../Components/Ui/FullPageSpinner";
 
 export const OrganizationContext = createContext({
   loadedOrganizationData: false,

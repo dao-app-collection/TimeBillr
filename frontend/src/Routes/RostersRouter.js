@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import HomeMenu from "../Components/HomeMenu";
+import HomeMenu from "../Components/Ui/HomeMenu";
 import { GroupOutlined, EditOutlined } from "@ant-design/icons";
 import CreateRoster from "../Pages/CreateRoster";
 import EditRoster from "../Pages/EditRoster";
