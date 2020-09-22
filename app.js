@@ -10,6 +10,8 @@ const UserRouter = require("./routes/User/User");
 const TeamsRouter = require("./routes/Teams/Teams");
 const EmployeeRouter = require('./routes/Employee/Employee');
 
+const CronTasks = require('./CronTasks/index');
+
 application.use("/api/user", UserRouter);
 application.use("/api/teams", TeamsRouter);
 application.use('/api/employee', EmployeeRouter);
@@ -26,11 +28,11 @@ application.use((err, req, res, next) => {
 //     res.sendFile(__dirname + '/views/verification.html');
 // });
 
-application.get("/landing", (req, res) => {
-  res.sendFile(__dirname + "/views/landing.html");
-});
+// application.get("/landing", (req, res) => {
+//   res.sendFile(__dirname + "/views/landing.html");
+// });
 
-application.get("/app*", (req, res) => {
+application.get("*", (req, res) => {
   res.sendFile(__dirname + "/frontend/build/index.html");
 });
 

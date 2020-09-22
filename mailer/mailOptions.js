@@ -33,6 +33,7 @@ const createTeamInviteEmailOptions = (email, teamName, inviteId) => {
 };
 
 const createShiftReminderEmail = async(email) => {
+  // console.log(email);
   options = {
     from: `"TimeBillr" <clintongillespie@outlook.com`,
     to: `${email}`,
@@ -40,6 +41,7 @@ const createShiftReminderEmail = async(email) => {
     text: 'Log In to view and confirm your new shifts.',
     html: await shiftReminderEmailRender(email)
   };
+  // console.log(options);
   return Promise.resolve(options);
 };
 

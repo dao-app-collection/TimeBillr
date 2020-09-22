@@ -11,6 +11,8 @@ import { useHistory, Link } from "react-router-dom";
 import { useRosterContext } from "../Context/RosterContext";
 import useWeekSplit from '../Components/Hooks/useWeekSplit';
 
+import RosterCards from '../Components/Ui/RosterCards';
+
 const {Panel} = Collapse;
 const { Meta } = Card;
 const { Title } = Typography;
@@ -45,7 +47,7 @@ const EditRoster = () => {
 
   const arrayToCardRender = (array) => {
 
-    
+    console.log('in array to card render');
     return array.map((roster) => {
       const weekStart = moment(roster.weekStart);
       return (
@@ -77,14 +79,22 @@ const EditRoster = () => {
     <CenteredContainer style={{ maxWidth: "calc(100vw - 80px)" }}>
       <Title level={3}>Current Roster</Title>
       <CardContainer>
-        {arrayToCardRender(current)}
+        <RosterCards rosters={current} onRosterSelect={onRosterSelect} />
       </CardContainer>
       <Divider />
       <Title level={3}>Upcoming Rosters</Title>
-      <CardContainer>{arrayToCardRender(future)}</CardContainer>
+      <CardContainer>
+        <RosterCards rosters={future} onRosterSelect={onRosterSelect} />
+      </CardContainer>
+        
+      {/* <CardContainer>{arrayToCardRender(future)}</CardContainer> */}
       <Divider />
       <Title level={3}>Previous Rosters</Title>
-      <CardContainer>{arrayToCardRender(previous)}</CardContainer>
+        <CardContainer>
+          <RosterCards rosters={previous} onRosterSelect={onRosterSelect} />
+        </CardContainer>
+        
+      {/* <CardContainer>{arrayToCardRender(previous)}</CardContainer> */}
     </CenteredContainer>
     {selectedRoster ? <RosterSummaryModal roster={selectedRoster} closeModal={closeModal}/> : null}
     </>

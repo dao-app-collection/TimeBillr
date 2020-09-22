@@ -1,5 +1,6 @@
 import React, { createContext } from "react";
 import apiClient from "../config/axios";
+import moment from 'moment-timezone';
 
 export const AuthContext = createContext({
   authenticated: false,
@@ -48,6 +49,12 @@ export class AuthProvider extends React.Component {
 
   componentDidMount() {
     this.validateOnLoad();
+
+    let startOfWeek = moment().tz('Australia/Sydney').startOf('week');
+
+    console.log(startOfWeek);
+
+    console.log(startOfWeek.format('YYYY/MM/DD HH:mm:SS'))
   }
 
   state = {

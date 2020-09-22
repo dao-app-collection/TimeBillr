@@ -1,17 +1,17 @@
 const cron = require('node-cron');
 const mailer = require('./mailer/config');
 const mailOptions = require('./mailer/mailOptions');
-const moment = require('moment-timezone');
+const moment = require('moment');
 
-moment.locale('de');
-const startOfWeek = moment().tz('Australia/Sydney').startOf('week');
+// moment.locale('de');
+const startOfWeek = moment().startOf('week').valueOf();
 
-console.log(startOfWeek.format('YYYY/MM/DD HH:mm:SS'));
+console.log(startOfWeek);
 
 
 cron.schedule('* * * * *', async () => {
 
-    
+
     mailer.sendMail(await mailOptions.createShiftReminderEmail('clintongillespie@outlook.com'), (err, info) => {
         if(err){
             console.log(err);

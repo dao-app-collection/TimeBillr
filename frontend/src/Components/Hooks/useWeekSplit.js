@@ -20,6 +20,7 @@ const useWeekSplit = (rosters) => {
         return startOfWeek.isAfter(moment(roster.weekStart));
       });
       setPrevious(tempPrevious);
+      console.log(moment(tempCurrent[0].weekStart).valueOf());
     }, [rosters]);
   
     console.log(current, future, previous);
