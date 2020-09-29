@@ -24,13 +24,6 @@ application.use((err, req, res, next) => {
   console.log("An error has been thrown");
   handleError(err, res);
 });
-// application.get('/verification*', (req, res) => {
-//     res.sendFile(__dirname + '/views/verification.html');
-// });
-
-// application.get("/landing", (req, res) => {
-//   res.sendFile(__dirname + "/views/landing.html");
-// });
 
 application.get("*", (req, res) => {
   res.sendFile(__dirname + "/frontend/build/index.html");

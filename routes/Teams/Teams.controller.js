@@ -167,7 +167,7 @@ module.exports = {
         let days = [0, 1, 2, 3, 4, 5, 6];
 
         let defaultOpeningHours = await Promise.all(days.map(async day => {
-          return db.OpeningHours.create({day: day, open: 32400000,close: 32400000,})
+          return db.OpeningHours.create({day: day, open: 32400000,close: 32400000, TeamSettingId: defaultSettings.dataValues.id});
         }))
         console.log(newMembership);
         return newTeam;
@@ -184,14 +184,16 @@ module.exports = {
   // A manager can create a member or a manager
   // An email is sent with the request to join the team
   async addMember(req, res) {
+    console.log(req.body);
+    const {TeamId} = req.body;
     if (req.permissions !== "employee") {
       try {
         const result = await db.sequelize.transaction(async (t) => {
-          let team = await db.Team.findOne({ where: { id: req.body.teamId } });
+          let team = await db.Team.findOne({ where: { id: TeamId } });
           let newMembershipRequest = await db.TeamMembershipRequest.create({
             email: req.body.email,
             permissions: req.body.permissions,
-            TeamId: req.body.teamId,
+            TeamId: TeamId,
             employmentType: req.body.employmentType,
           });
           mailer.sendMail(

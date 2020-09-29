@@ -15,26 +15,23 @@ const transport = nodemailer.createTransport({
   },
 });
 
-// const verificationEmail = (email, link) => {
+const teamInviteEmailRender = (teamName, inviteId) => {
 
-//     const email = new Email({
-//         message: {
-//             from: 'TimeBillr'
-//         },
-//         transport: transport,
-//     });
+  const email = new Email({
+    juice: true,
+    juiceResources: {
+      preserveImportant: true,
+      webResources: path.resolve('emails')
+    }
+  });
 
-//     email.send({
-//         template: 'verification/verification',,
-//         message: {
-//             to: email,
-//         },
-//         send: true,
-//         locals: {
-//             link: link,
-//         }
-//     }).then(res => {console.log(res).catch(err => {console.log(err)})})
-// };
+  return email.render('teaminvite/teaminvite', {
+    teamName: teamName,
+    inviteId: inviteId,
+    email: emailAddress
+  })
+};
+
 
 const verificationEmailRender = (emailAddress, link) => {
   console.log(emailAddress);
@@ -71,4 +68,4 @@ const shiftReminderEmailRender = (emailAddress, link) => {
   })
 };
 
-module.exports = { verificationEmailRender, shiftReminderEmailRender };
+module.exports = { verificationEmailRender, shiftReminderEmailRender, teamInviteEmailRender };

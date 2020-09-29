@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   TeamMembershipRequest.init(
     {
+      
       email: DataTypes.STRING,
       permissions: DataTypes.STRING,
       employmentType: DataTypes.STRING,

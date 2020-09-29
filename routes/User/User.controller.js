@@ -50,6 +50,7 @@ const UserController = {
           password: hash,
         });
         if (!newUser) {
+          console.log('some error in register')
           throw new ErrorHandler(
             400,
             "Error: A User already exists for this Email. Please Log In, or register under a different email."
@@ -110,33 +111,45 @@ const UserController = {
       } else {
         console.log(user.dataValues);
         if (user.dataValues.emailVerified === false) {
-          //    res.status(401).send({error: 'Please Verify your email to sign in'}).send();
+         
           throw new ErrorHandler(
             400,
             "You need to verify your email to sign in"
           );
-          res
-            .status(400)
-            .send({ error: "You need to verify your email to sign in" });
+          
         } else {
+          console.log(password);
+          console.log(user.dataValues.password);
           bcrypt.compare(password, user.dataValues.password, (err, result) => {
-            if (!result) {
-              throw new ErrorHandler(400, "Invalid Password");
-              res.status(401).send({ error: "Invalid Password" });
-            } else {
-              const payload = { email };
-
-              const token = jwt.sign(payload, secret, {
-                expiresIn: "24h",
-              });
-              res.status(200).cookie("jwt", token).send();
+            try {
+              if (err) {
+                console.log(err);
+                
+                
+              } else if(result) {
+                const payload = { email };
+  
+                const token = jwt.sign(payload, secret, {
+                  expiresIn: "24h",
+                });
+                res.status(200).cookie("jwt", token).send();
+              } else {
+                console.log('invalid username or pw')
+                throw new ErrorHandler(400, "Invalid email or password.");
+              }
+            } catch (error) {
+              console.log('in try catch in bcrypt.compare')
+              next(error);
             }
+            
           });
         }
       }
     } catch (error) {
-      next(error);
+      console.log('in try catch login')
       console.log(error);
+      next(error);
+      
     }
   },
   logOut(req, res, next) {

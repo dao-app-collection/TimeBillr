@@ -29,7 +29,7 @@ const LogIn = (props) => {
         history.push("/app");
       }
     } catch (error) {
-      alert.show("Error: Incorrect Username or Password", {
+      alert.show(error.response.data.message, {
         type: "error",
       });
       // setError(true);

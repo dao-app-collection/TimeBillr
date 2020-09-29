@@ -8,10 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      weekStart: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
       shiftReminders: {
         type: Sequelize.BOOLEAN
       },

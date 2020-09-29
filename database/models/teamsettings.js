@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   TeamSettings.init(
     {
-      weekStart: DataTypes.STRING,
       shiftReminders: DataTypes.BOOLEAN,
     },
     {

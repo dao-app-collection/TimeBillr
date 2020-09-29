@@ -31,9 +31,7 @@ const EditRoster = () => {
   const orgContext = useContext(OrganizationContext);
   const [current, future, previous] = useWeekSplit(rosterContext.rosterData);
   const [selectedRoster, setSelectedRoster] = useState(null);
-  console.log(current);
-  console.log(future);
-  console.log(previous);
+  
 
   const onRosterSelect = (roster) => {
     console.log('on roster select')
@@ -44,35 +42,6 @@ const EditRoster = () => {
   const closeModal = () => {
     setSelectedRoster(null);
   }
-
-  const arrayToCardRender = (array) => {
-
-    console.log('in array to card render');
-    return array.map((roster) => {
-      const weekStart = moment(roster.weekStart);
-      return (
-        // <Link
-        //   to={`/app/${orgContext.organizationData.id}/rosters/${roster.id}`}
-        //   key={roster.id}
-        // >
-          <Card
-            style={{ width: "auto", margin: "8px 8px" }}
-            hoverable
-            onClick={() => {onRosterSelect(roster)}}
-            actions={[
-              roster.complete ? (
-                <CheckCircleTwoTone twoToneColor={completeColor} />
-              ) : (
-                <CloseCircleTwoTone twoToneColor={incompleteColor} />
-              ),
-            ]}
-          >
-            <Meta title={weekStart.format('DD/MM/YYYY') + ' - ' + weekStart.endOf('week').format('DD/MM/YYYY')} />
-          </Card>
-        // </Link>
-      );
-    });
-  };
 
   return (
     <>

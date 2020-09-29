@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { verificationEmailRender, shiftReminderEmailRender } = require("../Email");
+const { verificationEmailRender, shiftReminderEmailRender, teamInviteEmailRender } = require("../Email");
 
 let mailOptions = {
   from: '"TimeBillr" <clintongillespie@outlook.com>',
@@ -22,7 +22,7 @@ const createVerificationEmailOptions = async (email, link) => {
   return Promise.resolve(options);
 };
 
-const createTeamInviteEmailOptions = (email, teamName, inviteId) => {
+const createTeamInviteEmailOptions = async (email, teamName, inviteId) => {
   return {
     from: '"TimeBillr" <clintongillespie@outlook.com>',
     to: `${email}`,
