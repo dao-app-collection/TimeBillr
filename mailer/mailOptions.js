@@ -28,7 +28,8 @@ const createTeamInviteEmailOptions = async (email, teamName, inviteId) => {
     to: `${email}`,
     subject: `An Invitation to join ${teamName}`,
     text: `An Invitated to join ${teamName}`,
-    html: `<p><a href='${process.env.HOSTNAME}/app/invitation/${inviteId}'>An Invitation to join ${teamName}</a></p>`,
+    // html: `<p><a href='${process.env.HOSTNAME}/app/invitation/${inviteId}'>An Invitation to join ${teamName}</a></p>`,
+    html: await teamInviteEmailRender(teamName, inviteId)
   };
 };
 
